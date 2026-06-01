@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Ladies</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Serif+Display&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --al-dark: #1a1a1a;
+      --al-gold: #c49f47;
+      --al-blush-50: #fef5f7;
+      --al-blush-100: #fdeaed;
+      --al-gray: #555;
+      --font-dm-sans: 'DM Sans';
+      --font-dm-serif: 'DM Serif Display';
+    }
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--font-dm-sans), sans-serif;
+      color: var(--al-dark);
+      line-height: 1.7;
+      background: #fff;
+    }
+
+    .nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(26,26,26,0.92);
+      backdrop-filter: blur(12px);
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo { text-decoration: none; font-size: 1.25rem; }
+    .nav-logo .ai { font-family: var(--font-dm-serif); color: #fff; font-weight: 700; }
+    .nav-logo .ladies { font-family: var(--font-dm-serif); color: var(--al-gold); font-style: italic; }
+    .nav-back {
+      color: rgba(255,255,255,0.7);
+      text-decoration: none;
+      font-size: 0.875rem;
+      transition: color 0.2s;
+    }
+    .nav-back:hover { color: #fff; }
+
+    .legal-content {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 3rem 1.5rem 5rem;
+    }
+    .legal-content h1 {
+      font-family: var(--font-dm-serif);
+      font-size: clamp(1.5rem, 4vw, 2rem);
+      margin-bottom: 0.5rem;
+      color: var(--al-dark);
+    }
+    .legal-content .meta {
+      font-size: 0.8125rem;
+      color: var(--al-gray);
+      margin-bottom: 2.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid #eee;
+    }
+    .legal-content h2 {
+      font-family: var(--font-dm-serif);
+      font-size: 1.25rem;
+      margin-top: 2.5rem;
+      margin-bottom: 0.75rem;
+      color: var(--al-dark);
+    }
+    .legal-content h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-top: 1.75rem;
+      margin-bottom: 0.5rem;
+    }
+    .legal-content p {
+      font-size: 0.9375rem;
+      color: var(--al-gray);
+      margin-bottom: 1rem;
+      line-height: 1.75;
+    }
+    .legal-content ul, .legal-content ol {
+      padding-left: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .legal-content li {
+      font-size: 0.9375rem;
+      color: var(--al-gray);
+      line-height: 1.7;
+      margin-bottom: 0.4rem;
+    }
+    .legal-content table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+      font-size: 0.8125rem;
+    }
+    .legal-content th, .legal-content td {
+      border: 1px solid #e5e5e5;
+      padding: 0.6rem 0.75rem;
+      text-align: left;
+      vertical-align: top;
+    }
+    .legal-content th {
+      background: var(--al-blush-50);
+      font-weight: 600;
+    }
+    .legal-content blockquote {
+      border-left: 3px solid var(--al-gold);
+      padding-left: 1rem;
+      margin: 1.5rem 0;
+      color: var(--al-gray);
+      font-size: 0.875rem;
+    }
+    .legal-content strong { color: var(--al-dark); }
+    .legal-content a { color: var(--al-gold); }
+    .legal-content hr {
+      border: none;
+      border-top: 1px solid #eee;
+      margin: 2rem 0;
+    }
+
+    .footer-mini {
+      background: var(--al-dark);
+      padding: 2rem;
+      text-align: center;
+    }
+    .footer-mini p {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.3);
+    }
+    .footer-mini a {
+      color: rgba(255,255,255,0.5);
+      text-decoration: none;
+    }
+    .footer-mini a:hover { color: var(--al-gold); }
+
+    @media (max-width: 640px) {
+      .legal-content { padding: 2rem 1rem 3rem; }
+      .legal-content table { font-size: 0.75rem; }
+      .legal-content th, .legal-content td { padding: 0.4rem 0.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="index.html" class="nav-logo"><span class="ai">AI</span><span class="ladies">Ladies</span></a>
+    <a href="index.html" class="nav-back">← Zpět na hlavní stránku</a>
+  </nav>
+
+  <div class="legal-content" id="content">
+    <p style="color: var(--al-gray); padding: 3rem 0; text-align: center;">Načítám dokument…</p>
+  </div>
+
+  <footer class="footer-mini">
+    <p><a href="obchodni-podminky.html">Obchodní podmínky</a> · <a href="ochrana-osobnich-udaju.html">Ochrana osobních údajů</a> · <a href="cookies.html">Cookies</a> · <a href="seznam-zpracovatelu.html">Seznam zpracovatelů</a></p>
+    <p style="margin-top: 0.75rem;">&copy; 2026 AI Ladies s.r.o.</p>
+  </footer>
+
+  <script>
+    const defined_pages = {
+      'obchodni-podminky.html': 'Podmínky aj./AILadies_obchodni_podminky_2026.md',
+      'ochrana-osobnich-udaju.html': 'Podmínky aj./AILadies_zasady_ochrany_osobnich_udaju_2026.md',
+      'cookies.html': 'Podmínky aj./AILadies_zasady_cookies_2026.md',
+      'seznam-zpracovatelu.html': 'Podmínky aj./AILadies_seznam_zpracovatelu_2026.md'
+    };
+
+    const page = location.pathname.split('/').pop();
+    const mdFile = defined_pages[page];
+
+    if (mdFile) {
+      fetch(mdFile)
+        .then(r => r.text())
+        .then(md => {
+          document.getElementById('content').innerHTML = renderMd(md);
+          const h1 = document.querySelector('.legal-content h1');
+          if (h1) document.title = h1.textContent + ' — AI Ladies';
+        })
+        .catch(() => {
+          document.getElementById('content').innerHTML = '<p>Dokument se nepodařilo načíst.</p>';
+        });
+    }
+
+    function renderMd(md) {
+      let html = md
+        .replace(/^#{3}\s+(.+)$/gm, '<h3>$1</h3>')
+        .replace(/^#{2}\s+(.+)$/gm, '<h2>$1</h2>')
+        .replace(/^#{1}\s+(.+)$/gm, '<h1>$1</h1>')
+        .replace(/^>\s*(.+)$/gm, '<blockquote>$1</blockquote>')
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.+?)\*/g, '<em>$1</em>')
+        .replace(/`(.+?)`/g, '<code>$1</code>')
+        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>')
+        .replace(/^---$/gm, '<hr>')
+        .replace(/^\|(.+)\|$/gm, (match) => {
+          const cells = match.split('|').filter(c => c.trim());
+          if (cells.every(c => /^[\s-:]+$/.test(c))) return '<!--sep-->';
+          return '<tr>' + cells.map(c => '<td>' + c.trim() + '</td>').join('') + '</tr>';
+        })
+        .replace(/^- (.+)$/gm, '<li>$1</li>')
+        .replace(/^(\d+)\. (.+)$/gm, '<li>$2</li>');
+
+      html = html.replace(/((?:<tr>.*<\/tr>\n?)+)/g, '<table>$1</table>');
+      html = html.replace(/<table>([\s\S]*?)<\/table>/g, (m, inner) => {
+        const rows = inner.split('\n').filter(r => r.trim() && !r.includes('<!--sep-->'));
+        if (rows.length > 1) {
+          const header = rows[0].replace(/<td>/g, '<th>').replace(/<\/td>/g, '</th>');
+          return '<table><thead>' + header + '</thead><tbody>' + rows.slice(1).join('\n') + '</tbody></table>';
+        }
+        return '<table>' + inner.replace(/<!--sep-->\n?/g, '') + '</table>';
+      });
+
+      html = html.replace(/((?:<li>.*<\/li>\n?)+)/g, '<ul>$1</ul>');
+
+      html = html.replace(/(<\/blockquote>\n?)+/g, '</blockquote>');
+      html = html.replace(/(?:<blockquote>)+/g, '<blockquote>');
+
+      const lines = html.split('\n');
+      let result = '';
+      for (const line of lines) {
+        const trimmed = line.trim();
+        if (!trimmed) continue;
+        if (/^<(h[1-3]|ul|ol|li|table|thead|tbody|tr|th|td|blockquote|hr|\/)/i.test(trimmed)) {
+          result += trimmed + '\n';
+        } else {
+          result += '<p>' + trimmed + '</p>\n';
+        }
+      }
+      return result;
+    }
+  </script>
+</body>
+</html>

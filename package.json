@@ -1,0 +1,9 @@
+{
+  "name": "ailadies-web",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AI Ladies — web + serverless API",
+  "engines": {
+    "node": ">=18"
+  }
+}

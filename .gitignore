@@ -1,0 +1,25 @@
+node_modules/
+.env
+.env.local
+.vercel/
+.DS_Store
+*.log
+
+# IDE / editor
+.vscode/
+.cursorindexingignore
+.specstory/
+
+# Internal project docs
+zapisy-z-callu/
+strategie/
+research/
+brand/
+logo-concepts/
+
+# Original web source (deploy from public/)
+web/
+
+# Design docs (internal)
+DESIGN-SYSTEM*.md
+CONTEXT.md
