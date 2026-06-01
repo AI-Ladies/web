@@ -23,3 +23,4 @@ web/
 # Design docs (internal)
 DESIGN-SYSTEM*.md
 CONTEXT.md
+.vercel
