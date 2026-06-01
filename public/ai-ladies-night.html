@@ -620,14 +620,11 @@
 
   regForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-
     regBtn.disabled = true;
     regBtn.textContent = 'Odesílám…';
     regBtn.style.opacity = '0.7';
-
     const errEl = document.getElementById('reg-error');
     if (errEl) errEl.remove();
-
     const data = {
       fname: regForm.fname.value.trim(),
       lname: regForm.lname.value.trim(),
@@ -637,7 +634,6 @@
       aiLevel: regForm['ai-level'].value,
       gdpr: regForm.gdpr.checked,
     };
-
     try {
       const res = await fetch('/api/register', {
         method: 'POST',
@@ -645,7 +641,6 @@
         body: JSON.stringify(data),
       });
       const result = await res.json();
-
       if (result.success) {
         regForm.innerHTML = `
           <div style="text-align:center; padding: 2rem 0;">

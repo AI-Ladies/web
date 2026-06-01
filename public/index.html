@@ -1394,19 +1394,15 @@
 
   nlForm.addEventListener('submit', async (e) => {
     e.preventDefault();
-
     const email = nlEmail.value.trim();
     if (!email) return;
-
     if (!nlConsent.checked) {
       nlMessage.textContent = 'Potvrď prosím souhlas se zasíláním.';
       nlMessage.style.color = 'var(--al-blush-500)';
       return;
     }
-
     nlBtn.disabled = true;
     nlBtn.textContent = 'Odesílám…';
-
     try {
       const res = await fetch('/api/newsletter', {
         method: 'POST',
@@ -1414,7 +1410,6 @@
         body: JSON.stringify({ email, consent: true }),
       });
       const result = await res.json();
-
       if (result.success) {
         nlForm.innerHTML = '<p style="color: var(--al-gold); font-weight: 600; font-size: 1rem;">✦ Díky! Jsi přihlášená.</p>';
         nlMessage.textContent = result.alreadySubscribed
