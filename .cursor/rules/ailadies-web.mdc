@@ -1,0 +1,40 @@
+---
+description: AI Ladies web project — deploy workflow, project structure, key rules
+alwaysApply: true
+---
+
+# AI Ladies Web — Pravidla projektu
+
+## Architektura
+
+- **Hosting:** Vercel (team `ai-ladies-projects`, projekt `ailadies-web`)
+- **Repo:** https://github.com/AI-Ladies/web (public, branch `main`)
+- **Auto-deploy:** push na `main` → Vercel automaticky deployne za ~15s
+- **Domény:** `ailadies.cz` (nový web), `mentoring.ailadies.cz` (Macaly/Petra), `www.ailadies.cz` → redirect na `ailadies.cz`
+
+## Struktura
+
+- `public/` — statické soubory webu (HTML, CSS, JS, obrázky). **Editace se dělají tady.**
+- `api/register.js` — serverless: registrace na event → Airtable + Brevo + potvrzovací email
+- `api/newsletter.js` — serverless: newsletter signup → Brevo
+- `vercel.json` — routing, CORS headers, redirect `/mentoring` → `mentoring.ailadies.cz`
+
+## Deploy workflow
+
+1. Před editací vždy `git pull` (ať máš aktuální verzi)
+2. Edituj soubory v `public/`
+3. `git add . && git commit -m "popis" && git push`
+4. Vercel deployne automaticky — netřeba nic dalšího
+
+## Environment variables (na Vercelu, NE v kódu)
+
+- `AIRTABLE_API_TOKEN`, `AIRTABLE_BASE_ID` — přístup k Airtable
+- `BREVO_API_KEY`, `BREVO_NIGHT_LIST_ID` (4), `BREVO_NEWSLETTER_LIST_ID` (5) — přístup k Brevo
+
+## Důležitá pravidla
+
+- **Nikdy nedávej API klíče do kódu** — vždy env vars na Vercelu
+- **Nesahej na `api/` bez rozmyslu** — změny ovlivní formuláře a emaily
+- **Email komunity:** hello@ailadies.cz (ne ahoj@, ne info@)
+- **Git email pro tento repo:** hello@ailadies.cz (lokální config, kvůli Vercel Hobby plan)
+- **DNS (Forpsi):** nesahej na MX, SPF, DKIM, DMARC záznamy — rozbije to emaily
