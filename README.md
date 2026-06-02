@@ -45,26 +45,32 @@ API klíče jsou uložené jako environment variables na Vercelu (ne v kódu).
    cd web
    ```
 
-2. **Otevři v Cursoru** (nebo jiném editoru):
+2. **Před každou editací pullni aktuální verzi** (ať nepracuješ se starou):
+   ```bash
+   git pull
+   ```
+   > ⚠️ **Vždy udělej `git pull` před tím, než začneš cokoliv měnit.** Jinak se ti může stát, že přepíšeš změny od někoho jiného.
+
+3. **Otevři v Cursoru** (nebo jiném editoru):
    ```bash
    cursor .
    ```
 
-3. **Edituj soubory ve složce `public/`** — tam jsou všechny HTML stránky, styly a obrázky. Řekni AI co chceš změnit, například:
+4. **Edituj soubory ve složce `public/`** — tam jsou všechny HTML stránky, styly a obrázky. Řekni AI co chceš změnit, například:
    > „Změň text v sekci O nás na homepage"
    >
    > „Přidej novou fotku do týmové sekce"
    >
    > „Uprav datum eventu na ai-ladies-night.html"
 
-4. **Commitni a pushni**:
+5. **Commitni a pushni**:
    ```bash
    git add .
    git commit -m "Popis změny"
    git push
    ```
 
-5. **Hotovo!** Za ~15 sekund se změna projeví na https://ailadies.cz
+6. **Hotovo!** Za ~15 sekund se změna projeví na https://ailadies.cz
 
 ### Varianta B: Přímo na GitHubu (rychlé drobné úpravy)
 
