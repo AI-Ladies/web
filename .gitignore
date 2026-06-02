@@ -24,3 +24,4 @@ web/
 DESIGN-SYSTEM*.md
 CONTEXT.md
 .vercel
+.env.vercel

@@ -31,7 +31,7 @@ export default async function handler(req, res) {
 
     if (airtableToken && airtableBaseId) {
       const airtableRes = await fetch(
-        `https://api.airtable.com/v0/${airtableBaseId}/Registrace%20AI%20Ladies%20Night`,
+        `https://api.airtable.com/v0/${airtableBaseId}/Registrace`,
         {
           method: 'POST',
           headers: {
@@ -39,16 +39,17 @@ export default async function handler(req, res) {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
+            typecast: true,
             fields: {
-              Jmeno: fname,
-              Prijmeni: lname,
+              'First Name': fname,
+              Surname: lname,
               Email: email,
               Obor: field || '',
               Seniorita: seniority || '',
-              'AI Level': aiLevel || '',
+              AI: aiLevel || '',
               'GDPR souhlas': true,
               'Datum registrace': new Date().toISOString().split('T')[0],
-              Stav: 'Nova',
+              Status: 'Nova',
             },
           }),
         }
