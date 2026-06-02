@@ -1,0 +1,44 @@
+---
+description: "/web command — pull, sync, commit and push changes to deploy the website"
+alwaysApply: true
+---
+
+# /web — Deploy na web
+
+Když uživatel napíše `/web` (nebo "deploy web", "propsat na web", "nasadit na web"):
+
+## Postup
+
+1. **Pull** aktuální verzi:
+   ```bash
+   cd "/Users/anetalizancova/AI Ladies" && git pull
+   ```
+
+2. **Zkopíruj změny** z `web/` do `public/` (pokud uživatel editoval v `web/`):
+   ```bash
+   cp web/index.html public/index.html
+   cp web/ai-ladies-night.html public/ai-ladies-night.html
+   ```
+   Pak znovu aplikuj JS formulářový kód v `public/` souborech (form handling pro `#registration-form` a `#newsletter-form`), pokud by kopie přepsala existující JS.
+
+3. **Pokud uživatel editoval přímo v `public/`** — krok 2 přeskoč.
+
+4. **Commitni a pushni**:
+   ```bash
+   git add .
+   git commit -m "popis změn"
+   git push origin main
+   ```
+
+5. **Ověř deploy** (počkej ~15s):
+   ```bash
+   npx vercel ls --scope ai-ladies-projects 2>&1 | head -6
+   ```
+
+6. Informuj uživatele, že změny jsou live na https://ailadies.cz
+
+## Pravidla
+
+- Commit message piš česky, stručně, popisně
+- Pokud nejsou žádné změny k commitnutí, řekni to a nedělej prázdný commit
+- Nikdy nepushuj API klíče nebo hesla
