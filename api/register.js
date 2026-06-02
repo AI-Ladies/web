@@ -108,7 +108,7 @@ export default async function handler(req, res) {
               <h1 style="font-size: 24px; color: #0d0d0d;">Díky za registraci, ${fname}!</h1>
               <p>Těšíme se na tebe na <strong>AI Ladies Night</strong>.</p>
               <div style="background: #f8f5f0; border-radius: 12px; padding: 20px; margin: 24px 0;">
-                <p style="margin: 4px 0;"><strong>Kdy:</strong> Středa 18. června 2026, 18:00–21:00</p>
+                <p style="margin: 4px 0;"><strong>Kdy:</strong> Čtvrtek 18. června 2026, 18:00–21:00</p>
                 <p style="margin: 4px 0;"><strong>Kde:</strong> Trinity Bank, Na Příkopě, Praha 1</p>
                 <p style="margin: 4px 0;"><strong>Cena:</strong> 390 Kč</p>
               </div>
