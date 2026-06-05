@@ -112,7 +112,7 @@ export default async function handler(req, res) {
                 <p style="margin: 4px 0;"><strong>Kde:</strong> Trinity Bank, Na Příkopě, Praha 1</p>
                 <p style="margin: 4px 0;"><strong>Cena:</strong> 390 Kč</p>
               </div>
-              <p>Platební instrukce ti pošleme v dalším e-mailu.</p>
+              <p>Pokud jsi ještě nezaplatila, můžeš to udělat <a href="https://buy.stripe.com/4gMfZj78J2w93eafdW1Nu01" style="color: #c49f47;">přes tento odkaz</a> (390 Kč).</p>
               <p style="margin-top: 24px;">Pokud máš jakékoli otázky, napiš nám na <a href="mailto:hello@ailadies.cz" style="color: #c49f47;">hello@ailadies.cz</a>.</p>
               <p style="margin-top: 32px; color: #9c8e82; font-size: 14px;">— Tým AI Ladies</p>
             </div>
