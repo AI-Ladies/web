@@ -91,8 +91,19 @@ export default async function handler(req, res) {
         console.error('Brevo contact error:', errData);
       }
 
-      // Confirmation email is handled by Brevo automation
-      // (triggered when contact is added to list 4)
+      // Brevo template #1: AI Ladies Night confirmation
+      await fetch('https://api.brevo.com/v3/smtp/email', {
+        method: 'POST',
+        headers: {
+          'api-key': brevoKey,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          to: [{ email, name: `${fname} ${lname}` }],
+          templateId: 1,
+          params: { FIRSTNAME: fname },
+        }),
+      });
     }
 
     return res.status(200).json({ success: true });
