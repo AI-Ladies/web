@@ -92,7 +92,6 @@ export default async function handler(req, res) {
       }
 
       // --- Brevo: send confirmation email ---
-      // Placeholder: will be replaced with proper HTML template in Phase 3
       await fetch('https://api.brevo.com/v3/smtp/email', {
         method: 'POST',
         headers: {
@@ -102,21 +101,8 @@ export default async function handler(req, res) {
         body: JSON.stringify({
           sender: { name: 'AI Ladies', email: 'hello@ailadies.cz' },
           to: [{ email, name: `${fname} ${lname}` }],
-          subject: 'Potvrzení registrace na AI Ladies Night',
-          htmlContent: `
-            <div style="font-family: 'DM Sans', Arial, sans-serif; max-width: 560px; margin: 0 auto; color: #1a1a1a;">
-              <h1 style="font-size: 24px; color: #0d0d0d;">Díky za registraci, ${fname}!</h1>
-              <p>Těšíme se na tebe na <strong>AI Ladies Night</strong>.</p>
-              <div style="background: #f8f5f0; border-radius: 12px; padding: 20px; margin: 24px 0;">
-                <p style="margin: 4px 0;"><strong>Kdy:</strong> Čtvrtek 18. června 2026, 18:00–21:00</p>
-                <p style="margin: 4px 0;"><strong>Kde:</strong> Trinity Bank, Na Příkopě, Praha 1</p>
-                <p style="margin: 4px 0;"><strong>Cena:</strong> 390 Kč</p>
-              </div>
-              <p>Pokud jsi ještě nezaplatila, můžeš to udělat <a href="https://buy.stripe.com/4gMfZj78J2w93eafdW1Nu01" style="color: #c49f47;">přes tento odkaz</a> (390 Kč).</p>
-              <p style="margin-top: 24px;">Pokud máš jakékoli otázky, napiš nám na <a href="mailto:hello@ailadies.cz" style="color: #c49f47;">hello@ailadies.cz</a>.</p>
-              <p style="margin-top: 32px; color: #9c8e82; font-size: 14px;">— Tým AI Ladies</p>
-            </div>
-          `,
+          subject: 'Jsi in! ✦ Potvrzení registrace na AI Ladies Night',
+          htmlContent: confirmationHtml(fname),
         }),
       });
     }
@@ -129,4 +115,116 @@ export default async function handler(req, res) {
       error: 'Něco se pokazilo. Zkus to prosím znovu nebo nám napiš na hello@ailadies.cz.',
     });
   }
+}
+
+function confirmationHtml(fname) {
+  return `<!DOCTYPE html>
+<html lang="cs" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="color-scheme" content="light only">
+<meta name="supported-color-schemes" content="light only">
+<meta name="x-apple-disable-message-reformatting">
+<!--[if mso]><noscript><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml></noscript><![endif]-->
+<style>
+:root,html,body,*{color-scheme:light only!important}
+body{margin:0;padding:0;background-color:#f8f8f7!important;color:#1a1a1a!important;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%}
+table{border-spacing:0;border-collapse:collapse}td{padding:0}img{border:0;display:block}a{color:#c49f47}
+@media(prefers-color-scheme:dark){body,html{background-color:#f8f8f7!important;color:#1a1a1a!important}.force-light{background-color:#fff!important;color:#1a1a1a!important}.force-bg{background-color:#f8f8f7!important}}
+[data-ogsc] *{color-scheme:light only!important}[data-ogsc] .force-light{background-color:#fff!important;color:#1a1a1a!important}
+[data-darkreader-mode] *{color-scheme:light only!important}
+@media screen and (max-width:600px){.wrapper{width:100%!important}.inner-pad{padding-left:24px!important;padding-right:24px!important}}
+</style>
+</head>
+<body style="margin:0;padding:0;background-color:#f8f8f7;font-family:'DM Sans','Segoe UI',Arial,sans-serif;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" class="force-bg" style="background-color:#f8f8f7!important;">
+<tr><td align="center" style="padding:40px 16px;">
+<table role="presentation" width="560" cellpadding="0" cellspacing="0" class="wrapper force-light" style="background-color:#fff!important;border-radius:16px;overflow:hidden;max-width:560px;width:100%;">
+
+<tr><td align="center" style="background-color:#0d0d0d!important;mso-background-alt:#0d0d0d;padding:28px 40px 24px;">
+<p style="margin:0;font-family:Georgia,serif;font-size:28px;line-height:1;"><span style="color:#fff!important;">AI</span><span style="color:#c49f47!important;">Ladies</span></p>
+<p style="margin:10px 0 0;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:#c49f47!important;">✦&nbsp; AI Ladies Night</p>
+</td></tr>
+
+<tr><td style="height:3px;background:linear-gradient(115deg,#7a5a1e 0%,#b8892a 22%,#c49f47 40%,#d4bc6a 55%,#c49f47 68%,#9a7428 84%,#7a5a1e 100%);mso-background-alt:#c49f47;"></td></tr>
+
+<tr><td align="center" style="padding:24px 0 8px;">
+<table role="presentation" cellpadding="0" cellspacing="0"><tr>
+<td align="center" style="width:56px;height:56px;border-radius:50%;background-color:#c49f47;text-align:center;vertical-align:middle;">
+<span style="color:#fff!important;font-size:24px;line-height:56px;">✓</span>
+</td></tr></table>
+</td></tr>
+
+<tr><td align="center" class="inner-pad" style="padding:16px 40px 8px;">
+<h1 style="margin:0;font-family:Georgia,serif;font-size:26px;font-weight:400;line-height:1.3;color:#0d0d0d!important;">Ahoj ${fname}, máš to!</h1>
+</td></tr>
+
+<tr><td align="center" class="inner-pad" style="padding:8px 40px 32px;">
+<p style="margin:0;font-size:16px;line-height:1.7;color:#5c5c5c!important;">Tvoje registrace na <strong style="color:#1a1a1a!important;">AI Ladies Night</strong> je potvrzená. Těšíme&nbsp;se, že budeš u&nbsp;toho.</p>
+</td></tr>
+
+<tr><td class="inner-pad" style="padding:0 40px 32px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background-color:#f8f2e4!important;border-radius:12px;border:1px solid rgba(196,159,71,0.2);">
+<tr><td style="padding:24px 28px 8px;">
+<p style="margin:0 0 4px;font-family:Georgia,serif;font-size:18px;color:#0d0d0d!important;"><span style="color:#c49f47!important;">✦</span> AI Ladies Night</p>
+</td></tr>
+<tr><td style="padding:12px 28px;">
+<table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+<tr><td style="padding:6px 0;font-size:15px;color:#1a1a1a!important;line-height:1.5;"><span style="display:inline-block;vertical-align:middle;line-height:1;font-size:1.1em;">📅</span>&nbsp;&nbsp;<strong>Čtvrtek 18.&nbsp;června&nbsp;2026</strong></td></tr>
+<tr><td style="padding:6px 0;font-size:15px;color:#1a1a1a!important;line-height:1.5;"><span style="display:inline-block;vertical-align:middle;line-height:1;font-size:1.1em;">🕐</span>&nbsp;&nbsp;18:00 – 21:00</td></tr>
+<tr><td style="padding:6px 0;font-size:15px;color:#1a1a1a!important;line-height:1.5;"><span style="display:inline-block;vertical-align:middle;line-height:1;font-size:1.1em;">📍</span>&nbsp;&nbsp;Praha (přesné místo pošleme e-mailem)</td></tr>
+<tr><td style="padding:6px 0;font-size:15px;color:#1a1a1a!important;line-height:1.5;"><span style="display:inline-block;vertical-align:middle;line-height:1;font-size:1.1em;">🥂</span>&nbsp;&nbsp;Welcome drink v&nbsp;ceně</td></tr>
+</table>
+</td></tr>
+<tr><td style="padding:0 0 16px;"></td></tr>
+</table>
+</td></tr>
+
+<tr><td class="inner-pad" style="padding:0 40px 8px;">
+<h2 style="margin:0;font-family:Georgia,serif;font-size:18px;font-weight:400;color:#0d0d0d!important;">Co tě čeká</h2>
+</td></tr>
+<tr><td class="inner-pad" style="padding:8px 40px 8px;">
+<p style="margin:0;font-size:15px;line-height:1.7;color:#5c5c5c!important;">Žádné přednášky, žádné slidy. Večer postavený na kulatých stolech, otevřené konverzaci a&nbsp;sdílení zkušeností s&nbsp;AI.</p>
+</td></tr>
+<tr><td class="inner-pad" style="padding:12px 40px 32px;">
+<table role="presentation" cellpadding="0" cellspacing="0" width="100%">
+<tr><td style="padding:6px 0;font-size:15px;color:#1a1a1a!important;line-height:1.5;"><span style="color:#c49f47!important;font-weight:600;">→</span>&nbsp;&nbsp;Networking u&nbsp;tematických stolů</td></tr>
+<tr><td style="padding:6px 0;font-size:15px;color:#1a1a1a!important;line-height:1.5;"><span style="color:#c49f47!important;font-weight:600;">→</span>&nbsp;&nbsp;Živé ukázky AI nástrojů</td></tr>
+<tr><td style="padding:6px 0;font-size:15px;color:#1a1a1a!important;line-height:1.5;"><span style="color:#c49f47!important;font-weight:600;">→</span>&nbsp;&nbsp;Talk show o&nbsp;práci s&nbsp;AI na&nbsp;dálku</td></tr>
+<tr><td style="padding:6px 0;font-size:15px;color:#1a1a1a!important;line-height:1.5;"><span style="color:#c49f47!important;font-weight:600;">→</span>&nbsp;&nbsp;AI koutek — pomůžeme ti s&nbsp;konkrétním nástrojem</td></tr>
+</table>
+</td></tr>
+
+<tr><td class="inner-pad" style="padding:0 40px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0">
+<tr><td style="border-top:1px solid #eee;height:1px;font-size:0;line-height:0;">&nbsp;</td></tr>
+</table>
+</td></tr>
+
+<tr><td align="center" class="inner-pad" style="padding:32px 40px 12px;">
+<p style="margin:0;font-size:15px;line-height:1.7;color:#5c5c5c!important;">Kdyby cokoliv, napiš nám na<br><a href="mailto:hello@ailadies.cz" style="color:#c49f47!important;text-decoration:none;font-weight:600;">hello@ailadies.cz</a></p>
+</td></tr>
+
+<tr><td align="center" class="inner-pad" style="padding:16px 40px 12px;">
+<p style="margin:0;font-size:15px;color:#1a1a1a!important;font-weight:500;line-height:1.7;">Těšíme se na tebe!</p>
+</td></tr>
+<tr><td align="center" class="inner-pad" style="padding:4px 40px 40px;">
+<p style="margin:0;font-size:15px;color:#9c8e82!important;line-height:1.7;">Aneta, Katka a&nbsp;Petra<br><span style="font-size:13px;color:#c49f47!important;">zakladatelky AI Ladies</span></p>
+</td></tr>
+
+</table>
+
+<table role="presentation" width="560" cellpadding="0" cellspacing="0" class="wrapper" style="max-width:560px;width:100%;">
+<tr><td align="center" style="padding:24px 40px;font-size:12px;line-height:1.6;color:#9c8e82!important;">
+<p style="margin:0;">Tento e-mail ti přišel, protože ses zaregistrovala na AI&nbsp;Ladies Night na&nbsp;<a href="https://ailadies.cz" style="color:#9c8e82!important;text-decoration:underline;">ailadies.cz</a>.</p>
+<p style="margin:8px 0 0;">© 2026 AI Ladies s.r.o.</p>
+</td></tr>
+</table>
+
+</td></tr>
+</table>
+</body>
+</html>`;
 }

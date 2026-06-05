@@ -1,0 +1,92 @@
+---
+description: Pravidla pro tvorbu HTML emailů (Brevo) — best practices, dark mode, emoji, brand
+globs: emails/**
+alwaysApply: false
+---
+
+# HTML emaily — AI Ladies
+
+## Brand barvy pro emaily
+
+- Zlatá: `#c49f47`, tmavší: `#7a5a1e`, světlá: `#f8f2e4`
+- Tmavá: `#0d0d0d`, text: `#1a1a1a`, šedá: `#5c5c5c`, teplá šedá: `#9c8e82`
+- Blush: `#fef7f8`
+- Font: `'DM Sans', 'Segoe UI', Arial, sans-serif` (DM Sans se nenačte všude, proto fallbacky)
+
+## Struktura emailu
+
+- Vždy table-based layout (ne `<div>`) — kvůli Outlook a starším klientům
+- Max šířka: `560px`, centrovaný
+- Odesílatel: `AI Ladies <hello@ailadies.cz>`
+
+## Dark Mode — FORCE LIGHT
+
+V `<head>` vždy:
+```html
+<meta name="color-scheme" content="light only">
+<meta name="supported-color-schemes" content="light only">
+```
+
+V `<style>` vždy:
+```css
+:root, html, body, * { color-scheme: light only !important; }
+@media (prefers-color-scheme: dark) {
+  body, html { background-color: #ffffff !important; color: #1a1a1a !important; }
+}
+[data-ogsc] * { color-scheme: light only !important; }
+```
+
+Na kritických elementech: `color: #1a1a1a !important;`
+
+## Emoji
+
+Vždy zabalit do `<span>`:
+```html
+<span style="display:inline-block;vertical-align:middle;line-height:1;font-size:1.1em;">📅</span>
+```
+Tečka/text PŘED spanem, ne uvnitř!
+
+## Nezalomitelné mezery
+
+Datumy a krátké výrazy: `18.&nbsp;června`, `Praha&nbsp;1`
+
+## Tlačítka
+
+```html
+<a href="URL" target="_blank" style="
+  background-color: #c49f47;
+  border-radius: 999px;
+  color: #ffffff !important;
+  display: inline-block;
+  font-family: 'DM Sans', Arial, sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 48px;
+  text-align: center;
+  text-decoration: none;
+  padding: 0 32px;
+">Text tlačítka</a>
+```
+
+## Brevo placeholdery
+
+- **Transactional email (API):** proměnné předáváme v `params` objektu, v šabloně `{{ params.FNAME }}`
+- **Campaign email:** `{{ contact.FIRSTNAME }}`, `{{ unsubscribe }}`, `{{ mirror }}`
+- NIKDY `{{ unsubscribe_url }}` — v Brevo nefunguje!
+
+## Footer — transakční emaily
+
+Stačí minimální: proč email přišel + kontakt. Unsubscribe není povinný u transakčních.
+
+## Footer — kampaňové emaily
+
+Musí obsahovat: `{{ unsubscribe }}` odkaz, `{{ mirror }}`, `{{ contact.EMAIL }}`, © AI Ladies s.r.o.
+
+## Checklist před odesláním
+
+- [ ] Test email z Breva — zkontrolovat vizuál
+- [ ] Mobilní zobrazení (max-width 600px)
+- [ ] Dark mode (Gmail app, Apple Mail, Outlook)
+- [ ] Všechny odkazy klikatelné a správné
+- [ ] Emoji se nezalomují
+- [ ] Unsubscribe funguje (u kampaní)
