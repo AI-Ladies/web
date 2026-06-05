@@ -1,0 +1,87 @@
+---
+description: Pravidla pro tvorbu Thank You stránek po platbě (Stripe)
+globs: public/*-thank-you.html
+alwaysApply: false
+---
+
+# Thank You stránky — šablona a pravidla
+
+## Kdy vytvořit
+
+Po každém placeném eventu/webináři, kde registrace vede přes Stripe Payment Link. Stránka se zobrazí po úspěšné platbě (Stripe redirect).
+
+## Pojmenování
+
+- Formát: `public/{nazev-eventu}-thank-you.html`
+- Příklady: `al-ladies-night-thank-you.html`, `webinar-ai-intro-thank-you.html`
+- URL pak bude: `ailadies.cz/{nazev-eventu}-thank-you` (díky `cleanUrls` ve vercel.json)
+
+## Stránka musí obsahovat
+
+1. **`<meta name="robots" content="noindex">`** — nechceme TY stránky v Googlu
+2. **Vizuální potvrzení** — animovaný checkmark (zlatý kruh + SVG check)
+3. **Copy** — nadpis typu "Máš to! Držíme ti místo.", krátký text o potvrzení + koukni do spamu
+4. **Kartička s detaily eventu** — datum, čas, místo, co je v ceně
+5. **Přidání do kalendáře** — dvě tlačítka:
+   - **Google Calendar** — odkaz s parametry (viz vzor níže)
+   - **Apple / Outlook (.ics)** — JS generuje a stahuje .ics soubor
+6. **Kontakt** — odkaz na hello@ailadies.cz
+7. **Navigace zpět** — link na hlavní stránku
+
+## Kalendář — Google Calendar odkaz
+
+```
+https://calendar.google.com/calendar/render?action=TEMPLATE
+  &text={název eventu URL-encoded}
+  &dates={YYYYMMDD}T{HHmmss}Z/{YYYYMMDD}T{HHmmss}Z   ← časy v UTC!
+  &location={místo URL-encoded}
+  &details={popis URL-encoded}
+```
+
+Praha je UTC+2 (CEST léto) / UTC+1 (CET zima). Příklad: 18:00 CEST = 16:00 UTC → `20260618T160000Z`.
+
+## Kalendář — .ics soubor (Apple / Outlook)
+
+```javascript
+function downloadICS() {
+  const ics = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//AI Ladies//Event//CS',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    'BEGIN:VEVENT',
+    'DTSTART:YYYYMMDDT160000Z',      // UTC čas začátku
+    'DTEND:YYYYMMDDT190000Z',        // UTC čas konce
+    'SUMMARY:Název eventu',
+    'DESCRIPTION:Popis\\n\\nhttps://ailadies.cz/event-slug',
+    'LOCATION:Místo konání',
+    'STATUS:CONFIRMED',
+    'UID:event-slug-YYYY@ailadies.cz', // unikátní ID
+    'END:VEVENT',
+    'END:VCALENDAR'
+  ].join('\r\n');
+
+  const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'event-slug.ics';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+```
+
+## Stripe propojení
+
+1. Registrační formulář odešle data na `/api/register` (Airtable + Brevo)
+2. Po úspěchu JS přesměruje na Stripe Payment Link s `?prefilled_email=...`
+3. Ve **Stripe Dashboard → Payment Links → After payment** se nastaví redirect na `https://ailadies.cz/{nazev-eventu}-thank-you`
+
+## Design
+
+- Použij stejný design systém jako zbytek webu (viz CSS proměnné v hlavních stránkách)
+- Referenční stránka: `public/al-ladies-night-thank-you.html`
+- Animace: `scaleIn` pro checkmark, `fadeUp` s postupnými delay pro sekce
