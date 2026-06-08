@@ -33,6 +33,12 @@ Moc se těšíme, že budeš u toho. Tady je všechno, co potřebuješ vědět:
 
 ---
 
+### 📅 Přidej si to do kalendáře
+
+[Google Calendar](https://calendar.google.com/calendar/render?action=TEMPLATE&text=AI+Ladies+Night&dates=20260617T160000Z/20260617T190000Z&location=Space+Caf%C3%A9%2C+Praha&details=Prvn%C3%AD+ve%C4%8Der+AI+Ladies.+Kulat%C3%A9+stoly%2C+welcome+drink%2C+networking.%0A%0Ahttps%3A%2F%2Failadies.cz%2Fai-ladies-night) | [Apple / Outlook (.ics)](https://ailadies.cz/ai-ladies-night.ics)
+
+---
+
 Kdyby cokoliv, napiš nám na [hello@ailadies.cz](mailto:hello@ailadies.cz). Odpovíme co nejdřív.
 
 Těšíme se na tebe!
