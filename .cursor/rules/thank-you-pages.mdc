@@ -38,7 +38,7 @@ https://calendar.google.com/calendar/render?action=TEMPLATE
   &details={popis URL-encoded}
 ```
 
-Praha je UTC+2 (CEST léto) / UTC+1 (CET zima). Příklad: 18:00 CEST = 16:00 UTC → `20260618T160000Z`.
+Praha je UTC+2 (CEST léto) / UTC+1 (CET zima). Příklad: 18:00 CEST = 16:00 UTC → `20260617T160000Z`.
 
 ## Kalendář — .ics soubor (Apple / Outlook)
 

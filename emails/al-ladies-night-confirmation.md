@@ -15,9 +15,9 @@ Moc se těšíme, že budeš u toho. Tady je všechno, co potřebuješ vědět:
 
 ### ✦ AI Ladies Night
 
-📅 **Čtvrtek 18. června 2026**
+📅 **Středa 17. června 2026**
 🕐 **18:00 – 21:00**
-📍 **Praha** (přesné místo pošleme pár dní před akcí)
+📍 **[Space Café, Praha](https://maps.app.goo.gl/HRQsa5yWiDGmzRTG7)**
 🥂 **Welcome drink v ceně**
 
 ---
