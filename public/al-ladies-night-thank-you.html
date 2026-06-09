@@ -195,8 +195,9 @@
       margin-bottom: 1rem;
     }
     .ty-cal-buttons {
-      display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center;
+      display: flex; flex-direction: column; gap: 0.625rem; align-items: center;
     }
+    @media (min-width: 480px) { .ty-cal-buttons { flex-direction: row; flex-wrap: wrap; justify-content: center; gap: 0.75rem; } }
     .ty-cal-btn {
       display: inline-flex; align-items: center; gap: 0.5rem;
       padding: 0.75rem 1.25rem;
@@ -217,6 +218,7 @@
       transform: translateY(-1px);
     }
     .ty-cal-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+    @media (max-width: 479px) { .ty-cal-btn { width: 100%; justify-content: center; } }
 
     /* CTA */
     .ty-cta {
@@ -291,7 +293,7 @@
 
       <h1>Máš to! Držíme ti <span class="al-text-gold">místo.</span></h1>
 
-      <p class="ty-subtitle">Platba proběhla úspěšně. Tvoje místo na AI Ladies Night je potvrzené. Potvrzení ti přijde na e-mail — koukni i do spamu, pro jistotu.</p>
+      <p class="ty-subtitle">Platba proběhla úspěšně. Tvoje místo na AI Ladies Night je potvrzené. Potvrzení ti přijde na e-mail — koukni i&nbsp;do spamu, pro jistotu. Doklad o&nbsp;platbě přijde od&nbsp;<strong style="color:var(--al-text);font-weight:600;">Alesio s.r.o.</strong>&nbsp;— to jsme my, jen pod&nbsp;firemním názvem.</p>
 
       <div class="ty-event-card">
         <h3>✦ AI Ladies Night</h3>
@@ -322,9 +324,14 @@
             Google Calendar
           </a>
 
+          <a href="https://outlook.office.com/calendar/0/deeplink/compose?path=/calendar/action/compose&rru=addevent&subject=AI+Ladies+Night&startdt=2026-06-17T18:00:00&enddt=2026-06-17T21:00:00&body=Prvn%C3%AD+ve%C4%8Der+AI+Ladies.+Kulat%C3%A9+stoly%2C+welcome+drink%2C+networking.%0A%0Ahttps%3A%2F%2Failadies.cz%2Fai-ladies-night&location=Space+Caf%C3%A9%2C+Praha&allday=false" target="_blank" rel="noopener" class="ty-cal-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 14h2v2H8z"/></svg>
+            Outlook Calendar
+          </a>
+
           <button onclick="downloadICS()" class="ty-cal-btn">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="12" y1="14" x2="12" y2="19"/><polyline points="9 16 12 19 15 16"/></svg>
-            Apple / Outlook (.ics)
+            Stáhnout .ics soubor
           </button>
 
         </div>
