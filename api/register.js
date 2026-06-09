@@ -91,6 +91,35 @@ export default async function handler(req, res) {
         console.error('Brevo contact error:', errData);
       }
 
+      // --- sklonovani-jmen.cz: get vocative (5th case) of first name ---
+      let fname5pad = fname;
+      const sklonKey = process.env.SKLONOVANI_API_KEY;
+      if (sklonKey) {
+        try {
+          const sklonUrl = new URL('https://www.sklonovani-jmen.cz/api');
+          sklonUrl.searchParams.set('klic', sklonKey);
+          sklonUrl.searchParams.set('pad', '5');
+          sklonUrl.searchParams.set('jmeno', `${fname} ${lname}`);
+          sklonUrl.searchParams.set('pouzit-osloveni', 'ne');
+          sklonUrl.searchParams.set('pouzit-prijmeni', 'ne');
+          sklonUrl.searchParams.set('pouzit-krestni', 'ano');
+          sklonUrl.searchParams.set('format', 'json');
+
+          const sklonRes = await fetch(sklonUrl.toString());
+          if (sklonRes.ok) {
+            const sklonData = await sklonRes.json();
+            if (Array.isArray(sklonData) && sklonData[0]?.odpoved) {
+              const odpoved = sklonData[0].odpoved;
+              if (!/^\d+$/.test(odpoved)) {
+                fname5pad = odpoved;
+              }
+            }
+          }
+        } catch (err) {
+          console.error('Sklonovani-jmen error (fallback to fname):', err.message);
+        }
+      }
+
       // Brevo template #1: AI Ladies Night confirmation
       await fetch('https://api.brevo.com/v3/smtp/email', {
         method: 'POST',
@@ -101,7 +130,7 @@ export default async function handler(req, res) {
         body: JSON.stringify({
           to: [{ email, name: `${fname} ${lname}` }],
           templateId: 1,
-          params: { FIRSTNAME: fname },
+          params: { FIRSTNAME: fname, FIRSTNAME_5PAD: fname5pad },
         }),
       });
     }
