@@ -4,6 +4,23 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="85c13a8e-96cb-4a50-90eb-e55fdebe15de" data-blockingmode="auto" type="text/javascript"></script>
+  <!-- Meta Pixel Code -->
+  <script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '27041465528857133');
+  fbq('track', 'PageView');
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=27041465528857133&ev=PageView&noscript=1"
+  /></noscript>
+  <!-- End Meta Pixel Code -->
   <title>AI Ladies Night — 17. června 2026, Praha</title>
   <meta name="description" content="Večer pro ženy, které chtějí AI konečně řešit normálně. Kulaté stoly, welcome drink, otevřená konverzace. 17. 6. 2026, Praha.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -658,6 +675,14 @@
       });
       const result = await res.json();
       if (result.success) {
+        if (typeof fbq === 'function') {
+          fbq('track', 'InitiateCheckout', {
+            content_name: 'AI Ladies Night 17.6.2026',
+            content_category: 'Event Registration',
+            currency: 'CZK',
+            value: 390
+          });
+        }
         regBtn.textContent = 'Přesměrovávám na platbu…';
         const stripeUrl = 'https://buy.stripe.com/4gMfZj78J2w93eafdW1Nu01'
           + '?prefilled_email=' + encodeURIComponent(data.email);
