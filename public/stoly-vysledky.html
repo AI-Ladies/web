@@ -25,26 +25,64 @@
     body {
       font-family: var(--font-dm-sans), sans-serif;
       color: #fff;
-      background: var(--al-dark);
+      background: linear-gradient(145deg, #1A1612 0%, #2a1820 50%, #1A1612 100%);
       min-height: 100vh;
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
     }
 
-    /* Decorative floating orbs */
-    .deco-orb {
+    /* Brand atmosphere orbs (from presentation) */
+    .brand-atmosphere {
       position: fixed;
-      border-radius: 50%;
-      pointer-events: none;
-      filter: blur(80px);
-      opacity: 0.25;
+      inset: 0;
       z-index: 0;
-      animation: floatOrb 12s ease-in-out infinite;
+      pointer-events: none;
+      overflow: hidden;
     }
-    @keyframes floatOrb {
-      0%, 100% { transform: translate(0, 0); }
-      33% { transform: translate(15px, -20px); }
-      66% { transform: translate(-10px, 10px); }
+    .brand-atmosphere span {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(60px);
+    }
+    .brand-atmosphere span:nth-child(1) {
+      width: 38vw; height: 38vw; top: -12%; left: -10%;
+      background: radial-gradient(circle, rgba(201,168,76,.28) 0%, rgba(201,168,76,.08) 45%, transparent 70%);
+      animation: orbDrift 14s ease-in-out infinite;
+    }
+    .brand-atmosphere span:nth-child(2) {
+      width: 22vw; height: 22vw; top: 8%; right: 12%;
+      background: radial-gradient(circle, rgba(226,201,126,.2) 0%, transparent 65%);
+      animation: orbDrift 14s ease-in-out infinite;
+      animation-delay: -2s;
+    }
+    .brand-atmosphere span:nth-child(3) {
+      width: 16vw; height: 16vw; top: 42%; left: 18%;
+      background: radial-gradient(circle, rgba(201,100,90,.18) 0%, transparent 68%);
+      animation: orbDrift 14s ease-in-out infinite;
+      animation-delay: -5s;
+    }
+    .brand-atmosphere span:nth-child(4) {
+      width: 28vw; height: 28vw; bottom: -8%; right: -6%;
+      background: radial-gradient(circle, rgba(201,100,90,.22) 0%, rgba(249,212,218,.12) 40%, transparent 72%);
+      animation: orbDrift 14s ease-in-out infinite;
+      animation-delay: -7s;
+    }
+    .brand-atmosphere span:nth-child(5) {
+      width: 10vw; height: 10vw; top: 28%; right: 32%;
+      background: radial-gradient(circle, rgba(201,168,76,.35) 0%, transparent 70%);
+      animation: orbDrift 11s ease-in-out infinite;
+      animation-delay: -3s;
+    }
+    .brand-atmosphere span:nth-child(6) {
+      width: 8vw; height: 8vw; bottom: 22%; left: 8%;
+      background: radial-gradient(circle, rgba(249,212,218,.4) 0%, transparent 70%);
+      animation: orbDrift 16s ease-in-out infinite;
+      animation-delay: -9s;
+    }
+    @keyframes orbDrift {
+      0%, 100% { transform: translate(0, 0) scale(1); opacity: .7; }
+      33% { transform: translate(1.5vw, -2vh) scale(1.05); opacity: .95; }
+      66% { transform: translate(-1vw, 1.5vh) scale(.97); opacity: .8; }
     }
 
     /* Top bar */
@@ -52,7 +90,7 @@
       position: sticky;
       top: 0;
       z-index: 10;
-      background: rgba(13,13,13,0.92);
+      background: rgba(26,22,18,0.88);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
       border-bottom: 1px solid rgba(255,255,255,0.06);
@@ -203,8 +241,8 @@
 
     /* Card */
     .card {
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.07);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
       border-radius: 1rem;
       padding: 1.5rem;
       position: relative;
@@ -265,25 +303,24 @@
       color: #fff;
     }
 
-    /* Focus / carousel mode */
+    /* Focus mode: all cards, larger, single column */
     .focus-view { display: none; }
-    .focus-view.active { display: flex; }
-    .focus-view {
-      align-items: center;
-      justify-content: center;
-      min-height: calc(100vh - 6rem);
-      padding: 2rem;
+    .focus-view.active { display: block; }
+    .focus-grid {
+      max-width: 780px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
     }
     .focus-card {
-      max-width: 720px;
-      width: 100%;
-      background: rgba(255,255,255,0.04);
+      background: rgba(255,255,255,0.05);
       border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 1.5rem;
-      padding: 3rem;
+      border-radius: 1.25rem;
+      padding: 2rem 2.5rem;
       position: relative;
       overflow: hidden;
-      animation: focusFade 0.6s ease both;
+      animation: cardEnter 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
     }
     .focus-card::before {
       content: "";
@@ -292,9 +329,9 @@
       height: 3px;
       background: var(--al-gold-gradient);
     }
-    @keyframes focusFade {
-      from { opacity: 0; transform: scale(0.97); }
-      to { opacity: 1; transform: scale(1); }
+    .focus-card.new-card {
+      animation: cardEnter 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both,
+                 cardGlow 2s ease-out both;
     }
     .focus-name {
       font-size: 0.75rem;
@@ -302,9 +339,9 @@
       text-transform: uppercase;
       letter-spacing: 0.1em;
       color: var(--al-gold);
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.25rem;
     }
-    .focus-field { margin-bottom: 1.5rem; }
+    .focus-field { margin-bottom: 1rem; }
     .focus-field:last-child { margin-bottom: 0; }
     .focus-label {
       font-size: 0.6875rem;
@@ -315,44 +352,16 @@
       margin-bottom: 0.25rem;
     }
     .focus-text {
-      font-size: 1.25rem;
+      font-size: 1.125rem;
       color: rgba(255,255,255,0.9);
-      line-height: 1.5;
+      line-height: 1.55;
     }
     .focus-field.highlight .focus-text {
       font-family: var(--font-dm-serif);
-      font-size: 1.75rem;
+      font-size: 1.375rem;
       color: #fff;
-      line-height: 1.3;
+      line-height: 1.35;
     }
-    .focus-counter {
-      text-align: center;
-      margin-top: 2rem;
-      font-size: 0.75rem;
-      color: rgba(255,255,255,0.25);
-      letter-spacing: 0.05em;
-    }
-    .focus-nav {
-      display: flex;
-      justify-content: center;
-      gap: 1rem;
-      margin-top: 1.5rem;
-    }
-    .focus-nav-btn {
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 50%;
-      width: 2.5rem;
-      height: 2.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: rgba(255,255,255,0.5);
-      cursor: pointer;
-      font-size: 1rem;
-      transition: all 0.2s;
-    }
-    .focus-nav-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
 
     /* Grid wrapper */
     .grid-view { display: block; }
@@ -361,10 +370,15 @@
 </head>
 <body>
 
-<!-- Decorative orbs -->
-<div class="deco-orb" style="width:300px;height:300px;background:radial-gradient(circle,rgba(196,159,71,0.4),transparent 70%);top:-80px;right:-80px;"></div>
-<div class="deco-orb" style="width:200px;height:200px;background:radial-gradient(circle,rgba(232,132,154,0.3),transparent 70%);bottom:-60px;left:-60px;animation-delay:-4s;"></div>
-<div class="deco-orb" style="width:150px;height:150px;background:radial-gradient(circle,rgba(196,159,71,0.3),transparent 70%);top:40%;left:10%;animation-delay:-7s;"></div>
+<!-- Animated brand atmosphere (same as presentation) -->
+<div class="brand-atmosphere">
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+  <span></span>
+</div>
 
 <!-- Top bar -->
 <div class="topbar">
@@ -390,7 +404,7 @@
   </div>
 
   <div class="topbar-right">
-    <button class="mode-btn" id="mode-grid" onclick="setMode('grid')">Přehled</button>
+    <button class="mode-btn active" id="mode-grid" onclick="setMode('grid')">Přehled</button>
     <button class="mode-btn" id="mode-focus" onclick="setMode('focus')">Fokus</button>
     <div class="status-dot" title="Živé načítání"></div>
   </div>
@@ -405,21 +419,14 @@
     <p>Jakmile účastnice odešlou své zápisky, objeví se tady.</p>
   </div>
 
-  <!-- Grid view -->
+  <!-- Grid view (compact multi-column) -->
   <div id="grid-view" class="grid-view hidden">
     <div id="cards-grid" class="cards-grid"></div>
   </div>
 
-  <!-- Focus view -->
+  <!-- Focus view (large single-column, all cards) -->
   <div id="focus-view" class="focus-view">
-    <div style="width:100%;max-width:720px;">
-      <div id="focus-card" class="focus-card"></div>
-      <div class="focus-nav">
-        <button class="focus-nav-btn" onclick="focusPrev()">←</button>
-        <button class="focus-nav-btn" onclick="focusNext()">→</button>
-      </div>
-      <div class="focus-counter" id="focus-counter"></div>
-    </div>
+    <div id="focus-grid" class="focus-grid"></div>
   </div>
 </div>
 
@@ -432,22 +439,20 @@
 
   let allRecords = [];
   let displayedIds = new Set();
+  let focusDisplayedIds = new Set();
   let currentTab = 'all';
   let currentMode = 'grid';
-  let focusIndex = 0;
   let pollInterval = null;
-  let autoAdvanceInterval = null;
 
   function switchTab(topic) {
     currentTab = topic;
     document.querySelectorAll('.tab').forEach(t => {
       t.classList.toggle('active', t.dataset.topic === topic);
     });
+    displayedIds.clear();
+    focusDisplayedIds.clear();
     renderCards();
-    if (currentMode === 'focus') {
-      focusIndex = 0;
-      renderFocus();
-    }
+    renderFocus();
   }
 
   function setMode(mode) {
@@ -455,16 +460,19 @@
     document.getElementById('mode-grid').classList.toggle('active', mode === 'grid');
     document.getElementById('mode-focus').classList.toggle('active', mode === 'focus');
 
+    const empty = document.getElementById('empty-state');
+    const hasRecords = getFiltered().length > 0;
+
     if (mode === 'grid') {
-      document.getElementById('grid-view').classList.remove('hidden');
+      document.getElementById('grid-view').classList.toggle('hidden', !hasRecords);
       document.getElementById('focus-view').classList.remove('active');
-      stopAutoAdvance();
+      empty.style.display = hasRecords ? 'none' : 'block';
     } else {
       document.getElementById('grid-view').classList.add('hidden');
-      document.getElementById('focus-view').classList.add('active');
-      focusIndex = 0;
+      document.getElementById('focus-view').classList.toggle('active', hasRecords);
+      empty.style.display = hasRecords ? 'none' : 'block';
+      focusDisplayedIds.clear();
       renderFocus();
-      startAutoAdvance();
     }
   }
 
@@ -535,84 +543,59 @@
 
   function renderFocus() {
     const filtered = getFiltered();
-    const card = document.getElementById('focus-card');
-    const counter = document.getElementById('focus-counter');
+    const grid = document.getElementById('focus-grid');
+    const empty = document.getElementById('empty-state');
 
     if (filtered.length === 0) {
-      card.innerHTML = '<div style="text-align:center;padding:2rem;color:rgba(255,255,255,0.3);">Zatím žádné odpovědi</div>';
-      counter.textContent = '';
+      if (currentMode === 'focus') {
+        empty.style.display = 'block';
+        document.getElementById('focus-view').classList.remove('active');
+      }
       return;
     }
 
-    if (focusIndex >= filtered.length) focusIndex = 0;
-    if (focusIndex < 0) focusIndex = filtered.length - 1;
-
-    const r = filtered[focusIndex];
-    card.style.animation = 'none';
-    card.offsetHeight;
-    card.style.animation = '';
-
-    let html = '';
-    if (r.name) {
-      html += '<div class="focus-name">' + escHtml(r.name) + '</div>';
+    if (currentMode === 'focus') {
+      empty.style.display = 'none';
+      document.getElementById('focus-view').classList.add('active');
     }
 
-    const fields = [
-      { label: 'Nejlepší tip', value: r.bestTip, highlight: false },
-      { label: 'Nejzajímavější nástroj', value: r.interestingTool, highlight: false },
-      { label: 'Co chceme vyzkoušet', value: r.wantToTry, highlight: false },
-      { label: 'Jedna věta', value: r.oneSentence, highlight: true },
-    ];
+    grid.innerHTML = '';
+    filtered.forEach((r, i) => {
+      const isNew = !focusDisplayedIds.has(r.id);
+      const card = document.createElement('div');
+      card.className = 'focus-card' + (isNew ? ' new-card' : '');
+      card.style.animationDelay = (isNew ? (i * 0.1) + 's' : '0s');
 
-    fields.forEach(f => {
-      if (!f.value) return;
-      html += '<div class="focus-field' + (f.highlight ? ' highlight' : '') + '">' +
-        '<div class="focus-label">' + f.label + '</div>' +
-        '<div class="focus-text">' + escHtml(f.value) + '</div>' +
-        '</div>';
+      let html = '';
+      if (r.name) {
+        html += '<div class="focus-name">✦ ' + escHtml(r.name) + '</div>';
+      } else {
+        html += '<div class="focus-name" style="color:rgba(255,255,255,0.2);">✦ Anonymní</div>';
+      }
+
+      const fields = [
+        { label: 'Nejlepší tip', value: r.bestTip, highlight: false },
+        { label: 'Nejzajímavější nástroj', value: r.interestingTool, highlight: false },
+        { label: 'Co chceme vyzkoušet', value: r.wantToTry, highlight: false },
+        { label: 'Jedna věta', value: r.oneSentence, highlight: true },
+      ];
+
+      fields.forEach(f => {
+        if (!f.value) return;
+        html += '<div class="focus-field' + (f.highlight ? ' highlight' : '') + '">' +
+          '<div class="focus-label">' + f.label + '</div>' +
+          '<div class="focus-text">' + escHtml(f.value) + '</div>' +
+          '</div>';
+      });
+
+      card.innerHTML = html;
+      grid.appendChild(card);
     });
 
-    card.innerHTML = html;
-    counter.textContent = (focusIndex + 1) + ' / ' + filtered.length;
+    filtered.forEach(r => focusDisplayedIds.add(r.id));
   }
 
-  function focusPrev() {
-    focusIndex--;
-    renderFocus();
-    restartAutoAdvance();
-  }
-
-  function focusNext() {
-    focusIndex++;
-    renderFocus();
-    restartAutoAdvance();
-  }
-
-  function startAutoAdvance() {
-    stopAutoAdvance();
-    autoAdvanceInterval = setInterval(() => {
-      focusIndex++;
-      renderFocus();
-    }, 8000);
-  }
-
-  function stopAutoAdvance() {
-    if (autoAdvanceInterval) {
-      clearInterval(autoAdvanceInterval);
-      autoAdvanceInterval = null;
-    }
-  }
-
-  function restartAutoAdvance() {
-    if (currentMode === 'focus') startAutoAdvance();
-  }
-
-  // Keyboard navigation
   document.addEventListener('keydown', (e) => {
-    if (currentMode === 'focus') {
-      if (e.key === 'ArrowLeft') { focusPrev(); e.preventDefault(); }
-      if (e.key === 'ArrowRight') { focusNext(); e.preventDefault(); }
-    }
     if (e.key === 'g') setMode('grid');
     if (e.key === 'f') setMode('focus');
     if (e.key === '1') switchTab(TOPIC_NAMES[0]);
@@ -626,13 +609,10 @@
       const res = await fetch('/api/stoly');
       const data = await res.json();
       if (data.success && data.records) {
-        const hadRecords = allRecords.length;
         allRecords = data.records;
         updateCounts();
         renderCards();
-        if (currentMode === 'focus' && hadRecords !== allRecords.length) {
-          renderFocus();
-        }
+        renderFocus();
       }
     } catch (err) {
       console.error('Fetch error:', err);
@@ -645,7 +625,6 @@
     return d.innerHTML;
   }
 
-  // Init
   setMode('grid');
   fetchRecords();
   pollInterval = setInterval(fetchRecords, 5000);
