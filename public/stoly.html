@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Kulaté stoly — AI Ladies Night</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --al-gold: #c49f47;
+      --al-gold-dark: #7a5a1e;
+      --al-gold-light: #f8f2e4;
+      --al-gold-hover: #8b6c24;
+      --al-blush-50: #fef7f8;
+      --al-blush-400: #e8849a;
+      --al-blush-500: #d4627d;
+      --al-dark: #0d0d0d;
+      --al-text: #1a1a1a;
+      --al-gray: #5c5c5c;
+      --al-warm-gray: #9c8e82;
+      --al-gold-gradient: linear-gradient(115deg, #7a5a1e 0%, #b8892a 22%, #c49f47 40%, #d4bc6a 55%, #c49f47 68%, #9a7428 84%, #7a5a1e 100%);
+      --font-dm-serif: "DM Serif Display", Georgia, serif;
+      --font-dm-sans: "DM Sans", system-ui, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+    body {
+      font-family: var(--font-dm-sans), sans-serif;
+      color: var(--al-text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      background: linear-gradient(160deg, #fdfcfa 0%, #fef7f8 30%, #faf8f5 70%, #fdfcfa 100%);
+      min-height: 100dvh;
+    }
+
+    .container { max-width: 480px; margin: 0 auto; padding: 0 1.25rem; }
+
+    /* Header */
+    .header {
+      padding: 1.5rem 0 1rem;
+      text-align: center;
+    }
+    .header-logo {
+      font-family: var(--font-dm-serif);
+      font-size: 1.375rem;
+      text-decoration: none;
+      display: inline-block;
+      margin-bottom: 0.75rem;
+    }
+    .header-logo .ai { color: var(--al-dark); }
+    .header-logo .ladies {
+      background: var(--al-gold-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .header-label {
+      font-size: 0.6875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--al-gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.375rem;
+    }
+    .header h1 {
+      font-family: var(--font-dm-serif);
+      font-size: 1.75rem;
+      font-weight: 400;
+      line-height: 1.25;
+      margin-top: 0.5rem;
+      color: var(--al-dark);
+    }
+    .header p {
+      font-size: 0.875rem;
+      color: var(--al-gray);
+      margin-top: 0.5rem;
+      line-height: 1.6;
+    }
+
+    /* Views */
+    .view { display: none; padding-bottom: 3rem; }
+    .view.active { display: block; animation: fadeIn 0.3s ease; }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Topic Cards */
+    .topics { display: flex; flex-direction: column; gap: 0.875rem; margin-top: 1.5rem; }
+    .topic-card {
+      background: #fff;
+      border: 1.5px solid rgba(0,0,0,0.06);
+      border-radius: 1rem;
+      padding: 1.25rem 1.25rem 1.25rem 1rem;
+      cursor: pointer;
+      transition: all 0.25s;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .topic-card::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; bottom: 0;
+      width: 3px;
+      background: var(--al-gold-gradient);
+      border-radius: 1rem 0 0 1rem;
+    }
+    .topic-card:active { transform: scale(0.98); }
+    .topic-card:hover { border-color: var(--al-gold); box-shadow: 0 4px 20px rgba(196,159,71,0.12); }
+    .topic-icon {
+      width: 2.75rem; height: 2.75rem; min-width: 2.75rem;
+      border-radius: 0.75rem;
+      background: var(--al-gold-light);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.25rem;
+    }
+    .topic-card h3 {
+      font-family: var(--font-dm-serif);
+      font-size: 1rem;
+      font-weight: 400;
+      line-height: 1.3;
+      color: var(--al-dark);
+    }
+    .topic-card .topic-desc {
+      font-size: 0.75rem;
+      color: var(--al-warm-gray);
+      margin-top: 0.125rem;
+    }
+    .topic-arrow {
+      margin-left: auto;
+      color: var(--al-gold);
+      font-size: 1.125rem;
+      flex-shrink: 0;
+    }
+
+    /* Form View */
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      background: none;
+      border: none;
+      color: var(--al-gold);
+      font-family: var(--font-dm-sans);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 0.5rem 0;
+      margin-bottom: 0.5rem;
+    }
+    .back-btn:active { opacity: 0.7; }
+
+    .topic-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--al-gold-light);
+      border: 1px solid rgba(196,159,71,0.2);
+      border-radius: 2rem;
+      padding: 0.375rem 1rem;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--al-gold-dark);
+      margin-bottom: 1.25rem;
+    }
+
+    /* Questions accordion */
+    .questions-toggle {
+      width: 100%;
+      background: #fff;
+      border: 1.5px solid rgba(0,0,0,0.06);
+      border-radius: 0.75rem;
+      padding: 0.875rem 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      font-family: var(--font-dm-sans);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--al-text);
+      margin-bottom: 0.5rem;
+      transition: all 0.2s;
+    }
+    .questions-toggle:hover { border-color: var(--al-gold); }
+    .questions-toggle .chevron {
+      transition: transform 0.2s;
+      color: var(--al-gold);
+      font-size: 0.75rem;
+    }
+    .questions-toggle.open .chevron { transform: rotate(180deg); }
+    .questions-list {
+      display: none;
+      background: #fff;
+      border: 1.5px solid rgba(0,0,0,0.06);
+      border-radius: 0.75rem;
+      padding: 0.75rem 1rem;
+      margin-bottom: 1.25rem;
+      list-style: none;
+    }
+    .questions-list.open { display: block; animation: fadeIn 0.2s ease; }
+    .questions-list li {
+      font-size: 0.8125rem;
+      color: var(--al-gray);
+      padding: 0.375rem 0;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      line-height: 1.5;
+    }
+    .questions-list li::before {
+      content: "→";
+      color: var(--al-gold);
+      flex-shrink: 0;
+      font-weight: 600;
+      font-size: 0.75rem;
+      margin-top: 0.1em;
+    }
+    .questions-list li + li { border-top: 1px solid rgba(0,0,0,0.04); }
+
+    /* Form fields */
+    .form-section { margin-top: 0.25rem; }
+    .form-section h2 {
+      font-family: var(--font-dm-serif);
+      font-size: 1.25rem;
+      font-weight: 400;
+      margin-bottom: 1rem;
+      color: var(--al-dark);
+    }
+    .field-group { margin-bottom: 1rem; }
+    .field-group label {
+      display: flex;
+      align-items: center;
+      gap: 0.375rem;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      color: var(--al-text);
+      margin-bottom: 0.375rem;
+    }
+    .field-group label .field-icon {
+      font-size: 0.875rem;
+    }
+    .field-group textarea,
+    .field-group input {
+      width: 100%;
+      padding: 0.75rem 0.875rem;
+      border: 1.5px solid rgba(0,0,0,0.1);
+      border-radius: 0.75rem;
+      font-size: 0.9375rem;
+      font-family: var(--font-dm-sans), sans-serif;
+      outline: none;
+      transition: border-color 0.2s;
+      background: #fff;
+      color: var(--al-text);
+      resize: vertical;
+    }
+    .field-group textarea { min-height: 4.5rem; line-height: 1.5; }
+    .field-group textarea:focus,
+    .field-group input:focus { border-color: var(--al-gold); }
+    .field-group textarea::placeholder,
+    .field-group input::placeholder { color: #bbb; }
+    .field-group .field-hint {
+      font-size: 0.6875rem;
+      color: var(--al-warm-gray);
+      margin-top: 0.25rem;
+    }
+
+    .name-field {
+      margin-top: 1.25rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid rgba(0,0,0,0.06);
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 0.9375rem;
+      margin-top: 1.5rem;
+      background: var(--al-gold);
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      font-size: 1rem;
+      font-weight: 600;
+      font-family: var(--font-dm-sans), sans-serif;
+      cursor: pointer;
+      transition: all 0.25s;
+    }
+    .submit-btn:hover { background: var(--al-gold-hover); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(196,159,71,0.3); }
+    .submit-btn:active { transform: scale(0.98); }
+    .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+    .form-error {
+      text-align: center;
+      color: var(--al-blush-500);
+      font-size: 0.8125rem;
+      margin-top: 0.75rem;
+    }
+
+    /* Success View */
+    .success-content { text-align: center; padding-top: 1rem; }
+    .success-check {
+      width: 4rem; height: 4rem;
+      border-radius: 50%;
+      background: var(--al-gold-light);
+      border: 2px solid var(--al-gold);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 1.25rem;
+      font-size: 1.75rem;
+      animation: scaleIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes scaleIn {
+      from { transform: scale(0); }
+      to { transform: scale(1); }
+    }
+    .success-content h2 {
+      font-family: var(--font-dm-serif);
+      font-size: 1.5rem;
+      font-weight: 400;
+      margin-bottom: 0.5rem;
+    }
+    .success-content p {
+      font-size: 0.875rem;
+      color: var(--al-gray);
+      margin-bottom: 1.5rem;
+    }
+
+    .notes-preview {
+      background: #fff;
+      border: 1.5px solid rgba(0,0,0,0.06);
+      border-radius: 1rem;
+      padding: 1.25rem;
+      text-align: left;
+      margin-bottom: 1.25rem;
+      position: relative;
+    }
+    .notes-preview::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: var(--al-gold-gradient);
+      border-radius: 1rem 1rem 0 0;
+    }
+    .notes-preview .note-topic {
+      font-size: 0.6875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--al-gold);
+      margin-bottom: 0.75rem;
+    }
+    .notes-preview .note-item {
+      margin-bottom: 0.625rem;
+    }
+    .notes-preview .note-item:last-child { margin-bottom: 0; }
+    .notes-preview .note-label {
+      font-size: 0.6875rem;
+      font-weight: 600;
+      color: var(--al-warm-gray);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .notes-preview .note-text {
+      font-size: 0.875rem;
+      color: var(--al-text);
+      line-height: 1.5;
+    }
+
+    .action-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 0.625rem;
+      margin-bottom: 1rem;
+    }
+    .action-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.8125rem;
+      border-radius: 50px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      font-family: var(--font-dm-sans), sans-serif;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+      border: none;
+    }
+    .action-btn-primary {
+      background: var(--al-dark);
+      color: #fff;
+    }
+    .action-btn-primary:hover { background: var(--al-gold); }
+    .action-btn-secondary {
+      background: #fff;
+      color: var(--al-text);
+      border: 1.5px solid rgba(0,0,0,0.1);
+    }
+    .action-btn-secondary:hover { border-color: var(--al-gold); }
+    .action-btn-gold {
+      background: var(--al-gold);
+      color: #fff;
+    }
+    .action-btn-gold:hover { background: var(--al-gold-hover); }
+
+    .reset-link {
+      display: inline-block;
+      margin-top: 0.5rem;
+      font-size: 0.8125rem;
+      color: var(--al-warm-gray);
+      text-decoration: none;
+      cursor: pointer;
+    }
+    .reset-link:hover { color: var(--al-gold); }
+
+    .copied-toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--al-dark);
+      color: #fff;
+      padding: 0.75rem 1.5rem;
+      border-radius: 50px;
+      font-size: 0.8125rem;
+      font-weight: 600;
+      z-index: 100;
+      opacity: 0;
+      transition: all 0.3s ease;
+    }
+    .copied-toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <div class="header-logo"><span class="ai">AI</span><span class="ladies">Ladies</span></div>
+    <div class="header-label">✦ AI Ladies Night &middot; 17. 6. 2026</div>
+    <h1>Kulaté stoly</h1>
+    <p>Zapiš si postřehy z diskuze. Ať si z dnešního večera odneseš co nejvíc.</p>
+  </div>
+
+  <!-- VIEW 1: Topic Selection -->
+  <div id="view-select" class="view active">
+    <div class="topics">
+      <div class="topic-card" onclick="selectTopic(0)">
+        <div class="topic-icon">💬</div>
+        <div>
+          <h3>Promptování a&nbsp;komunikace s&nbsp;AI</h3>
+          <div class="topic-desc">Jak mluvit s AI, aby to fungovalo</div>
+        </div>
+        <div class="topic-arrow">→</div>
+      </div>
+      <div class="topic-card" onclick="selectTopic(1)">
+        <div class="topic-icon">📱</div>
+        <div>
+          <h3>Marketing, obsah a&nbsp;sociální sítě</h3>
+          <div class="topic-desc">Tvorba obsahu a strategie s AI</div>
+        </div>
+        <div class="topic-arrow">→</div>
+      </div>
+      <div class="topic-card" onclick="selectTopic(2)">
+        <div class="topic-icon">⚡</div>
+        <div>
+          <h3>AI asistenti a&nbsp;produktivita</h3>
+          <div class="topic-desc">Nástroje a workflow pro efektivnější práci</div>
+        </div>
+        <div class="topic-arrow">→</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIEW 2: Form -->
+  <div id="view-form" class="view">
+    <button class="back-btn" onclick="goBack()">← Zpět na výběr</button>
+    <div id="topic-badge" class="topic-badge"></div>
+
+    <button class="questions-toggle" onclick="toggleQuestions()">
+      <span>💡 Inspirace k diskuzi</span>
+      <span class="chevron">▼</span>
+    </button>
+    <ul id="questions-list" class="questions-list"></ul>
+
+    <div class="form-section">
+      <h2>Zápis ze stolu</h2>
+      <form id="stoly-form">
+        <div class="field-group">
+          <label><span class="field-icon">✦</span> Nejlepší tip, který zazněl</label>
+          <textarea id="f-bestTip" placeholder="Co nejzajímavějšího jste probíraly?"></textarea>
+        </div>
+        <div class="field-group">
+          <label><span class="field-icon">✦</span> Nejzajímavější nástroj nebo AI objev</label>
+          <textarea id="f-interestingTool" placeholder="Doporučení na nástroj, appku, trik..."></textarea>
+        </div>
+        <div class="field-group">
+          <label><span class="field-icon">✦</span> Co chceme po dnešku vyzkoušet</label>
+          <textarea id="f-wantToTry" placeholder="Co si plánuješ zkusit?"></textarea>
+        </div>
+        <div class="field-group">
+          <label><span class="field-icon">✦</span> Jedna věta, kterou si odnášíme</label>
+          <textarea id="f-oneSentence" placeholder="Shrň to do jedné věty..."></textarea>
+        </div>
+
+        <div class="name-field">
+          <div class="field-group">
+            <label>Tvoje jméno <span style="font-weight:400;color:var(--al-warm-gray);">(nepovinné)</span></label>
+            <input type="text" id="f-name" placeholder="Jak ti říkají?">
+          </div>
+        </div>
+
+        <button type="submit" class="submit-btn" id="submit-btn">Odeslat zápis ✦</button>
+        <p class="form-error" id="form-error" style="display:none;"></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- VIEW 3: Success -->
+  <div id="view-success" class="view">
+    <div class="success-content">
+      <div class="success-check">✓</div>
+      <h2>Díky za zápis!</h2>
+      <p>Tvoje postřehy jsou uložené. Tady je shrnutí, které si můžeš vzít s sebou.</p>
+
+      <div id="notes-preview" class="notes-preview"></div>
+
+      <div class="action-btns">
+        <button class="action-btn action-btn-primary" onclick="copyNotes()">📋 Zkopírovat poznámky</button>
+        <a class="action-btn action-btn-secondary" id="mailto-link" href="#">✉️ Poslat si na e-mail</a>
+      </div>
+
+      <a class="reset-link" onclick="resetForm()">Vyplnit zápis k dalšímu tématu →</a>
+    </div>
+  </div>
+</div>
+
+<div class="copied-toast" id="toast">Zkopírováno!</div>
+
+<script>
+  const TOPICS = [
+    {
+      name: 'Promptování a komunikace s AI',
+      icon: '💬',
+      questions: [
+        'Jaké prompty používáš nejčastěji?',
+        'Máš nějakou osvědčenou strukturu zadání?',
+        'Co ti výrazně zlepšilo kvalitu odpovědí?',
+        'Jaké chyby jsi dělala na začátku?',
+        'Jak AI vysvětluješ kontext?',
+        'Používáš hlasové zadávání?',
+        'Máš vlastní šablony promptů?',
+        'Jaký je nejlepší prompt, který jsi kdy vytvořila?',
+      ],
+    },
+    {
+      name: 'Marketing, obsah a sociální sítě',
+      icon: '📱',
+      questions: [
+        'Jak AI používáš na LinkedInu?',
+        'Jak AI používáš na Instagramu?',
+        'Tvoříš s AI newslettery?',
+        'Jak si zachováváš vlastní styl?',
+        'Co ti nejvíc šetří čas?',
+        'Co naopak nefunguje?',
+        'Jaké workflow používáš při tvorbě obsahu?',
+        'Jak poznáš, že text potřebuje lidskou úpravu?',
+      ],
+    },
+    {
+      name: 'AI asistenti a produktivita',
+      icon: '⚡',
+      questions: [
+        'Jaké AI nástroje používáš nejčastěji?',
+        'Máš vlastního AI asistenta?',
+        'Na co ho využíváš?',
+        'Co už dnes neděláš ručně?',
+        'Jak si organizuješ práci s AI?',
+        'Jaké pracovní postupy ti fungují?',
+        'Co bys doporučila vyzkoušet hned zítra?',
+        'Jaký AI objev tě za poslední měsíc nejvíc překvapil?',
+      ],
+    },
+  ];
+
+  let currentTopic = null;
+  let submittedData = null;
+
+  function showView(id) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function selectTopic(idx) {
+    currentTopic = idx;
+    const topic = TOPICS[idx];
+
+    document.getElementById('topic-badge').innerHTML = topic.icon + ' ' + topic.name;
+
+    const list = document.getElementById('questions-list');
+    list.innerHTML = topic.questions.map(q => '<li>' + q + '</li>').join('');
+
+    const saved = localStorage.getItem('stoly-draft-' + idx);
+    if (saved) {
+      try {
+        const d = JSON.parse(saved);
+        document.getElementById('f-bestTip').value = d.bestTip || '';
+        document.getElementById('f-interestingTool').value = d.interestingTool || '';
+        document.getElementById('f-wantToTry').value = d.wantToTry || '';
+        document.getElementById('f-oneSentence').value = d.oneSentence || '';
+        document.getElementById('f-name').value = d.name || '';
+      } catch (e) { /* ignore */ }
+    } else {
+      document.getElementById('stoly-form').reset();
+    }
+
+    showView('view-form');
+  }
+
+  function goBack() {
+    saveDraft();
+    showView('view-select');
+  }
+
+  function toggleQuestions() {
+    const toggle = document.querySelector('.questions-toggle');
+    const list = document.getElementById('questions-list');
+    toggle.classList.toggle('open');
+    list.classList.toggle('open');
+  }
+
+  function saveDraft() {
+    if (currentTopic === null) return;
+    const data = {
+      bestTip: document.getElementById('f-bestTip').value,
+      interestingTool: document.getElementById('f-interestingTool').value,
+      wantToTry: document.getElementById('f-wantToTry').value,
+      oneSentence: document.getElementById('f-oneSentence').value,
+      name: document.getElementById('f-name').value,
+    };
+    localStorage.setItem('stoly-draft-' + currentTopic, JSON.stringify(data));
+  }
+
+  // Auto-save drafts
+  document.getElementById('stoly-form').addEventListener('input', () => saveDraft());
+
+  // Submit
+  document.getElementById('stoly-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('submit-btn');
+    const errEl = document.getElementById('form-error');
+    errEl.style.display = 'none';
+
+    const data = {
+      topic: TOPICS[currentTopic].name,
+      bestTip: document.getElementById('f-bestTip').value.trim(),
+      interestingTool: document.getElementById('f-interestingTool').value.trim(),
+      wantToTry: document.getElementById('f-wantToTry').value.trim(),
+      oneSentence: document.getElementById('f-oneSentence').value.trim(),
+      name: document.getElementById('f-name').value.trim(),
+    };
+
+    if (!data.bestTip && !data.interestingTool && !data.wantToTry && !data.oneSentence) {
+      errEl.textContent = 'Vyplň prosím alespoň jedno pole.';
+      errEl.style.display = 'block';
+      return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Odesílám…';
+
+    try {
+      const res = await fetch('/api/stoly', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+      const result = await res.json();
+
+      if (result.success) {
+        submittedData = data;
+        localStorage.removeItem('stoly-draft-' + currentTopic);
+        localStorage.setItem('stoly-submitted-' + currentTopic, JSON.stringify(data));
+        showSuccess(data);
+      } else {
+        errEl.textContent = result.error || 'Něco se pokazilo.';
+        errEl.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = 'Odeslat zápis ✦';
+      }
+    } catch {
+      errEl.textContent = 'Nepodařilo se odeslat. Zkontroluj připojení.';
+      errEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Odeslat zápis ✦';
+    }
+  });
+
+  function showSuccess(data) {
+    const fields = [
+      { label: 'Nejlepší tip', value: data.bestTip },
+      { label: 'Nejzajímavější nástroj', value: data.interestingTool },
+      { label: 'Co chceme vyzkoušet', value: data.wantToTry },
+      { label: 'Jedna věta', value: data.oneSentence },
+    ].filter(f => f.value);
+
+    const preview = document.getElementById('notes-preview');
+    preview.innerHTML = '<div class="note-topic">✦ ' + data.topic + '</div>' +
+      fields.map(f =>
+        '<div class="note-item"><div class="note-label">' + f.label + '</div><div class="note-text">' + escHtml(f.value) + '</div></div>'
+      ).join('');
+
+    const noteText = buildNoteText(data);
+    const mailto = 'mailto:?subject=' + encodeURIComponent('Moje poznámky z AI Ladies Night') +
+      '&body=' + encodeURIComponent(noteText);
+    document.getElementById('mailto-link').href = mailto;
+
+    showView('view-success');
+    document.getElementById('submit-btn').disabled = false;
+    document.getElementById('submit-btn').textContent = 'Odeslat zápis ✦';
+  }
+
+  function buildNoteText(data) {
+    let text = '🗂 Kulaté stoly — AI Ladies Night\n📌 Téma: ' + data.topic + '\n\n';
+    if (data.bestTip) text += '✦ Nejlepší tip: ' + data.bestTip + '\n\n';
+    if (data.interestingTool) text += '✦ Nejzajímavější nástroj: ' + data.interestingTool + '\n\n';
+    if (data.wantToTry) text += '✦ Co chceme vyzkoušet: ' + data.wantToTry + '\n\n';
+    if (data.oneSentence) text += '✦ Jedna věta: ' + data.oneSentence + '\n\n';
+    text += '—\nailadies.cz';
+    return text;
+  }
+
+  async function copyNotes() {
+    if (!submittedData) return;
+    const text = buildNoteText(submittedData);
+    try {
+      await navigator.clipboard.writeText(text);
+      showToast('Zkopírováno!');
+    } catch {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      showToast('Zkopírováno!');
+    }
+  }
+
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2000);
+  }
+
+  function resetForm() {
+    currentTopic = null;
+    submittedData = null;
+    document.getElementById('stoly-form').reset();
+    document.getElementById('form-error').style.display = 'none';
+    showView('view-select');
+  }
+
+  function escHtml(str) {
+    const d = document.createElement('div');
+    d.textContent = str;
+    return d.innerHTML;
+  }
+</script>
+
+</body>
+</html>
