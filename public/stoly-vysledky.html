@@ -31,7 +31,7 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* Brand atmosphere orbs (from presentation) */
+    /* Brand atmosphere orbs */
     .brand-atmosphere {
       position: fixed;
       inset: 0;
@@ -131,10 +131,7 @@
     }
 
     /* Topic tabs */
-    .tabs {
-      display: flex;
-      gap: 0.5rem;
-    }
+    .tabs { display: flex; gap: 0.5rem; }
     .tab {
       background: rgba(255,255,255,0.05);
       border: 1px solid rgba(255,255,255,0.08);
@@ -149,97 +146,56 @@
       white-space: nowrap;
     }
     .tab:hover { border-color: rgba(255,255,255,0.2); color: rgba(255,255,255,0.8); }
-    .tab.active {
-      background: var(--al-gold);
-      border-color: var(--al-gold);
-      color: #fff;
-    }
+    .tab.active { background: var(--al-gold); border-color: var(--al-gold); color: #fff; }
     .tab .tab-count {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 1.25rem;
-      height: 1.25rem;
-      border-radius: 1rem;
-      background: rgba(255,255,255,0.15);
-      font-size: 0.625rem;
-      font-weight: 700;
-      margin-left: 0.375rem;
-      padding: 0 0.375rem;
+      display: inline-flex; align-items: center; justify-content: center;
+      min-width: 1.25rem; height: 1.25rem; border-radius: 1rem;
+      background: rgba(255,255,255,0.15); font-size: 0.625rem; font-weight: 700;
+      margin-left: 0.375rem; padding: 0 0.375rem;
     }
     .tab.active .tab-count { background: rgba(255,255,255,0.25); }
 
     /* Controls */
-    .topbar-right {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
+    .topbar-right { display: flex; align-items: center; gap: 0.75rem; }
     .mode-btn {
       background: rgba(255,255,255,0.05);
       border: 1px solid rgba(255,255,255,0.1);
       border-radius: 2rem;
       padding: 0.5rem 1rem;
       font-family: var(--font-dm-sans);
-      font-size: 0.6875rem;
-      font-weight: 600;
+      font-size: 0.6875rem; font-weight: 600;
       color: rgba(255,255,255,0.6);
-      cursor: pointer;
-      transition: all 0.2s;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
+      cursor: pointer; transition: all 0.2s;
+      text-transform: uppercase; letter-spacing: 0.05em;
     }
     .mode-btn:hover { border-color: rgba(255,255,255,0.2); color: #fff; }
     .mode-btn.active { background: rgba(255,255,255,0.1); color: #fff; border-color: rgba(255,255,255,0.2); }
     .status-dot {
-      width: 0.5rem;
-      height: 0.5rem;
-      border-radius: 50%;
+      width: 0.5rem; height: 0.5rem; border-radius: 50%;
       background: #4ade80;
       animation: pulse 2s ease-in-out infinite;
     }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
-    }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
 
     /* Main content */
-    .main {
-      position: relative;
-      z-index: 1;
-      padding: 2rem 2.5rem 3rem;
-    }
+    .main { position: relative; z-index: 1; padding: 2rem 2.5rem 3rem; }
 
     /* Empty state */
-    .empty-state {
-      text-align: center;
-      padding: 6rem 2rem;
-    }
-    .empty-icon {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-      opacity: 0.3;
-    }
+    .empty-state { text-align: center; padding: 6rem 2rem; }
+    .empty-icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.3; }
     .empty-state h2 {
-      font-family: var(--font-dm-serif);
-      font-size: 1.5rem;
-      font-weight: 400;
-      color: rgba(255,255,255,0.4);
-      margin-bottom: 0.5rem;
+      font-family: var(--font-dm-serif); font-size: 1.5rem; font-weight: 400;
+      color: rgba(255,255,255,0.4); margin-bottom: 0.5rem;
     }
-    .empty-state p {
-      font-size: 0.875rem;
-      color: rgba(255,255,255,0.25);
-    }
+    .empty-state p { font-size: 0.875rem; color: rgba(255,255,255,0.25); }
 
-    /* Grid view */
+    /* === GRID VIEW === */
     .cards-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
       gap: 1.25rem;
     }
 
-    /* Card */
     .card {
       background: rgba(255,255,255,0.05);
       border: 1px solid rgba(255,255,255,0.08);
@@ -247,7 +203,6 @@
       padding: 1.5rem;
       position: relative;
       overflow: hidden;
-      animation: cardEnter 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
     }
     .card::before {
       content: "";
@@ -256,54 +211,28 @@
       height: 2px;
       background: var(--al-gold-gradient);
     }
-    .card.new-card {
-      animation: cardEnter 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both,
-                 cardGlow 2s ease-out both;
-    }
-    @keyframes cardEnter {
-      from {
-        opacity: 0;
-        transform: translateY(30px) scale(0.96);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
-    }
-    @keyframes cardGlow {
-      0% { box-shadow: 0 0 20px 4px rgba(196,159,71,0.3); }
-      100% { box-shadow: 0 0 0 0 rgba(196,159,71,0); }
+    .card.entering {
+      animation: cardFadeIn 0.8s ease both;
     }
     .card-name {
-      font-size: 0.6875rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--al-gold);
-      margin-bottom: 0.875rem;
+      font-size: 0.6875rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--al-gold); margin-bottom: 0.875rem;
     }
     .card-field { margin-bottom: 0.75rem; }
     .card-field:last-child { margin-bottom: 0; }
     .card-label {
-      font-size: 0.625rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: rgba(255,255,255,0.3);
-      margin-bottom: 0.125rem;
+      font-size: 0.625rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      color: rgba(255,255,255,0.3); margin-bottom: 0.125rem;
     }
-    .card-text {
-      font-size: 0.9375rem;
-      color: rgba(255,255,255,0.85);
-      line-height: 1.5;
-    }
+    .card-text { font-size: 0.9375rem; color: rgba(255,255,255,0.85); line-height: 1.5; }
     .card-field.highlight .card-text {
       font-family: var(--font-dm-serif);
-      font-size: 1.0625rem;
-      color: #fff;
+      font-size: 1.0625rem; color: #fff;
     }
 
-    /* Focus mode: all cards, larger, single column */
+    /* === FOCUS VIEW === */
     .focus-view { display: none; }
     .focus-view.active { display: block; }
     .focus-grid {
@@ -320,7 +249,6 @@
       padding: 2rem 2.5rem;
       position: relative;
       overflow: hidden;
-      animation: cardEnter 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
     }
     .focus-card::before {
       content: "";
@@ -329,58 +257,44 @@
       height: 3px;
       background: var(--al-gold-gradient);
     }
-    .focus-card.new-card {
-      animation: cardEnter 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both,
-                 cardGlow 2s ease-out both;
+    .focus-card.entering {
+      animation: cardFadeIn 0.8s ease both;
     }
     .focus-name {
-      font-size: 0.75rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-      color: var(--al-gold);
-      margin-bottom: 1.25rem;
+      font-size: 0.75rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--al-gold); margin-bottom: 1.25rem;
     }
     .focus-field { margin-bottom: 1rem; }
     .focus-field:last-child { margin-bottom: 0; }
     .focus-label {
-      font-size: 0.6875rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      color: rgba(255,255,255,0.35);
-      margin-bottom: 0.25rem;
+      font-size: 0.6875rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      color: rgba(255,255,255,0.35); margin-bottom: 0.25rem;
     }
-    .focus-text {
-      font-size: 1.125rem;
-      color: rgba(255,255,255,0.9);
-      line-height: 1.55;
-    }
+    .focus-text { font-size: 1.125rem; color: rgba(255,255,255,0.9); line-height: 1.55; }
     .focus-field.highlight .focus-text {
       font-family: var(--font-dm-serif);
-      font-size: 1.375rem;
-      color: #fff;
-      line-height: 1.35;
+      font-size: 1.375rem; color: #fff; line-height: 1.35;
     }
 
-    /* Grid wrapper */
+    /* Shared animation */
+    @keyframes cardFadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     .grid-view { display: block; }
     .grid-view.hidden { display: none; }
   </style>
 </head>
 <body>
 
-<!-- Animated brand atmosphere (same as presentation) -->
 <div class="brand-atmosphere">
-  <span></span>
-  <span></span>
-  <span></span>
-  <span></span>
-  <span></span>
-  <span></span>
+  <span></span><span></span><span></span>
+  <span></span><span></span><span></span>
 </div>
 
-<!-- Top bar -->
 <div class="topbar">
   <div class="topbar-left">
     <div class="topbar-logo"><span class="ai">AI</span><span class="ladies">Ladies</span></div>
@@ -410,21 +324,17 @@
   </div>
 </div>
 
-<!-- Main content -->
 <div class="main">
-  <!-- Empty state -->
   <div id="empty-state" class="empty-state">
     <div class="empty-icon">✦</div>
     <h2>Čekáme na první odpovědi...</h2>
     <p>Jakmile účastnice odešlou své zápisky, objeví se tady.</p>
   </div>
 
-  <!-- Grid view (compact multi-column) -->
   <div id="grid-view" class="grid-view hidden">
     <div id="cards-grid" class="cards-grid"></div>
   </div>
 
-  <!-- Focus view (large single-column, all cards) -->
   <div id="focus-view" class="focus-view">
     <div id="focus-grid" class="focus-grid"></div>
   </div>
@@ -438,161 +348,158 @@
   ];
 
   let allRecords = [];
-  let displayedIds = new Set();
-  let focusDisplayedIds = new Set();
   let currentTab = 'all';
   let currentMode = 'grid';
-  let pollInterval = null;
-
-  function switchTab(topic) {
-    currentTab = topic;
-    document.querySelectorAll('.tab').forEach(t => {
-      t.classList.toggle('active', t.dataset.topic === topic);
-    });
-    displayedIds.clear();
-    focusDisplayedIds.clear();
-    renderCards();
-    renderFocus();
-  }
-
-  function setMode(mode) {
-    currentMode = mode;
-    document.getElementById('mode-grid').classList.toggle('active', mode === 'grid');
-    document.getElementById('mode-focus').classList.toggle('active', mode === 'focus');
-
-    const empty = document.getElementById('empty-state');
-    const hasRecords = getFiltered().length > 0;
-
-    if (mode === 'grid') {
-      document.getElementById('grid-view').classList.toggle('hidden', !hasRecords);
-      document.getElementById('focus-view').classList.remove('active');
-      empty.style.display = hasRecords ? 'none' : 'block';
-    } else {
-      document.getElementById('grid-view').classList.add('hidden');
-      document.getElementById('focus-view').classList.toggle('active', hasRecords);
-      empty.style.display = hasRecords ? 'none' : 'block';
-      focusDisplayedIds.clear();
-      renderFocus();
-    }
-  }
 
   function getFiltered() {
     if (currentTab === 'all') return allRecords;
     return allRecords.filter(r => r.topic === currentTab);
   }
 
-  function updateCounts() {
-    document.getElementById('count-all').textContent = allRecords.length;
-    TOPIC_NAMES.forEach((name, i) => {
-      const count = allRecords.filter(r => r.topic === name).length;
-      document.getElementById('count-' + i).textContent = count;
+  function switchTab(topic) {
+    currentTab = topic;
+    document.querySelectorAll('.tab').forEach(t => {
+      t.classList.toggle('active', t.dataset.topic === topic);
     });
+    document.getElementById('cards-grid').innerHTML = '';
+    document.getElementById('focus-grid').innerHTML = '';
+    syncView();
   }
 
-  function renderCards() {
+  function setMode(mode) {
+    currentMode = mode;
+    document.getElementById('mode-grid').classList.toggle('active', mode === 'grid');
+    document.getElementById('mode-focus').classList.toggle('active', mode === 'focus');
+    syncView();
+  }
+
+  function syncView() {
     const filtered = getFiltered();
-    const grid = document.getElementById('cards-grid');
     const empty = document.getElementById('empty-state');
+    const gridWrap = document.getElementById('grid-view');
+    const focusWrap = document.getElementById('focus-view');
 
     if (filtered.length === 0) {
       empty.style.display = 'block';
-      document.getElementById('grid-view').classList.add('hidden');
+      gridWrap.classList.add('hidden');
+      focusWrap.classList.remove('active');
       return;
     }
 
     empty.style.display = 'none';
+
     if (currentMode === 'grid') {
-      document.getElementById('grid-view').classList.remove('hidden');
+      gridWrap.classList.remove('hidden');
+      focusWrap.classList.remove('active');
+      renderGrid(filtered);
+    } else {
+      gridWrap.classList.add('hidden');
+      focusWrap.classList.add('active');
+      renderFocus(filtered);
     }
-
-    grid.innerHTML = '';
-    filtered.forEach((r, i) => {
-      const isNew = !displayedIds.has(r.id);
-      const card = document.createElement('div');
-      card.className = 'card' + (isNew ? ' new-card' : '');
-      card.style.animationDelay = (isNew ? (i * 0.08) + 's' : '0s');
-
-      let html = '';
-      if (r.name) {
-        html += '<div class="card-name">' + escHtml(r.name) + '</div>';
-      } else {
-        html += '<div class="card-name" style="color:rgba(255,255,255,0.2);">Anonymní</div>';
-      }
-
-      const fields = [
-        { label: 'Nejlepší tip', value: r.bestTip, highlight: false },
-        { label: 'Nejzajímavější nástroj', value: r.interestingTool, highlight: false },
-        { label: 'Co chceme vyzkoušet', value: r.wantToTry, highlight: false },
-        { label: 'Jedna věta', value: r.oneSentence, highlight: true },
-      ];
-
-      fields.forEach(f => {
-        if (!f.value) return;
-        html += '<div class="card-field' + (f.highlight ? ' highlight' : '') + '">' +
-          '<div class="card-label">' + f.label + '</div>' +
-          '<div class="card-text">' + escHtml(f.value) + '</div>' +
-          '</div>';
-      });
-
-      card.innerHTML = html;
-      grid.appendChild(card);
-    });
-
-    filtered.forEach(r => displayedIds.add(r.id));
   }
 
-  function renderFocus() {
-    const filtered = getFiltered();
-    const grid = document.getElementById('focus-grid');
-    const empty = document.getElementById('empty-state');
+  function renderGrid(filtered) {
+    const grid = document.getElementById('cards-grid');
+    const existing = new Set();
+    grid.querySelectorAll('[data-id]').forEach(el => existing.add(el.dataset.id));
 
-    if (filtered.length === 0) {
-      if (currentMode === 'focus') {
-        empty.style.display = 'block';
-        document.getElementById('focus-view').classList.remove('active');
-      }
-      return;
-    }
-
-    if (currentMode === 'focus') {
-      empty.style.display = 'none';
-      document.getElementById('focus-view').classList.add('active');
-    }
-
-    grid.innerHTML = '';
-    filtered.forEach((r, i) => {
-      const isNew = !focusDisplayedIds.has(r.id);
-      const card = document.createElement('div');
-      card.className = 'focus-card' + (isNew ? ' new-card' : '');
-      card.style.animationDelay = (isNew ? (i * 0.1) + 's' : '0s');
-
-      let html = '';
-      if (r.name) {
-        html += '<div class="focus-name">✦ ' + escHtml(r.name) + '</div>';
-      } else {
-        html += '<div class="focus-name" style="color:rgba(255,255,255,0.2);">✦ Anonymní</div>';
-      }
-
-      const fields = [
-        { label: 'Nejlepší tip', value: r.bestTip, highlight: false },
-        { label: 'Nejzajímavější nástroj', value: r.interestingTool, highlight: false },
-        { label: 'Co chceme vyzkoušet', value: r.wantToTry, highlight: false },
-        { label: 'Jedna věta', value: r.oneSentence, highlight: true },
-      ];
-
-      fields.forEach(f => {
-        if (!f.value) return;
-        html += '<div class="focus-field' + (f.highlight ? ' highlight' : '') + '">' +
-          '<div class="focus-label">' + f.label + '</div>' +
-          '<div class="focus-text">' + escHtml(f.value) + '</div>' +
-          '</div>';
-      });
-
-      card.innerHTML = html;
-      grid.appendChild(card);
+    const currentIds = new Set(filtered.map(r => r.id));
+    grid.querySelectorAll('[data-id]').forEach(el => {
+      if (!currentIds.has(el.dataset.id)) el.remove();
     });
 
-    filtered.forEach(r => focusDisplayedIds.add(r.id));
+    filtered.forEach(r => {
+      if (existing.has(r.id)) return;
+
+      const card = document.createElement('div');
+      card.className = 'card entering';
+      card.dataset.id = r.id;
+
+      let html = r.name
+        ? '<div class="card-name">' + esc(r.name) + '</div>'
+        : '<div class="card-name" style="color:rgba(255,255,255,0.2)">Anonymní</div>';
+
+      html += fieldHtml(r, 'card');
+      card.innerHTML = html;
+
+      card.addEventListener('animationend', () => card.classList.remove('entering'), { once: true });
+      grid.appendChild(card);
+    });
+  }
+
+  function renderFocus(filtered) {
+    const grid = document.getElementById('focus-grid');
+    const existing = new Set();
+    grid.querySelectorAll('[data-id]').forEach(el => existing.add(el.dataset.id));
+
+    const currentIds = new Set(filtered.map(r => r.id));
+    grid.querySelectorAll('[data-id]').forEach(el => {
+      if (!currentIds.has(el.dataset.id)) el.remove();
+    });
+
+    filtered.forEach(r => {
+      if (existing.has(r.id)) return;
+
+      const card = document.createElement('div');
+      card.className = 'focus-card entering';
+      card.dataset.id = r.id;
+
+      let html = r.name
+        ? '<div class="focus-name">✦ ' + esc(r.name) + '</div>'
+        : '<div class="focus-name" style="color:rgba(255,255,255,0.2)">✦ Anonymní</div>';
+
+      html += fieldHtml(r, 'focus');
+      card.innerHTML = html;
+
+      card.addEventListener('animationend', () => card.classList.remove('entering'), { once: true });
+      grid.appendChild(card);
+    });
+  }
+
+  function fieldHtml(r, prefix) {
+    const fields = [
+      { label: 'Nejlepší tip', value: r.bestTip },
+      { label: 'Nejzajímavější nástroj', value: r.interestingTool },
+      { label: 'Co chceme vyzkoušet', value: r.wantToTry },
+      { label: 'Jedna věta', value: r.oneSentence, highlight: true },
+    ];
+    return fields
+      .filter(f => f.value)
+      .map(f =>
+        '<div class="' + prefix + '-field' + (f.highlight ? ' highlight' : '') + '">' +
+          '<div class="' + prefix + '-label">' + f.label + '</div>' +
+          '<div class="' + prefix + '-text">' + esc(f.value) + '</div>' +
+        '</div>'
+      ).join('');
+  }
+
+  function updateCounts() {
+    document.getElementById('count-all').textContent = allRecords.length;
+    TOPIC_NAMES.forEach((name, i) => {
+      document.getElementById('count-' + i).textContent =
+        allRecords.filter(r => r.topic === name).length;
+    });
+  }
+
+  async function fetchRecords() {
+    try {
+      const res = await fetch('/api/stoly');
+      const data = await res.json();
+      if (data.success && data.records) {
+        allRecords = data.records;
+        updateCounts();
+        syncView();
+      }
+    } catch (err) {
+      console.error('Fetch error:', err);
+    }
+  }
+
+  function esc(str) {
+    const d = document.createElement('div');
+    d.textContent = str;
+    return d.innerHTML;
   }
 
   document.addEventListener('keydown', (e) => {
@@ -604,30 +511,9 @@
     if (e.key === '0') switchTab('all');
   });
 
-  async function fetchRecords() {
-    try {
-      const res = await fetch('/api/stoly');
-      const data = await res.json();
-      if (data.success && data.records) {
-        allRecords = data.records;
-        updateCounts();
-        renderCards();
-        renderFocus();
-      }
-    } catch (err) {
-      console.error('Fetch error:', err);
-    }
-  }
-
-  function escHtml(str) {
-    const d = document.createElement('div');
-    d.textContent = str;
-    return d.innerHTML;
-  }
-
   setMode('grid');
   fetchRecords();
-  pollInterval = setInterval(fetchRecords, 5000);
+  setInterval(fetchRecords, 5000);
 </script>
 
 </body>
