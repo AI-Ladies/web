@@ -122,19 +122,6 @@ export default async function handler(req, res) {
         console.error('Brevo contact error:', errData);
       }
 
-      const brevoTemplateId = Number(process.env.BREVO_NIGHT_TEMPLATE_ID) || 1;
-      await fetch('https://api.brevo.com/v3/smtp/email', {
-        method: 'POST',
-        headers: {
-          'api-key': brevoKey,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          to: [{ email, name: `${fname} ${lname}` }],
-          templateId: brevoTemplateId,
-          params: { FIRSTNAME: fname, FIRSTNAME_5PAD: fname5pad },
-        }),
-      });
     }
 
     return res.status(200).json({ success: true });
