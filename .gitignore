@@ -26,3 +26,4 @@ CONTEXT.md
 .vercel
 .env.vercel
 .env*.local
+.env*

@@ -5,5 +5,8 @@
   "description": "AI Ladies — web + serverless API",
   "engines": {
     "node": ">=18"
+  },
+  "devDependencies": {
+    "puppeteer-core": "^25.1.0"
   }
 }

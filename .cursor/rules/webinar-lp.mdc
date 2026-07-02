@@ -1,0 +1,359 @@
+---
+description: Pravidla pro tvorbu landing pages webinářů AI Ladies — design, struktura, backend, generování fotek
+globs: public/webinar-*.html
+alwaysApply: false
+---
+
+# Webinářové Landing Pages — AI Ladies
+
+## Zdroj dat
+
+- **Airtable base:** `app0hrAz2Vj2TxNHe`
+- **Tabulka webinářů:** `tbl74yZ5Tx3Jy0Gfl` — obsahuje název, popis, datum, délku, úroveň, lektora
+- **Tabulka lektorů:** `tblexQDOvgYnoHbSe` — jméno, bio, profilová fotka, LinkedIn
+- **Token:** env var `AIRTABLE_API_TOKEN` (nikdy necommitovat do gitu!)
+- Vždy stáhni data z AT před tvorbou LP (obsah, lektorka, datum, čas)
+
+## Struktura LP (shora dolů)
+
+1. **Navigace** — logo AI Ladies (link na /), sekční odkazy: "Co se dozvíš", "Pro koho to je", "Kdo tě provede" + zlatý CTA "Rezervovat místo →". Mobilní hamburger menu se stejnými linky.
+2. **Hero** — tmavý, centered, fotka na pozadí (opacity 0.35), floating rings, gold glow. Outcome headline (ne název webináře!), subtitle, meta info (datum, čas, online, délka), CTA button, cena. Padding: `8.5rem top, 11rem bottom`. Smooth fade dole (200px gradient do bílé).
+3. **Pain / intro section** — bílá, centered, empatie s čtenářkou. Formát přizpůsobit tématu webináře:
+   - **Otázky** — růžové kartičky s "?" prefixem (vhodné, když se téma dá uchopit přes bolesti/pochybnosti)
+   - **Textový úvod** — krátký empatie-odstavec s vizuálním dělením (vhodné pro pozitivní / praktické téma)
+   - **Mix** — 2-3 body s ikonami nebo krátké bullet points
+   - Pravidlo: obsah musí dávat smysl pro konkrétní téma. Nenutit otázky tam, kde se nehodí.
+4. **Co se dozvíš** — fotka ženy (generovaná, tematická) jako subtle pozadí (opacity 0.14, CSS mask fade). Číslované téma body. Floating gold dots jako dekorace.
+5. **Co si odneseš** — outcome karty v 2-column gridu s emoji ikonami v gold čtvercích. Hover efekt (translateY + shadow). **Vždy 6 položek** (nebo 4), nikdy 5 — kvůli zarovnání gridu.
+6. **Image break** — full-width obrázek (generovaný, abstraktní/tematický). Fade nahoře i dole (50% bílý gradient z obou stran). Hover scale efekt + parallax.
+7. **Je to pro tebe?** — dvě karty: "Přijď, pokud" (gold background/border) a "Není pro tebe" (šedá). Centrovaný nadpis jako otázka.
+8. **Lektorka** — fotka z AT (kulatá, gold ring), jméno (DM Serif), role (gold), bio, LinkedIn link. Desktop: fotka vlevo, text vpravo. Label "✦ Kdo tě provede" zarovnaný doleva.
+9. **Co v ceně dostaneš** — 4 karty na šířku (SVG ikony v gold čtvercích, ne emoji!). Gradient pozadí, fade nahoře (80px bílý gradient).
+10. **Registrace** — tmavá sekce. Heading se zlatým gradientem na klíčovém slově. Bílá karta: název webináře (DM Serif), cena (590 Kč), detaily (datum, čas, formát, co dostaneš), formulář.
+11. **Footer** — standardní AI Ladies footer (legal, firma, "Všechny webináře" + email).
+
+## Formulář registrace
+
+- Povinné: Jméno, Příjmení, E-mail, GDPR checkbox
+- Nepovinné: Obor (select), Seniorita (select)
+- Submit: "Registrovat a zaplatit →" → volá `/api/register-webinar`
+- Po úspěchu: FB Pixel `InitiateCheckout` + redirect na Stripe
+
+## Design pravidla
+
+- **Fonty:** DM Serif Display (headings), DM Sans (body)
+- **Barvy:** `--al-gold: #c49f47`, `--al-dark: #0d0d0d`, `--al-blush-*` pro akcenty
+- **Zlatý gradient:** `linear-gradient(115deg, #7a5a1e ... #7a5a1e)` — použít na klíčová slova v headings
+- **Smooth přechody:** žádné ostré předěly! Mezi sekcemi vždy gradient fade (min 100-200px)
+- **Hero → bílá:** 200px gradient s 6 kroky (transparent → white)
+- **Image break:** fade top 50% + fade bottom 50% (bílý gradient)
+- **Dynamické prvky:** floating rings (hero), floating dots (sekce), parallax hero rings na scroll, hover efekty na kartách, animated gradient na included-strip
+- **Reveal animace:** `.reveal` class + IntersectionObserver (opacity 0 → 1, translateY 24px → 0)
+- **Navigace:** fixed, tmavá, backdrop-blur
+
+## Generování fotek
+
+Pro každý webinář generuj 2 obrázky:
+1. **Tematická fotka osoby** — žena u notebooku/v kanceláři, warm tones, editorial style, shallow DOF. Použít jako subtle pozadí sekce "Co se dozvíš".
+2. **Abstraktní vizuál k tématu** — konceptuální, dark background, gold/warm akcenty, bez textu. Použít jako image break a hero background.
+
+Uložit do `public/img/webinar-{slug}-1.png` a `webinar-{slug}-2.png`.
+
+## Backend — registrace flow
+
+### Celý flow registrace:
+1. Uživatelka vyplní formulář na LP → klik "Registrovat a zaplatit"
+2. JS pošle POST na `/api/register-webinar` s daty: `fname`, `lname`, `email`, `gdpr`, `field`, `seniority`, `webinar` (slug), `webinarName`
+3. API endpoint:
+   - Validuje vstupy (fname, lname, email, gdpr povinné)
+   - Vytvoří záznam v **Airtable** tabulce "Registrace webináře"
+   - Přidá/updatne kontakt v **Brevo** (list + atributy)
+   - Vrátí Stripe payment link
+4. Frontend přesměruje na Stripe platbu (prefilled email)
+5. Po zaplacení Stripe webhook (TBD) updatne status v AT na "Zaplaceno"
+
+### Airtable — registrace
+- **Tabulka:** "Registrace webináře" (`tblRT1uYawygbVGio`)
+- **Base:** `app0hrAz2Vj2TxNHe`
+- **Pole:** Email, Jméno, Příjmení, Webinář slug, Obor, Seniorita, GDPR souhlas, Datum registrace, Status (Nová/Zaplaceno/Zrušeno), Stripe Payment ID
+- Typecast: true (aby AT sám vytvořil hodnoty v linked fields)
+- **DŮLEŽITÉ:** Jedna tabulka pro VŠECHNY webináře. Nezakládat novou tabulku pro každý webinář! Rozlišení přes pole `Webinář slug`.
+
+### Brevo — emailing
+- **API klíč:** env var `BREVO_API_KEY`
+- **Složka:** "Webináře" (folder ID: 7)
+- **List:** "Webináře — registrace" (list ID: **8**) — env var `BREVO_WEBINAR_LIST_ID`
+- **Kontakt atributy:** `FIRSTNAME`, `LASTNAME`, `FIRSTNAME_5PAD` (vokativ), `WEBINAR_SLUG`, `WEBINAR_NAME`
+- **DŮLEŽITÉ:** Jeden list pro VŠECHNY webináře. Nezakládat nový list pro každý webinář! Segmentace přes atribut `WEBINAR_SLUG` (filtry/segmenty v Brevo dashboardu).
+- Vokativ (5. pád) se získává z API `sklonovani-jmen.cz` (klíč v env `SKLONOVANI_API_KEY`)
+- `updateEnabled: true` — pokud kontakt existuje, aktualizuje atributy
+- Pro emaily specifické danému webináři vytvořit **segment** v Brevo: filtr `WEBINAR_SLUG = '{slug}'`
+- Pro ruční emaily z Brevo dashboardu: Campaigns → Create → jako příjemce zvol segment (ne list). Segment = filtr na `WEBINAR_SLUG equals {slug}`.
+
+### Brevo — transactional templates (confirmation emaily)
+- **AI bezpečně:** Template ID **7** (env: `BREVO_TEMPLATE_AI_BEZPECNE`)
+- **Asistent na web:** Template ID **8** (env: `BREVO_TEMPLATE_ASISTENT_NA_WEB`)
+- Šablony žijí lokálně v `emails/webinar-{slug}-confirmation.html` a zároveň v Brevo Transactional → Templates
+- Pokud se mění obsah emailu (datum, link), je třeba updatnout OBOJÍ (lokální soubor + Brevo template)
+- API pro update existující šablony: `PUT https://api.brevo.com/v3/smtp/templates/{id}` s `htmlContent`
+
+### Stripe — platby
+- Používáme **Stripe Payment Links** (ne custom checkout)
+- Každý webinář má vlastní payment link v env var: `STRIPE_LINK_AI_BEZPECNE`, `STRIPE_LINK_ASISTENT_NA_WEB`, atd.
+- K linku se přidá `?prefilled_email={email}` pro prefill
+- Payment links se vytvářejí ručně ve Stripe dashboardu
+- Cena produktu na Stripe: 590 CZK
+
+#### Nastavení Payment Link ve Stripe (POVINNÉ pro každý webinář):
+1. Stripe Dashboard → Payment Links → vyber link
+2. **Metadata** → přidej klíč `webinar_slug`, hodnota = slug webináře (např. `ai-bezpecne`)
+3. **After payment** → redirect na `https://ailadies.cz/webinar-{slug}-thank-you`
+4. Bez metadata webhook nepošle confirmation email!
+
+### Confirmation email po platbě
+
+#### Jak to funguje:
+1. Uživatelka zaplatí přes Stripe Payment Link
+2. Stripe pošle webhook `checkout.session.completed` na `/api/stripe-webhook`
+3. Webhook přečte `session.metadata.webinar_slug`
+4. Podle slugu vybere správnou Brevo šablonu (template ID z env var)
+5. Pošle transactional email s params `FIRSTNAME` a `FIRSTNAME_5PAD`
+6. Zároveň updatne status v Airtable na "Zaplaceno"
+
+#### Env vars pro šablony:
+- `BREVO_TEMPLATE_AI_BEZPECNE` — ID šablony v Brevo pro "AI bezpečně"
+- `BREVO_TEMPLATE_ASISTENT_NA_WEB` — ID šablony v Brevo pro "Asistent na web"
+- Formát: `BREVO_TEMPLATE_` + slug CAPS s podtržítky
+
+#### Jak vytvořit šablonu v Brevo:
+1. Vytvoř HTML email lokálně: `emails/webinar-{slug}-confirmation.html`
+2. V Brevo: Transactional → Templates → New Template
+3. Vlož HTML, nastav subject: "Potvrzení registrace — {název webináře}"
+4. Sender: `AI Ladies <hello@ailadies.cz>`
+5. Zapiš si Template ID → přidej na Vercel jako env var
+
+#### Obsah confirmation emailu (per webinář):
+- Heading: `{{ params.FIRSTNAME_5PAD }}, platba proběhla!`
+- Event details: název, datum, čas, formát (online), záznam info
+- **Button "Odkaz na připojení →"** — přímo Meet link
+- Kalendář: Google Calendar + Outlook buttony (s Meet linkem v location)
+- Kontakt: hello@ailadies.cz
+- Podpis: Aneta, Katka a Petra
+
+#### Stripe Webhook — nastavení (jednorázové, HOTOVO):
+1. Stripe Dashboard → Developers → Webhooks → Add endpoint
+2. URL: `https://ailadies.cz/api/stripe-webhook`
+3. Events: `checkout.session.completed`
+4. Signing secret → uložen na Vercel jako `STRIPE_WEBHOOK_SECRET` ✓
+
+#### Aktuální stav Payment Links:
+- `ai-bezpecne`: `https://buy.stripe.com/cNi5kEbVk22bchj1yhes001` — metadata `webinar_slug=ai-bezpecne` ✓
+- `asistent-na-web`: `https://buy.stripe.com/00w8wQ5wWbCLchj5Oxes002` — metadata `webinar_slug=asistent-na-web` ✓
+
+### Vercel env vars potřebné
+- `AIRTABLE_API_TOKEN`, `AIRTABLE_BASE_ID`
+- `BREVO_API_KEY`, `BREVO_WEBINAR_LIST_ID` (= 8)
+- `SKLONOVANI_API_KEY`
+- `STRIPE_WEBHOOK_SECRET` — signing secret z Stripe webhook endpointu
+- `STRIPE_LINK_AI_BEZPECNE`, `STRIPE_LINK_ASISTENT_NA_WEB` (atd. per webinář)
+- `BREVO_TEMPLATE_AI_BEZPECNE`, `BREVO_TEMPLATE_ASISTENT_NA_WEB` (atd. per webinář — ID šablon)
+
+### Jak přidat Stripe env var na Vercel:
+```bash
+cd "/Users/anetalizancova/AI Ladies"
+npx vercel env add STRIPE_LINK_{SLUG} production <<< "https://buy.stripe.com/XXXXX"
+```
+- Formát názvu: `STRIPE_LINK_` + slug CAPS s pomlčkami jako podtržítky (ai-bezpecne → `AI_BEZPECNE`)
+- Hodnota: celý Stripe Payment Link URL
+- Env se přidá na production, platí po dalším deployi
+
+### Facebook Pixel
+- Pixel ID: `27041465528857133`
+- Events: `PageView` (na load), `InitiateCheckout` (po úspěšném POST, před redirectem na Stripe)
+- InitiateCheckout params: `content_name`, `content_category: 'Webinar Registration'`, `currency: 'CZK'`, `value: 590`
+
+## Formulář — pole
+
+### Povinné:
+- **Jméno** — text, placeholder "Jana"
+- **Příjmení** — text, placeholder "Nováková"
+- **E-mail** — email, placeholder "jana@email.cz"
+- **GDPR** — checkbox, odkaz na obchodní podmínky + ochranu osobních údajů
+
+### Nepovinné:
+- **Obor** — select: Marketing a komunikace, HR a People, Finance a účetnictví, IT a vývoj, Design a kreativa, Poradenství, Vzdělávání, Sales a obchod, Management, Jiný
+- **Seniorita** — select: Studentka, Junior (0–2 roky), Mid (3–5 let), Senior (6+ let), Lead / manažerka, Freelancerka / OSVČ, Zakladatelka / CEO
+
+### Styling formuláře:
+- Inputy: `border-radius: 0.75rem`, border `1.5px solid rgba(0,0,0,0.1)`, focus: gold border + gold box-shadow
+- Select: custom dropdown arrow (SVG data URI), `appearance: none`
+- Button: full-width, dark bg, rounded pill (`border-radius: 50px`), hover → gold
+
+## Cena
+
+- Každý webinář: **590 Kč**
+- FB Pixel value: 590
+
+## Na co dát pozor
+
+- NIKDY nedávat live bez odsouhlasení
+- Žádné zmínky o Notionu (nevíme, kde budou podklady)
+- Ikonky vždy SVG v brandových barvách, NE emoji
+- Nadpisy sekcí centrované (kromě lektorky — ta doleva)
+- Logo v nav vždy proklikávací na `/`
+- `scroll-behavior: smooth` na html
+- V reg. kartě vždy zobrazit název webináře (DM Serif font) nad cenou
+- Detail v reg. kartě: "Záznam, přepis + podklady po webináři" (ne jen "Záznam + přepis")
+- Žádné "Jednorázová platba" ani "Včetně záznamu" pod cenou — zbytečné, info je v bodech
+
+## Sirotky a vdovy (typografie)
+
+České typografické pravidlo: jednopísmenné předložky a spojky **nesmí zůstat na konci řádku**. Vždy za nimi dej `&nbsp;`.
+
+### Povinné `&nbsp;` za:
+- **Předložky:** v, s, k, z, u, o, na, ke, ze, do, od, po, pro, při, přes, bez
+- **Spojky:** a, i, nebo (pokud je krátké slovo za nimi)
+- **Před pomlčkou:** `—&nbsp;` pokud následuje krátké slovo (aby `— a` nezůstalo na dvou řádcích)
+
+### Příklady:
+```
+❌ "Pracuješ s AI" → ✅ "Pracuješ s&nbsp;AI"
+❌ "podklady od klientky" → ✅ "podklady od&nbsp;klientky"
+❌ "orientaci v právu a AI" → ✅ "orientaci v&nbsp;právu a&nbsp;AI"
+❌ "— v práci" → ✅ "—&nbsp;v&nbsp;práci"
+❌ "na kód z AI" → ✅ "na&nbsp;kód z&nbsp;AI"
+```
+
+### Kontrola po napsání LP:
+1. Projdi všechny textové elementy (h1, h2, p, li, span)
+2. Najdi jednopísmenné předložky/spojky **bez** `&nbsp;` za nimi
+3. Oprav je — i v atributech jako `alt=""` a `content=""`
+4. Vyjímka: uvnitř `<option>` tagů ve formuláři to není potřeba
+
+## Mobilní kompatibilita
+
+### Povinné technické prvky:
+- `<meta name="viewport" content="width=device-width, initial-scale=1.0">`
+- `overflow-x: hidden` na body
+- Font sizes: vždy `clamp()` pro headingy (min, preferred, max)
+- Kontejner: responsive padding (`1.25rem` → `2rem` → `2.5rem`)
+
+### Breakpointy:
+- `max-width: 374px` — extra malé (SE, starší iPhony): zmenšit base font na 16px, zúžit paddingy
+- `max-width: 639px` — mobil: single-column layout, menší paddingy, skrýt `<br>` v h1
+- `min-width: 640px` — tablet: 2-column gridy (outcomes, for/not for, included)
+- `min-width: 700px` — lektorka: přepnout na řádkový layout
+- `min-width: 768px` — nav links viditelné, hero vyšší
+- `min-width: 900px` — included grid na 4 sloupce
+- `min-width: 1024px` — plný desktop padding
+
+### Mobilní CSS (přidat do každé LP):
+```css
+@media (max-width: 639px) {
+  .hero { padding: 7rem 1rem 8rem; }
+  .hero h1 br { display: none; }
+  .hero .hero-subtitle { font-size: 1rem; }
+  .hero-meta { gap: 0.75rem 1.25rem; }
+  .hero-meta-item { font-size: 0.8125rem; }
+  .hero-cta { padding: 0.875rem 2rem; font-size: 0.9375rem; }
+  .content-section { padding: 3.5rem 0; }
+  .img-break img { height: 250px; }
+  .for-box { padding: 1.5rem; }
+  .lecturer-photo { width: 110px; height: 110px; }
+  .included-strip { padding: 3rem 0 4rem; }
+  .included-item { padding: 1.25rem 0.75rem; }
+  .reg-section { padding: 4rem 0 5rem; }
+  .reg-card { padding: 1.75rem 1.25rem; border-radius: 1.25rem; }
+  .reg-card-price { font-size: 2rem; }
+  .footer-inner { flex-direction: column; align-items: flex-start; }
+}
+
+@media (max-width: 374px) {
+  html { font-size: 16px; }
+  .hero { padding: 6rem 0.75rem 7rem; }
+  .reg-card { padding: 1.5rem 1rem; }
+  .hero-meta { flex-direction: column; align-items: center; gap: 0.5rem; }
+}
+```
+
+### Testování na mobilu — checklist:
+1. Hero text se nelomí neočekávaně (`<br>` skrytý na mobilu)
+2. Navigace: hamburger menu funguje, linky klikatelné (min. 44px touch target)
+3. Formulář: inputy mají dostatečný padding, select dropdown funguje
+4. Obrázky: nepřetékají, zachovávají poměr stran
+5. Karty (outcomes, for/not for): single column na mobilu, čitelné
+6. CTA button: dostatečně velký pro palec (min. 48px výška)
+7. Footer: text čitelný, linky klikatelné
+8. Žádné horizontální scrollování
+
+## Vytvoření nového webináře — checklist
+
+### Landing Page:
+1. Stáhni data z AT (název, popis, datum, čas, úroveň, lektorka, Meet link)
+2. Stáhni fotku lektorky z AT → `public/img/lektorka-{jmeno}.png`
+3. Generuj 2 fotky k tématu → `public/img/webinar-{slug}-1.png` a `-2.png`
+4. Zkopíruj `webinar-ai-bezpecne.html` jako šablonu → `webinar-{slug}.html`
+5. Uprav obsah (headline, subtitle, pain points, témata, outcomes, pro koho, lektorku)
+6. Uprav JS: `webinar: '{slug}'`, `webinarName: '...'`, FB Pixel content_name, Stripe link
+7. Uprav meta tagy (title, description, og:image)
+8. **Zkontroluj sirotky a vdovy** — projdi všechny texty a přidej `&nbsp;`
+9. **Otestuj mobilní layout** — responsive breakpointy, touch targets, no overflow
+
+### Thank You Page:
+10. Zkopíruj `webinar-ai-bezpecne-thank-you.html` → `webinar-{slug}-thank-you.html`
+11. Uprav obsah: název, datum (správný den v týdnu!), čas, Meet link (button + kalendáře)
+12. Zkontroluj UTC časy v kalendářích (CEST = UTC+2 v létě)
+
+### Stripe + Vercel:
+13. Na Stripe: vytvořit Payment Link pro 590 CZK, nastavit redirect na TY page URL
+14. Na Stripe: přidat metadata `webinar_slug` = `{slug}` na Payment Link (jinak nepůjde confirmation email!)
+15. Na Vercel: `npx vercel env add STRIPE_LINK_{SLUG} production <<< "{link}"`
+
+### Confirmation email:
+16. Vytvořit `emails/webinar-{slug}-confirmation.html` (zkopírovat existující, upravit název, datum, Meet link, kalendáře)
+17. Nahrát HTML do Brevo jako transactional template → zaznamenat Template ID
+18. Na Vercel: `npx vercel env add BREVO_TEMPLATE_{SLUG} production <<< "{templateId}"`
+19. V `api/stripe-webhook.js` → přidat slug do `getTemplateForSlug()`:
+    ```javascript
+    '{slug}': Number(process.env.BREVO_TEMPLATE_{SLUG}) || null,
+    ```
+
+### Propojení s webinare.html:
+20. **Přidat kartičku na `/webinare.html`** — POVINNÉ, jinak se na LP nikdo nedostane!
+
+#### Struktura kartičky na webinare.html:
+```html
+<div class="wb-card reveal">
+  <div class="wb-card-accent"></div>
+  <div class="wb-card-body">
+    <div class="wb-card-top">
+      <span class="wb-level wb-level--all">✨ Pro všechny</span>
+      <span class="wb-date"><svg>...</svg> {den}. {měsíc}. {rok} · {čas}</span>
+    </div>
+    <h3>{Marketing name z AT}</h3>
+    <p class="wb-tagline">{Podtitulek}</p>
+    <p class="wb-desc">{Krátký popis}</p>
+    <div class="wb-card-footer">
+      <div class="wb-meta">
+        <span>60 min</span>
+        <span>Online</span>
+        <span>{Jméno lektorky}</span>
+      </div>
+      <a href="/webinar-{slug}" class="btn-gold">Chci se přihlásit →</a>
+    </div>
+  </div>
+</div>
+```
+
+#### Pravidla:
+- `href` buttonu vede na `/webinar-{slug}` (LP bez .html — Vercel cleanUrls)
+- Úroveň: `wb-level--all` (pro všechny) nebo `wb-level--beginner` (začátečnice)
+- Pokud webinář ještě nemá termín: `<span class="wb-soon">Připravujeme</span>` místo data, button nahradit `<span class="btn-outline" style="pointer-events:none;opacity:0.6;">Termín brzy oznámíme</span>`
+- Pořadí karet: podle data (nejbližší nahoře)
+- Karty s termínem mají reveal bez delay, „připravujeme" mají `reveal-delay-2` / `reveal-delay-3`
+
+### Přidat slug do API:
+21. V `api/register-webinar.js` → objekt `stripeLinks` přidat nový řádek:
+    ```javascript
+    '{slug}': process.env.STRIPE_LINK_{SLUG} || '',
+    ```

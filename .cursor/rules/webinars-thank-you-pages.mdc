@@ -1,0 +1,226 @@
+---
+description: Pravidla pro tvorbu Thank You stránek webinářů po platbě (Stripe redirect)
+globs: public/webinar-*-thank-you.html
+alwaysApply: false
+---
+
+# Webinářové Thank You stránky — kompletní pravidla
+
+## Kdy vytvořit
+
+Pro každý placený webinář. Stránka se zobrazí po úspěšné platbě přes Stripe Payment Link (redirect po checkout).
+
+## Pojmenování
+
+- **Formát:** `public/webinar-{slug}-thank-you.html`
+- **Příklady:** `webinar-ai-bezpecne-thank-you.html`, `webinar-asistent-na-web-thank-you.html`
+- **URL po deploy:** `ailadies.cz/webinar-{slug}-thank-you` (díky `cleanUrls` ve vercel.json)
+- **POZOR:** AI Ladies Night má vlastní TY page (`al-ladies-night-thank-you.html`) — jiný formát, jiný obsah. Toto rule se na ni nevztahuje.
+
+## Zdroj dat — Airtable
+
+Před tvorbou TY page vždy stáhni data z Airtable:
+
+- **Base:** `app0hrAz2Vj2TxNHe`
+- **Tabulka webinářů:** `tbl74yZ5Tx3Jy0Gfl`
+- **Token:** env var `AIRTABLE_API_TOKEN` (nikdy necommitovat do gitu!)
+
+### Co potřebuješ z AT:
+- **Název** — pro heading v kartičce
+- **Datum** — pole `Datum` (ISO, UTC) → přepočítat na CET/CEST
+- **Délka** — pole `Délka` (v minutách) → dopočítat konec
+- **Link k připojení** — pole `Link k připojení` (Google Meet URL) → **KLÍČOVÉ pro button i kalendáře**
+
+### Filtrování:
+```
+filterByFormula=SEARCH("klíčové slovo",{Název})
+```
+(Pozn.: tabulka nemá pole `Slug`, hledat přes `Název`)
+
+## Struktura stránky (shora dolů)
+
+1. **Navigace** — fixed, tmavá, logo AI Ladies (link na `/`), nav links: "Hlavní stránka", "Webináře"
+2. **Animovaný checkmark** — zlatý kruh (80px), bílý SVG check s draw animací
+3. **Nadpis** — "Máš to! Místo je tvoje." (se zlatým gradientem na klíčovém slově)
+4. **Subtitle** — potvrzení platby, název webináře tučně, upozornění na spam
+5. **Kartička s detaily** — bílá karta s:
+   - 📅 Den + datum (česky, správný den v týdnu!)
+   - 🕐 Čas (začátek – konec)
+   - 💻 Online (Google Meet)
+   - 🎬 Záznam, přepis + podklady po webináři
+6. **Button na připojení** — výrazný zlatý CTA s Meet linkem z AT
+7. **Přidat do kalendáře** — 3 buttony (Google Calendar, Outlook, Apple Calendar)
+8. **Kontakt** — hello@ailadies.cz + link zpět na `/webinare`
+9. **Footer** — legal linky + copyright
+
+## Button na připojení
+
+Zlatý, výrazný, hned pod kartičkou s detaily. Odkaz vede přímo na Google Meet URL z Airtable.
+
+```html
+<div class="ty-join">
+  <a href="https://meet.google.com/XXX-XXXX-XXX" target="_blank" rel="noopener" class="ty-join-btn">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+    Odkaz na&nbsp;připojení →
+  </a>
+</div>
+```
+
+```css
+.ty-join-btn {
+  display: inline-flex; align-items: center; gap: 0.625rem;
+  padding: 1rem 2rem;
+  background: var(--al-gold); color: #fff;
+  font-size: 1rem; font-weight: 600;
+  border-radius: 50px; text-decoration: none;
+  box-shadow: 0 4px 16px rgba(196,159,71,0.25);
+  transition: all 0.25s;
+}
+.ty-join-btn:hover {
+  background: var(--al-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+}
+```
+
+## Kalendářové buttony
+
+### Google Calendar
+```
+https://calendar.google.com/calendar/render?action=TEMPLATE
+  &text={název webináře URL-encoded}
+  &dates={YYYYMMDD}T{HHmmss}Z/{YYYYMMDD}T{HHmmss}Z   ← časy v UTC!
+  &location={Meet URL}
+  &details={popis + Meet link + LP URL}
+```
+
+**Časy v UTC!** Praha je UTC+2 (CEST léto) / UTC+1 (CET zima).
+Příklad: 11:00 CEST = 09:00 UTC → `20260714T090000Z`
+
+### Outlook Calendar
+```
+https://outlook.office.com/calendar/0/deeplink/compose?path=/calendar/action/compose
+  &rru=addevent
+  &subject={název}
+  &startdt={YYYY-MM-DD}T{HH:mm:ss}   ← lokální čas!
+  &enddt={YYYY-MM-DD}T{HH:mm:ss}
+  &body={popis + Meet link}
+  &location={Meet URL}
+  &allday=false
+```
+
+### Apple Calendar (NE stahování .ics!)
+Místo stahování souboru použij `window.open()` — na iOS/macOS to přímo otevře Calendar app.
+
+```javascript
+function openAppleCalendar() {
+  const ics = [
+    'BEGIN:VCALENDAR',
+    'VERSION:2.0',
+    'PRODID:-//AI Ladies//Webinar//CS',
+    'CALSCALE:GREGORIAN',
+    'METHOD:PUBLISH',
+    'BEGIN:VEVENT',
+    'DTSTART:YYYYMMDDT090000Z',         // UTC!
+    'DTEND:YYYYMMDDT100000Z',           // UTC!
+    'SUMMARY:Název webináře — Webinář AI Ladies',
+    'DESCRIPTION:Popis\\n\\nOdkaz na připojení: https://meet.google.com/XXX\\n\\nhttps://ailadies.cz/webinar-slug',
+    'LOCATION:https://meet.google.com/XXX',
+    'STATUS:CONFIRMED',
+    'UID:webinar-slug-YYYY@ailadies.cz',
+    'END:VEVENT',
+    'END:VCALENDAR'
+  ].join('\r\n');
+
+  const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+  window.open(url, '_blank');
+  setTimeout(() => URL.revokeObjectURL(url), 5000);
+}
+```
+
+**DŮLEŽITÉ:** Ve všech třech kalendářích musí být:
+- **Location** = Meet URL (ne "Online (Google Meet)")
+- **Description/body** = krátký popis + "Odkaz na připojení: {Meet URL}" + LP URL
+
+## Meet link v kalendáři
+
+Odkaz na připojení (Google Meet) se bere z Airtable pole `Link k připojení`. Přidává se do:
+1. **Button na TY page** — přímo jako `href`
+2. **Google Calendar** — do `location` i `details`
+3. **Outlook** — do `location` i `body`
+4. **Apple Calendar (.ics)** — do `LOCATION` i `DESCRIPTION`
+
+Účastnice tak uvidí Meet link přímo v kalendářové události — nemusí hledat v emailech.
+
+## Design pravidla
+
+- **Fonty:** DM Serif Display (headings), DM Sans (body)
+- **Barvy:** stejné CSS proměnné jako zbytek webu (`--al-gold`, `--al-dark`, etc.)
+- **Background:** jemný gradient (`linear-gradient(155deg, #fef7f8 ... #fef7f8)`)
+- **Layout:** centered, max-width 600px, flexbox (body flex-direction: column, hero flex: 1)
+- **Animace:**
+  - `scaleIn` (0.6s, bounce easing) — checkmark
+  - `drawCheck` (0.5s, 0.4s delay) — SVG check čára
+  - `fadeUp` (0.7s) — sekce s rostoucím delay (0.2s → 0.35s → 0.5s → 0.65s → 0.8s → 0.9s)
+  - `floatSlow` (8s) — dekorativní blurred dots v pozadí
+- **Dekorace:** 2 blurred radial-gradient dots (gold + blush), absolute positioned
+- **Event card:** white bg, border, 1.25rem border-radius, subtle box-shadow
+- **Calendar buttons:** pill shape (50px radius), border, hover → gold border + shadow + translateY
+- **Join button:** zlatý, pill, prominent, hover → dark
+
+## Stripe propojení
+
+1. LP formulář → POST `/api/register-webinar` → success → redirect na Stripe Payment Link
+2. Ve **Stripe Dashboard → Payment Links → After payment** nastavit:
+   - **Redirect URL:** `https://ailadies.cz/webinar-{slug}-thank-you`
+3. Payment Link URL s prefilled email: `{stripe_link}?prefilled_email={email}`
+
+### Vercel env var pro Stripe link:
+```bash
+cd "/Users/anetalizancova/AI Ladies"
+npx vercel env add STRIPE_LINK_{SLUG} production <<< "https://buy.stripe.com/XXXXX"
+```
+- Formát: `STRIPE_LINK_` + slug CAPS, pomlčky → podtržítka (ai-bezpecne → `AI_BEZPECNE`)
+- Platí po dalším deployi
+
+### Aktuální Stripe links:
+- `STRIPE_LINK_AI_BEZPECNE` = `https://buy.stripe.com/cNi5kEbVk22bchj1yhes001`
+
+## Sirotky a vdovy
+
+Stejná pravidla jako pro LP — `&nbsp;` za jednopísmenné předložky a spojky (v, s, k, z, u, o, a, i, na, ke, ze, do, od, po, pro, při, přes, bez).
+
+## Na co dát pozor
+
+- **`<meta name="robots" content="noindex">`** — TY pages nesmí být v Googlu
+- **Správný den v týdnu!** — ověřit, že 14. 7. 2026 je opravdu úterý, ne pondělí atd.
+- **Žádné "odkaz pošleme den předem"** — link je přímo na stránce i v kalendáři
+- **Meet link z AT** — vždy aktuální, pole `Link k připojení`
+- **UTC časy v kalendářích** — přepočítat z českého času (CEST = UTC+2 v létě)
+- **Apple Calendar = `window.open()`** — NE stahování .ics souboru (to nikdo nedělá)
+- **Cookiebot** script vždy v head
+- **Nav links:** "Hlavní stránka" + "Webináře" (NE linky na sekce LP)
+- **Zpět link:** vede na `/webinare` (ne na `/`)
+
+## Checklist pro novou TY page
+
+1. Stáhni z AT: název, datum, čas, délku, Meet link
+2. Zkopíruj `webinar-ai-bezpecne-thank-you.html` jako šablonu
+3. Uprav:
+   - `<title>` a `<meta description>`
+   - Nadpis (může být jiný wording, ale zlatý gradient zachovat)
+   - Subtitle — správný název webináře tučně
+   - Kartička — správný den, datum, čas
+   - Join button — správný Meet link
+   - Google Calendar link — správné UTC časy + Meet link
+   - Outlook link — správné lokální časy + Meet link
+   - Apple Calendar JS — správné UTC časy + Meet link + UID
+4. Zkontroluj den v týdnu (ověřit!)
+5. Zkontroluj sirotky/vdovy
+6. Na Stripe: nastavit redirect po platbě na TY page URL
+7. Otestovat všechny 3 kalendářové buttony
+
+## Referenční šablona
+
+`public/webinar-ai-bezpecne-thank-you.html` — aktuální a kompletní vzor pro webinářové TY pages.

@@ -1,0 +1,70 @@
+# Upload Image to GitHub and Update Email
+
+Když uživatel napíše **"/urlimage"** nebo **"urlimage"**, automaticky:
+
+1. **OKAMŽITĚ** zjisti, který obrázek chce nahrát:
+   - Pokud zmínil cestu k obrázku (např. `/path/to/image.jpg`), použij ho
+   - Pokud má v kontextu zmíněný obrázek, použij ho
+   - Pokud ne, zeptej se na cestu k obrázku
+
+2. **Automaticky proveď celý workflow:**
+
+   ```bash
+   # 1. Naklonuj repo do dočasného adresáře
+   cd /tmp
+   rm -rf ailadies-email-assets-temp
+   git clone https://github.com/anetalizancova/ailadies-email-assets.git ailadies-email-assets-temp
+   cd ailadies-email-assets-temp
+
+   # 2. Vytvoř cílovou složku (pojmenuj podle kampaně/emailu)
+   mkdir -p images
+
+   # 3. Zkopíruj obrázek
+   cp "[cesta-k-obrazku]" "images/$(basename "[cesta-k-obrazku]")"
+
+   # 4. Commit a push
+   git add "images/$(basename "[cesta-k-obrazku]")"
+   git commit -m "Add email image: $(basename "[cesta-k-obrazku]")"
+   git push origin main
+   ```
+
+3. **Vygeneruj raw URL:**
+   ```
+   https://raw.githubusercontent.com/anetalizancova/ailadies-email-assets/main/images/[nazev-souboru]
+   ```
+
+4. **Najdi aktuální HTML email:**
+   - Pokud má uživatel otevřený HTML soubor v editoru, použij ho
+   - Pokud ne, najdi nejnovější HTML email v `emails/`
+   - Pokud není jasné, zeptej se
+
+5. **Aktualizuj URL v HTML emailu:**
+   - Najdi odpovídající `<img>` tag
+   - Aktualizuj `src` atribut na novou raw GitHub URL
+   - Pokud není jasné kam obrázek vložit, zeptej se
+
+6. **VŽDY zobraz výsledek:**
+   - Zobraz vygenerovanou URL jako klikací link
+   - Potvrď, že HTML byl aktualizován
+
+### Důležité poznámky:
+
+- **VŽDY použij dočasný klon** (`/tmp/ailadies-email-assets-temp`) — nikdy neklonuj do workspace
+- **Automaticky vytvoř složkovou strukturu** — použij `mkdir -p`
+- **URL musí být z branch `main`**
+- **Po pushi je URL okamžitě dostupná**
+- **VŽDY proveď celý workflow automaticky** — nemusíš se ptát na potvrzení kroků
+- Pokud nějaký krok selže, pokračuj dál a informuj uživatele o tom, co se povedlo
+
+### Příklady použití:
+
+- `/urlimage` → zeptá se na cestu k obrázku a provede celý workflow
+- `/urlimage /path/to/image.jpg` → nahraje konkrétní obrázek a aktualizuje email
+- `urlimage` → stejné jako `/urlimage`
+
+### Technické detaily:
+
+- **Repo:** `anetalizancova/ailadies-email-assets`
+- **Branch:** `main`
+- **Cílový adresář:** `images/`
+- **Raw URL formát:** `https://raw.githubusercontent.com/anetalizancova/ailadies-email-assets/main/images/[filename]`

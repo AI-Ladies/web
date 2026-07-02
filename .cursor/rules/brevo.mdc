@@ -1,0 +1,50 @@
+# Brevo — AI Ladies
+
+## Důležité: NEPOUŽÍVEJ MCP Brevo tool!
+
+MCP `user-Brevo` je napojený na **Aibility** účet — NE na AI Ladies.
+Pro AI Ladies emaily vždy používej **přímé Brevo API volání** přes `curl`.
+
+## API přístup
+
+- **API klíč:** uložen v env var `BREVO_API_KEY` na Vercelu. Pro lokální volání použij klíč, který uživatel poskytne.
+- **Base URL:** `https://api.brevo.com/v3/`
+- **Sender ID:** `1` (AI Ladies <hello@ailadies.cz>)
+- **Reply-to:** `hello@ailadies.cz`
+
+## Listy
+
+| ID | Název | Použití |
+|----|-------|---------|
+| 4  | AI Ladies Night (17.6.) | Registrace na event — červen 2026 |
+| 5  | Newsletter | Odběratelé newsletteru |
+| 6  | AI Ladies Night — 27.8.2026 | Registrace na event — srpen 2026 |
+
+## Vytvoření kampaně
+
+```bash
+curl -s -X POST "https://api.brevo.com/v3/emailCampaigns" \
+  -H "api-key: $BREVO_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d @payload.json
+```
+
+Payload:
+```json
+{
+  "name": "Název kampaně",
+  "subject": "Předmět emailu",
+  "sender": {"id": 1},
+  "replyTo": "hello@ailadies.cz",
+  "recipients": {"listIds": [4]},
+  "type": "classic",
+  "htmlContent": "<html>...</html>"
+}
+```
+
+## Pravidla
+
+- **NIKDY nepoužívej tag** — AI Ladies free plan ho nepodporuje
+- **Sender vždy jako ID** (ne email + name + id dohromady)
+- **HTML content** předávej přímo přes Python script → JSON payload → curl
+- **Test email** před odesláním: `POST /v3/emailCampaigns/{id}/sendTest`
