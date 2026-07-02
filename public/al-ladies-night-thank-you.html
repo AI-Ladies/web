@@ -365,6 +365,19 @@
 </footer>
 
 <script>
+  (function sendConfirmation() {
+    try {
+      const email = localStorage.getItem('al_night_email');
+      if (!email) return;
+      localStorage.removeItem('al_night_email');
+      fetch('/api/send-confirmation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      }).catch(() => {});
+    } catch (_) {}
+  })();
+
   function downloadICS() {
     const ics = [
       'BEGIN:VCALENDAR',

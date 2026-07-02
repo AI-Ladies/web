@@ -943,6 +943,7 @@
           });
         }
         regBtn.textContent = 'Přesměrovávám na platbu…';
+        try { localStorage.setItem('al_night_email', data.email); } catch (_) {}
         const stripeUrl = 'https://buy.stripe.com/cNieVe3oO7mvbdf1yhes000'
           + '?prefilled_email=' + encodeURIComponent(data.email);
         window.location.href = stripeUrl;
