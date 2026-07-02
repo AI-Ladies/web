@@ -314,17 +314,25 @@
       gap: 1rem;
     }
 
-    /* HERO EVENT CARD */
+    /* HERO EVENT CARDS */
+    .hero-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      max-width: 360px;
+      width: 100%;
+    }
     .hero-event-card {
       background: #fff;
       border: 1px solid rgba(0,0,0,0.06);
       border-radius: 1.25rem;
       box-shadow: 0 8px 40px rgba(0,0,0,0.06);
-      padding: 2.25rem;
-      max-width: 360px;
+      padding: 1.75rem;
       width: 100%;
       position: relative;
       transition: transform 0.3s, box-shadow 0.3s;
+      text-decoration: none;
+      display: block;
     }
     .hero-event-card:hover {
       transform: translateY(-4px);
@@ -338,6 +346,9 @@
       background: var(--al-gold-gradient);
       border-radius: 1.25rem 1.25rem 0 0;
     }
+    .hero-event-card--webinar::before {
+      background: linear-gradient(115deg, #0d0d0d 0%, #3a3a3a 50%, #0d0d0d 100%);
+    }
     .hero-event-badge {
       display: inline-block;
       background: var(--al-blush-50);
@@ -348,26 +359,40 @@
       border-radius: 9999px;
       text-transform: uppercase;
       letter-spacing: 0.06em;
-      margin-bottom: 1.25rem;
+      margin-bottom: 1rem;
       border: 1px solid var(--al-blush-200);
+    }
+    .hero-event-badge--dark {
+      background: var(--al-dark);
+      color: var(--al-gold);
+      border-color: rgba(196,159,71,0.3);
     }
     .hero-event-card h3 {
       font-family: var(--font-dm-serif);
-      font-size: 1.375rem;
-      margin-bottom: 0.5rem;
+      font-size: 1.25rem;
+      margin-bottom: 0.375rem;
       color: var(--al-dark);
     }
     .hero-event-card .event-meta {
-      font-size: 0.9375rem;
+      font-size: 0.875rem;
       color: var(--al-gray);
       margin-bottom: 0.25rem;
     }
     .hero-event-card .event-vibe {
-      font-size: 0.875rem;
+      font-size: 0.8125rem;
       color: var(--al-warm-gray);
       font-style: italic;
-      margin-top: 0.75rem;
-      margin-bottom: 1.5rem;
+      margin-top: 0.5rem;
+    }
+    .hero-event-card .card-arrow {
+      position: absolute;
+      top: 1.75rem; right: 1.75rem;
+      color: var(--al-gold);
+      font-size: 1.125rem;
+      transition: transform 0.3s;
+    }
+    .hero-event-card:hover .card-arrow {
+      transform: translateX(3px);
     }
 
     /* TICKER */
@@ -632,21 +657,46 @@
       font-size: 0.625rem;
     }
 
-    /* EVENT TEASER */
-    .event-teaser-inner {
-      display: grid;
-      gap: 3rem;
-      align-items: center;
+    /* EVENT CAROUSEL */
+    .events-carousel-wrap {
+      position: relative;
+    }
+    .events-carousel {
+      display: flex;
+      gap: 1.5rem;
+      overflow-x: auto;
+      scroll-snap-type: x mandatory;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      padding: 0.5rem 0 2rem;
+      scrollbar-width: none;
+    }
+    .events-carousel::-webkit-scrollbar { display: none; }
+
+    .event-slide {
+      flex: 0 0 75%;
+      scroll-snap-align: start;
       background: linear-gradient(135deg, #fff 0%, var(--al-blush-50) 40%, var(--al-gold-light) 100%);
       border-radius: 1.5rem;
       border: 1px solid rgba(0,0,0,0.05);
-      padding: 3.5rem;
+      padding: 2.5rem;
       position: relative;
       overflow: hidden;
+      display: grid;
+      gap: 2.5rem;
+      align-items: center;
+      transition: transform 0.3s, box-shadow 0.3s;
     }
-    @media (min-width: 768px) { .event-teaser-inner { grid-template-columns: 1.3fr 0.7fr; gap: 4rem; padding: 4rem; } }
-    @media (max-width: 640px) { .event-teaser-inner { padding: 2.5rem 1.75rem; } }
-    .event-teaser-inner::before {
+    @media (min-width: 768px) {
+      .event-slide { flex: 0 0 55%; grid-template-columns: 1.3fr 0.7fr; gap: 3rem; padding: 3.5rem; }
+    }
+    @media (min-width: 1024px) {
+      .event-slide { flex: 0 0 48%; }
+    }
+    .event-slide:hover {
+      box-shadow: 0 12px 40px rgba(0,0,0,0.06);
+    }
+    .event-slide::before {
       content: "";
       position: absolute;
       top: -50px; right: -50px;
@@ -669,7 +719,7 @@
       margin-bottom: 1.25rem;
     }
 
-    .event-teaser-inner h2 {
+    .event-slide h2 {
       font-family: var(--font-dm-serif);
       font-size: clamp(1.75rem, 3.5vw, 2.5rem);
       font-weight: 400;
@@ -677,7 +727,7 @@
       color: var(--al-dark);
       margin-bottom: 1rem;
     }
-    .event-teaser-inner .event-desc {
+    .event-slide .event-desc {
       font-size: 1rem;
       color: var(--al-gray);
       line-height: 1.75;
@@ -713,6 +763,44 @@
       font-style: italic;
     }
 
+    .carousel-nav {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+    }
+    .carousel-dot {
+      width: 10px; height: 10px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.12);
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s;
+      padding: 0;
+    }
+    .carousel-dot.active {
+      background: var(--al-gold);
+      width: 28px;
+      border-radius: 5px;
+    }
+    .carousel-arrow {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(0,0,0,0.12);
+      background: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      color: var(--al-dark);
+    }
+    .carousel-arrow:hover {
+      border-color: var(--al-gold);
+      color: var(--al-gold);
+    }
+
     /* FORMAT CARDS */
     .formats-grid {
       display: grid;
@@ -727,10 +815,49 @@
       border-radius: 1rem;
       padding: 2rem;
       transition: transform 0.25s, border-color 0.25s;
+      position: relative;
     }
     .format-card:hover {
       transform: translateY(-3px);
       border-color: rgba(196,159,71,0.4);
+    }
+    .format-card--active {
+      border: none;
+      background: rgba(255,255,255,0.06);
+    }
+    .format-card--active::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: 1rem;
+      padding: 2px;
+      background: linear-gradient(135deg, #e8849a, #d4627d, #c49f47, #f2adb8, #b8445f, #d4bc6a, #e8849a);
+      background-size: 400% 400%;
+      animation: borderPulse 5s ease infinite;
+      -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+    .format-card--active::after {
+      content: "";
+      position: absolute;
+      inset: -1px;
+      border-radius: 1rem;
+      background: linear-gradient(135deg, rgba(232,132,154,0.15), rgba(196,159,71,0.08), rgba(212,98,125,0.12));
+      background-size: 300% 300%;
+      animation: borderPulse 5s ease infinite;
+      z-index: -1;
+      pointer-events: none;
+      filter: blur(8px);
+      opacity: 0.6;
+    }
+    @keyframes borderPulse {
+      0% { background-position: 0% 50%; }
+      25% { background-position: 50% 100%; }
+      50% { background-position: 100% 50%; }
+      75% { background-position: 50% 0%; }
+      100% { background-position: 0% 50%; }
     }
     .format-card .icon {
       width: 44px; height: 44px;
@@ -1072,12 +1199,21 @@
         </div>
       </div>
       <div style="display: flex; justify-content: center; align-items: center;">
-        <div class="hero-event-card">
-          <span class="hero-event-badge">✦ Další akce</span>
-          <h3>AI Ladies Night</h3>
-          <p class="event-meta">27. srpna 2026, Praha</p>
-          <p class="event-vibe">Kulaté stoly, welcome drink, žádné přednášky.</p>
-          <a href="/ai-ladies-night" class="btn-gold" style="font-size:0.8125rem; padding:0.625rem 1.5rem;">Chci vědět víc →</a>
+        <div class="hero-cards">
+          <a href="/ai-ladies-night" class="hero-event-card">
+            <span class="card-arrow">→</span>
+            <span class="hero-event-badge">✦ Naživo · Praha</span>
+            <h3>AI Ladies Night</h3>
+            <p class="event-meta">27. srpna 2026 · 18:00</p>
+            <p class="event-vibe">Kulaté stoly, welcome drink, žádné přednášky.</p>
+          </a>
+          <a href="/webinare" class="hero-event-card hero-event-card--webinar">
+            <span class="card-arrow">→</span>
+            <span class="hero-event-badge hero-event-badge--dark">✦ Online webináře</span>
+            <h3>Webináře AI Ladies</h3>
+            <p class="event-meta">60 min · jedno téma · konkrétní výstup</p>
+            <p class="event-vibe">Nejbližší: 14. 7. a&nbsp;4.&nbsp;8.&nbsp;2026</p>
+          </a>
         </div>
       </div>
     </div>
@@ -1153,32 +1289,93 @@
   </div>
 </section>
 
-<!-- EVENT TEASER -->
+<!-- DALŠÍ AKCE — CAROUSEL -->
 <section class="section-white" style="padding: 5rem 0;">
-  <!-- SVG flowing line -->
   <svg class="svg-deco" style="top: 5%; left: 0; width: 100%; height: 100%;" viewBox="0 0 1200 400" preserveAspectRatio="none">
     <path d="M-20 350 C 200 280, 400 50, 600 200 S 900 380, 1220 120" stroke="var(--al-blush-200)" stroke-width="1.2" stroke-linecap="round" opacity="0.6"/>
   </svg>
   <svg class="svg-deco" style="top: 0; left: 0; width: 100%; height: 100%;" viewBox="0 0 1200 400" preserveAspectRatio="none">
     <path d="M-20 80 C 150 200, 350 350, 600 250 S 950 50, 1220 200" stroke="var(--al-gold)" stroke-width="0.8" stroke-linecap="round" opacity="0.2"/>
   </svg>
-  <div class="deco-gradient-dot" style="top: 20%; right: 10%; animation-delay: 2s;"></div>
   <div class="container">
-    <div class="event-teaser-inner reveal">
-      <div>
-        <span class="event-badge">Další akce</span>
-        <h2>AI Ladies Night —<br><span class="al-text-gold">27. srpna, Praha</span></h2>
-        <p class="event-desc">Žádné přednášky, žádné slidy. Potkáme se u&nbsp;kulatých stolů, dáme si welcome drink a&nbsp;budeme mluvit o&nbsp;tom, <span class="text-highlight">jak AI opravdu používáme</span>, kde narážíme a&nbsp;co nám pomáhá.</p>
-        <a href="/ai-ladies-night" class="btn-primary">Zjistit víc a registrovat se →</a>
-      </div>
-      <div>
-        <div class="event-details-list">
-          <div class="detail-item"><div class="detail-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--al-gold)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><circle cx="12" cy="16" r="1" fill="var(--al-gold)" stroke="none"/></svg></div> Čtvrtek 27. 8. 2026</div>
-          <div class="detail-item"><div class="detail-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--al-gold)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg></div> <a href="https://maps.app.goo.gl/HRQsa5yWiDGmzRTG7" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline;">Space Café, Praha — Anděl</a></div>
-          <div class="detail-item"><div class="detail-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--al-gold)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div> 18:00 – 21:00</div>
-          <div class="detail-item"><div class="detail-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--al-gold)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M8 2v4"/><path d="M16 2v4"/><path d="M17.5 8H19a2 2 0 0 1 2 2v1.5"/><path d="M21 16.5V18a2 2 0 0 1-2 2h-1.5"/><path d="M6.5 20H5a2 2 0 0 1-2-2v-1.5"/><path d="M3 11.5V10a2 2 0 0 1 2-2h1.5"/><circle cx="12" cy="14" r="3"/><path d="M12 11v-1"/></svg></div> Welcome drink v&nbsp;ceně</div>
+    <div class="section-header reveal" style="margin-bottom: 2.5rem;">
+      <span class="al-label">✦ Nejbližší akce</span>
+      <h2>Potkej se s&nbsp;námi <span class="al-text-gold">naživo i&nbsp;online</span></h2>
+    </div>
+  </div>
+
+  <!-- Full-width carousel (breaks out of container) -->
+  <div class="events-carousel-wrap reveal" style="max-width: 100%; padding: 0 clamp(1.25rem, 3vw, 3rem);">
+    <div class="events-carousel" id="eventsCarousel">
+
+        <!-- SLIDE 1: AI Ladies Night -->
+        <div class="event-slide">
+          <div>
+            <span class="event-badge">Naživo · Praha</span>
+            <h2>AI Ladies Night —<br><span class="al-text-gold">27. srpna</span></h2>
+            <p class="event-desc">Žádné přednášky, žádné slidy. Potkáme se u&nbsp;kulatých stolů, dáme si welcome drink a&nbsp;budeme mluvit o&nbsp;tom, <span class="text-highlight">jak AI opravdu používáme</span>.</p>
+            <a href="/ai-ladies-night" class="btn-primary">Chci se registrovat →</a>
+          </div>
+          <div>
+            <div class="event-details-list">
+              <div class="detail-item"><div class="detail-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--al-gold)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div> Středa 27.&nbsp;8.&nbsp;2026</div>
+              <div class="detail-item"><div class="detail-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--al-gold)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg></div> Space Café, Praha</div>
+              <div class="detail-item"><div class="detail-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--al-gold)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div> 18:00 – 21:00</div>
+              <div class="detail-item"><div class="detail-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--al-gold)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 8H19a2 2 0 0 1 2 2v1.5M21 16.5V18a2 2 0 0 1-2 2h-1.5M6.5 20H5a2 2 0 0 1-2-2v-1.5M3 11.5V10a2 2 0 0 1 2-2h1.5"/><circle cx="12" cy="14" r="3"/></svg></div> Welcome drink v&nbsp;ceně</div>
+            </div>
+            <p class="event-micro">Počet míst je omezený.</p>
+          </div>
         </div>
-        <p class="event-micro">Počet míst je omezený, tak neváhej.</p>
+
+        <!-- SLIDE 2: Webinář AI bezpečně -->
+        <div class="event-slide" style="background: linear-gradient(135deg, #fff 0%, #f8f5f0 40%, var(--al-gold-light) 100%);">
+          <div>
+            <span class="event-badge" style="background: var(--al-dark);">Online · Webinář</span>
+            <h2>AI bezpečně a&nbsp;s&nbsp;rozmyslem</h2>
+            <p class="event-desc">Projdeme autorská práva, GDPR i&nbsp;firemní politiky. Srozumitelně, s&nbsp;příklady z&nbsp;praxe a&nbsp;prostorem na&nbsp;tvoje otázky.</p>
+            <a href="/webinar-ai-bezpecne" class="btn-primary">Zjistit víc →</a>
+          </div>
+          <div>
+            <div class="event-details-list">
+              <div class="detail-item"><div class="detail-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--al-gold)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div> Úterý 14.&nbsp;7.&nbsp;2026</div>
+              <div class="detail-item"><div class="detail-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--al-gold)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div> 10:00 – 11:00</div>
+              <div class="detail-item"><div class="detail-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--al-gold)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div> Online (Google Meet)</div>
+              <div class="detail-item"><div class="detail-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--al-gold)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></div> 590 Kč · záznam v&nbsp;ceně</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SLIDE 3: Webinář Asistent na web -->
+        <div class="event-slide" style="background: linear-gradient(135deg, #fff 0%, #f5f8f5 40%, #f0f5ef 100%);">
+          <div>
+            <span class="event-badge" style="background: var(--al-dark);">Online · Webinář</span>
+            <h2>Asistent na&nbsp;web pro&nbsp;tvůj projekt</h2>
+            <p class="event-desc">Postav si AI asistenta na&nbsp;web, který odpovídá na&nbsp;dotazy za&nbsp;tebe. Bez kódu, bez programátorky.</p>
+            <a href="/webinar-asistent-na-web" class="btn-primary">Zjistit víc →</a>
+          </div>
+          <div>
+            <div class="event-details-list">
+              <div class="detail-item"><div class="detail-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--al-gold)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div> Úterý 4.&nbsp;8.&nbsp;2026</div>
+              <div class="detail-item"><div class="detail-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--al-gold)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div> 10:00 – 11:00</div>
+              <div class="detail-item"><div class="detail-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--al-gold)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></div> Online (Google Meet)</div>
+              <div class="detail-item"><div class="detail-icon"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--al-gold)" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg></div> 590 Kč · záznam v&nbsp;ceně</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Carousel navigation -->
+      <div class="carousel-nav">
+        <button class="carousel-arrow" onclick="scrollCarousel(-1)" aria-label="Předchozí">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <button class="carousel-dot active" data-index="0"></button>
+        <button class="carousel-dot" data-index="1"></button>
+        <button class="carousel-dot" data-index="2"></button>
+        <button class="carousel-arrow" onclick="scrollCarousel(1)" aria-label="Další">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
       </div>
     </div>
   </div>
@@ -1193,27 +1390,27 @@
       <p style="color: rgba(255,255,255,0.55);">Offline eventy, online webináře, rozhovory a&nbsp;komunitní hub&nbsp;— abys se s&nbsp;námi mohla potkávat i&nbsp;mezi akcemi.</p>
     </div>
     <div class="formats-grid">
-      <div class="format-card reveal">
+      <a href="/ai-ladies-night" class="format-card format-card--active reveal" style="text-decoration:none;">
         <div class="icon">
           <svg viewBox="0 0 24 24"><path d="M17 8l4 4-4 4M3 12h18"/></svg>
         </div>
-        <span class="tag">27. srpna · Praha · naživo</span>
+        <span class="tag">Naživo · Praha</span>
         <h3>AI Ladies Night</h3>
-        <p>Večerní setkání u kulatých stolů. Sdílení, networking, konkrétní tipy a atmosféra, kde se nemusíš tvářit, že všechno víš.</p>
-      </div>
-      <div class="format-card reveal">
+        <p>Večerní setkání u kulatých stolů. Networking, konkrétní tipy a atmosféra, kde se nemusíš tvářit, že všechno víš.</p>
+      </a>
+      <a href="/webinare" class="format-card format-card--active reveal" style="text-decoration:none;">
         <div class="icon">
           <svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
         </div>
-        <span class="tag">Od 14. července · online</span>
+        <span class="tag">Online · 60 min</span>
         <h3>Webináře</h3>
-        <p>60 minut, jedno téma, jeden konkrétní výstup. Otevřeš nástroj a rovnou si v něm něco nastavíš nebo vytvoříš. Záznam a přepis ti pošleme.</p>
-      </div>
+        <p>Jedno téma, jeden výstup. Otevřeš nástroj a&nbsp;rovnou si v&nbsp;něm něco vytvoříš. Záznam a&nbsp;přepis v&nbsp;ceně.</p>
+      </a>
       <div class="format-card reveal">
         <div class="icon">
           <svg viewBox="0 0 24 24"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2M12 19v4M8 23h8"/></svg>
         </div>
-        <span class="tag">Léto 2026 · rozhovory</span>
+        <span class="tag">Připravujeme</span>
         <h3>Callcast</h3>
         <p>Moderované rozhovory se ženami, které AI reálně používají v práci, podnikání i životě. Upřímné sdílení, co funguje a co ne.</p>
       </div>
@@ -1221,7 +1418,7 @@
         <div class="icon">
           <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg>
         </div>
-        <span class="tag">Připravujeme · online</span>
+        <span class="tag">Připravujeme</span>
         <h3>AI Ladies Hub</h3>
         <p>Místo pro materiály, otázky, kontakty a navázání na akce. Aby komunita nekončila ve chvíli, kdy skončí večer.</p>
       </div>
@@ -1401,6 +1598,46 @@
     }
   }
   typeLoop();
+
+  // Events carousel
+  const carousel = document.getElementById('eventsCarousel');
+  const dots = document.querySelectorAll('.carousel-dot');
+  let currentSlide = 0;
+
+  function scrollCarousel(dir) {
+    const slides = carousel.querySelectorAll('.event-slide');
+    currentSlide = Math.max(0, Math.min(slides.length - 1, currentSlide + dir));
+    slides[currentSlide].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+    updateDots();
+  }
+
+  function updateDots() {
+    dots.forEach((dot, i) => {
+      dot.classList.toggle('active', i === currentSlide);
+    });
+  }
+
+  dots.forEach(dot => {
+    dot.addEventListener('click', () => {
+      currentSlide = Number(dot.dataset.index);
+      const slides = carousel.querySelectorAll('.event-slide');
+      slides[currentSlide].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+      updateDots();
+    });
+  });
+
+  if (carousel) {
+    carousel.addEventListener('scroll', () => {
+      const slides = carousel.querySelectorAll('.event-slide');
+      const scrollLeft = carousel.scrollLeft;
+      const slideWidth = slides[0].offsetWidth + 24;
+      const newIdx = Math.round(scrollLeft / slideWidth);
+      if (newIdx !== currentSlide) {
+        currentSlide = newIdx;
+        updateDots();
+      }
+    });
+  }
 
   // Newsletter form
   const nlForm = document.getElementById('newsletter-form');
