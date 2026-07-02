@@ -11,8 +11,8 @@
 
 **AILadies s.r.o.**
 Sídlo: Všehrdova 447/10, Malá Strana, 118 00 Praha 1
-IČO: [DOPLNIT]
-Zapsaná v obchodním rejstříku vedeném [DOPLNIT — Městský soud v Praze], oddíl [DOPLNIT], vložka [DOPLNIT].
+IČO: 29682185
+Zapsaná v obchodním rejstříku vedeném Městským soudem v Praze, oddíl [DOPLNIT], vložka [DOPLNIT].
 
 **Kontakt ve věcech ochrany osobních údajů:**
 - E-mail: **hello@ailadies.cz** (jednotný kontakt pro všechny záležitosti AI Ladies)

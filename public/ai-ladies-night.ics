@@ -4,12 +4,12 @@ PRODID:-//AI Ladies//Night//CS
 CALSCALE:GREGORIAN
 METHOD:PUBLISH
 BEGIN:VEVENT
-DTSTART:20260617T160000Z
-DTEND:20260617T190000Z
+DTSTART:20260827T160000Z
+DTEND:20260827T190000Z
 SUMMARY:AI Ladies Night
-DESCRIPTION:První večer AI Ladies. Kulaté stoly\, welcome drink\, networking.\n\nhttps://ailadies.cz/ai-ladies-night
-LOCATION:Space Café\, Praha
+DESCRIPTION:Další večer AI Ladies. Kulaté stoly\, welcome drink\, networking.\n\nhttps://ailadies.cz/ai-ladies-night
+LOCATION:Space Café\, Praha — Anděl
 STATUS:CONFIRMED
-UID:ai-ladies-night-2026@ailadies.cz
+UID:ai-ladies-night-aug2026@ailadies.cz
 END:VEVENT
 END:VCALENDAR

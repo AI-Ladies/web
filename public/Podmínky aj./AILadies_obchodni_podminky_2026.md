@@ -17,13 +17,13 @@
 **Poskytovatel služeb:**
 **AILadies s.r.o.**
 Sídlo: Všehrdova 447/10, Malá Strana, 118 00 Praha 1
-IČO: [DOPLNIT]
+IČO: 29682185
 DIČ: [DOPLNIT — pokud bude přiděleno; AI Ladies není ke dni zveřejnění VOP plátcem DPH, ledaže je výslovně uvedeno jinak]
-Zapsaná v obchodním rejstříku vedeném [DOPLNIT — Městský soud v Praze], oddíl [DOPLNIT], vložka [DOPLNIT].
+Zapsaná v obchodním rejstříku vedeném Městským soudem v Praze, oddíl [DOPLNIT], vložka [DOPLNIT].
 
 **Kontaktní údaje:**
 - E-mail (jednotný kontakt pro obchodní záležitosti, reklamace, odstoupení od smlouvy, ochranu osobních údajů a podporu): **hello@ailadies.cz**
-- Telefon: [DOPLNIT]
+- Telefon: +420 605 059 085
 - Web: [https://ailadies.cz](https://ailadies.cz)
 
 **Dozorové orgány:**

@@ -28,10 +28,11 @@ export default async function handler(req, res) {
     // --- Airtable: create registration record ---
     const airtableToken = process.env.AIRTABLE_API_TOKEN;
     const airtableBaseId = process.env.AIRTABLE_BASE_ID;
+    const airtableTable = process.env.AIRTABLE_NIGHT_TABLE || 'Registrace';
 
     if (airtableToken && airtableBaseId) {
       const airtableRes = await fetch(
-        `https://api.airtable.com/v0/${airtableBaseId}/Registrace`,
+        `https://api.airtable.com/v0/${airtableBaseId}/${airtableTable}`,
         {
           method: 'POST',
           headers: {
@@ -66,31 +67,6 @@ export default async function handler(req, res) {
     const brevoNightListId = process.env.BREVO_NIGHT_LIST_ID;
 
     if (brevoKey && brevoNightListId) {
-      const brevoRes = await fetch('https://api.brevo.com/v3/contacts', {
-        method: 'POST',
-        headers: {
-          'api-key': brevoKey,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email,
-          attributes: {
-            FIRSTNAME: fname,
-            LASTNAME: lname,
-            FIELD: field || '',
-            SENIORITY: seniority || '',
-            AI_LEVEL: aiLevel || '',
-          },
-          listIds: [Number(brevoNightListId)],
-          updateEnabled: true,
-        }),
-      });
-
-      if (!brevoRes.ok) {
-        const errData = await brevoRes.json().catch(() => ({}));
-        console.error('Brevo contact error:', errData);
-      }
-
       // --- sklonovani-jmen.cz: get vocative (5th case) of first name ---
       let fname5pad = fname;
       const sklonKey = process.env.SKLONOVANI_API_KEY;
@@ -120,7 +96,33 @@ export default async function handler(req, res) {
         }
       }
 
-      // Brevo template #1: AI Ladies Night confirmation
+      const brevoRes = await fetch('https://api.brevo.com/v3/contacts', {
+        method: 'POST',
+        headers: {
+          'api-key': brevoKey,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email,
+          attributes: {
+            FIRSTNAME: fname,
+            LASTNAME: lname,
+            FIRSTNAME_5PAD: fname5pad,
+            FIELD: field || '',
+            SENIORITY: seniority || '',
+            AI_LEVEL: aiLevel || '',
+          },
+          listIds: [Number(brevoNightListId)],
+          updateEnabled: true,
+        }),
+      });
+
+      if (!brevoRes.ok) {
+        const errData = await brevoRes.json().catch(() => ({}));
+        console.error('Brevo contact error:', errData);
+      }
+
+      const brevoTemplateId = Number(process.env.BREVO_NIGHT_TEMPLATE_ID) || 1;
       await fetch('https://api.brevo.com/v3/smtp/email', {
         method: 'POST',
         headers: {
@@ -129,7 +131,7 @@ export default async function handler(req, res) {
         },
         body: JSON.stringify({
           to: [{ email, name: `${fname} ${lname}` }],
-          templateId: 1,
+          templateId: brevoTemplateId,
           params: { FIRSTNAME: fname, FIRSTNAME_5PAD: fname5pad },
         }),
       });
