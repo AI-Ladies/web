@@ -122,8 +122,12 @@ export default async function handler(req, res) {
       return res.status(200).json({ received: true, note: `no template for ${webinarSlug}` });
     }
   } else {
-    templateId = Number(process.env.BREVO_NIGHT_TEMPLATE_ID) || 1;
+    templateId = Number(process.env.BREVO_NIGHT_TEMPLATE_ID) || 6;
   }
+
+  const sentAttr = webinarSlug
+    ? `CONFIRMATION_SENT_${webinarSlug.replace(/-/g, '_').toUpperCase()}`
+    : 'CONFIRMATION_SENT';
 
   let firstName = '';
   let firstName5pad = '';
@@ -138,6 +142,12 @@ export default async function handler(req, res) {
       const contact = await contactRes.json();
       firstName = contact.attributes?.FIRSTNAME || '';
       firstName5pad = contact.attributes?.FIRSTNAME_5PAD || firstName;
+
+      const sentVal = contact.attributes?.[sentAttr];
+      if (sentVal === true || sentVal === 'true') {
+        console.log(`Webhook: confirmation already sent to ${email} (${sentAttr}), skipping`);
+        return res.status(200).json({ received: true, note: 'already sent' });
+      }
     }
   } catch (err) {
     console.error('Brevo contact lookup error:', err.message);
@@ -199,6 +209,14 @@ export default async function handler(req, res) {
       console.error('Brevo email send error:', errData);
     } else {
       console.log(`Webhook: confirmation sent to ${email} (template ${templateId}, slug: ${webinarSlug || 'night'})`);
+
+      try {
+        await fetch(`https://api.brevo.com/v3/contacts/${encodeURIComponent(email)}`, {
+          method: 'PUT',
+          headers: { 'api-key': brevoKey, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ attributes: { [sentAttr]: true } }),
+        });
+      } catch (_) {}
     }
   } catch (err) {
     console.error('Email send error:', err.message);

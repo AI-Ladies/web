@@ -48,7 +48,8 @@ export default async function handler(req, res) {
     firstName = contact.attributes?.FIRSTNAME || '';
     firstName5pad = contact.attributes?.FIRSTNAME_5PAD || firstName;
 
-    if (contact.attributes?.[sentAttr] === true) {
+    const sentVal = contact.attributes?.[sentAttr];
+    if (sentVal === true || sentVal === 'true') {
       return res.status(200).json({ success: true, note: 'already sent' });
     }
   } catch (err) {
