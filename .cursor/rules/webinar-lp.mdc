@@ -129,8 +129,9 @@ document.cookie = 'al_webinar_slug={slug};path=/;max-age=7200;SameSite=Lax';
 - Pro ruční emaily z Brevo dashboardu: Campaigns → Create → jako příjemce zvol segment (ne list). Segment = filtr na `WEBINAR_SLUG equals {slug}`.
 
 ### Brevo — transactional templates (confirmation emaily)
-- **AI bezpečně:** Template ID **7** (env: `BREVO_TEMPLATE_AI_BEZPECNE`)
-- **Asistent na web:** Template ID **8** (env: `BREVO_TEMPLATE_ASISTENT_NA_WEB`)
+- **AI bezpečně:** Template ID **7**
+- **Asistent na web:** Template ID **8**
+- **DŮLEŽITÉ:** Template IDs jsou **hardcoded přímo v kódu** (`api/send-confirmation.js` a `api/stripe-webhook.js`), NE v env vars! Env vars `BREVO_TEMPLATE_*` se nepoužívají — Vercel je nepropagoval spolehlivě.
 - Šablony žijí lokálně v `emails/webinar-{slug}-confirmation.html` a zároveň v Brevo Transactional → Templates
 - Pokud se mění obsah emailu (datum, link), je třeba updatnout OBOJÍ (lokální soubor + Brevo template)
 - API pro update existující šablony: `PUT https://api.brevo.com/v3/smtp/templates/{id}` s `htmlContent`
@@ -150,25 +151,52 @@ document.cookie = 'al_webinar_slug={slug};path=/;max-age=7200;SameSite=Lax';
 
 ### Confirmation email po platbě
 
-#### Jak to funguje:
-1. Uživatelka zaplatí přes Stripe Payment Link
-2. Stripe pošle webhook `checkout.session.completed` na `/api/stripe-webhook`
-3. Webhook přečte `session.metadata.webinar_slug`
-4. Podle slugu vybere správnou Brevo šablonu (template ID z env var)
-5. Pošle transactional email s params `FIRSTNAME` a `FIRSTNAME_5PAD`
-6. Zároveň updatne status v Airtable na "Zaplaceno"
+#### Jak to funguje (dva kanály, dedup):
+**Primární kanál — TY page (client-side, cookie):**
+1. Uživatelka klikne "Registrovat a zaplatit" na LP
+2. LP nastaví cookies `al_webinar_email` + `al_webinar_slug` (SameSite=Lax)
+3. Přesměrování na Stripe platbu
+4. Po platbě Stripe redirectne na TY page
+5. TY page přečte cookies → zavolá `POST /api/send-confirmation` s `{ email, slug }`
+6. API vybere template podle slugu (hardcoded mapa), pošle email, označí jako odesláno
 
-#### Env vars pro šablony:
-- `BREVO_TEMPLATE_AI_BEZPECNE` — ID šablony v Brevo pro "AI bezpečně"
-- `BREVO_TEMPLATE_ASISTENT_NA_WEB` — ID šablony v Brevo pro "Asistent na web"
-- Formát: `BREVO_TEMPLATE_` + slug CAPS s podtržítky
+**Záložní kanál — Stripe webhook (server-side):**
+1. Stripe pošle webhook `checkout.session.completed` na `/api/stripe-webhook`
+2. Webhook přečte `session.metadata.webinar_slug` + email
+3. Podle slugu vybere šablonu (hardcoded mapa v `getTemplateForSlug()`)
+4. Pošle email + updatne AT status na "Zaplaceno"
 
-#### Jak vytvořit šablonu v Brevo:
+**Deduplication:**
+- Brevo atribut `CONFIRMATION_SENT_{SLUG}` (per webinář) zabrání dvojímu odeslání
+- Oba kanály (TY page i webhook) kontrolují tento atribut před odesláním
+
+#### Jak přidat nový webinář (template):
 1. Vytvoř HTML email lokálně: `emails/webinar-{slug}-confirmation.html`
 2. V Brevo: Transactional → Templates → New Template
 3. Vlož HTML, nastav subject: "Potvrzení registrace — {název webináře}"
 4. Sender: `AI Ladies <hello@ailadies.cz>`
-5. Zapiš si Template ID → přidej na Vercel jako env var
+5. Zapiš si Template ID
+6. **Přidej template ID do kódu** (OBOJÍ soubory!):
+   - `api/send-confirmation.js` → objekt `templates`:
+     ```javascript
+     const templates = {
+       'ai-bezpecne': 7,
+       'asistent-na-web': 8,
+       '{novy-slug}': {noveID},  // ← přidat
+     };
+     ```
+   - `api/stripe-webhook.js` → funkce `getTemplateForSlug()`:
+     ```javascript
+     function getTemplateForSlug(slug) {
+       const templates = {
+         'ai-bezpecne': 7,
+         'asistent-na-web': 8,
+         '{novy-slug}': {noveID},  // ← přidat
+       };
+       return templates[slug] || null;
+     }
+     ```
+7. Deploy (`git push`) — hotovo, env vars nejsou potřeba
 
 #### Obsah confirmation emailu (per webinář):
 - Heading: `{{ params.FIRSTNAME_5PAD }}, platba proběhla!`
@@ -190,11 +218,11 @@ document.cookie = 'al_webinar_slug={slug};path=/;max-age=7200;SameSite=Lax';
 
 ### Vercel env vars potřebné
 - `AIRTABLE_API_TOKEN`, `AIRTABLE_BASE_ID`
-- `BREVO_API_KEY`, `BREVO_WEBINAR_LIST_ID` (= 8)
+- `BREVO_API_KEY`, `BREVO_WEBINAR_LIST_ID` (= 8), `BREVO_NIGHT_TEMPLATE_ID` (= 6)
 - `SKLONOVANI_API_KEY`
 - `STRIPE_WEBHOOK_SECRET` — signing secret z Stripe webhook endpointu
 - `STRIPE_LINK_AI_BEZPECNE`, `STRIPE_LINK_ASISTENT_NA_WEB` (atd. per webinář)
-- `BREVO_TEMPLATE_AI_BEZPECNE`, `BREVO_TEMPLATE_ASISTENT_NA_WEB` (atd. per webinář — ID šablon)
+- ~~`BREVO_TEMPLATE_*`~~ — **NEPOUŽÍVAT!** Template IDs jsou hardcoded v kódu (spolehlivější)
 
 ### Jak přidat Stripe env var na Vercel:
 ```bash
@@ -350,11 +378,13 @@ npx vercel env add STRIPE_LINK_{SLUG} production <<< "https://buy.stripe.com/XXX
 ### Confirmation email:
 16. Vytvořit `emails/webinar-{slug}-confirmation.html` (zkopírovat existující, upravit název, datum, Meet link, kalendáře)
 17. Nahrát HTML do Brevo jako transactional template → zaznamenat Template ID
-18. Na Vercel: `npx vercel env add BREVO_TEMPLATE_{SLUG} production <<< "{templateId}"`
-19. V `api/stripe-webhook.js` → přidat slug do `getTemplateForSlug()`:
+18. **Hardcoded v kódu** — přidat nový slug + template ID do OBOU souborů:
+    - `api/send-confirmation.js` → objekt `templates`
+    - `api/stripe-webhook.js` → funkce `getTemplateForSlug()`
     ```javascript
-    '{slug}': Number(process.env.BREVO_TEMPLATE_{SLUG}) || null,
+    '{slug}': {templateId},
     ```
+19. Deploy (`git push origin main`) — hotovo
 
 ### Propojení s webinare.html:
 20. **Přidat kartičku na `/webinare.html`** — POVINNÉ, jinak se na LP nikdo nedostane!

@@ -194,8 +194,14 @@ TY page musí automaticky odeslat confirmation email po loadu. Používáme cook
 ### Jak to funguje:
 1. LP nastaví cookie před Stripe redirectem (SameSite=Lax přežije top-level navigaci)
 2. Po platbě Stripe redirectne na TY page
-3. TY page přečte cookie → zavolá API → smaže cookie
-4. Stripe webhook funguje jako backup (server-to-server, s dedup přes CONFIRMATION_SENT)
+3. TY page přečte cookie → zavolá `POST /api/send-confirmation` s `{ email, slug }` → smaže cookie
+4. API vybere Brevo template podle slugu (hardcoded mapa v kódu, NE env vars!)
+5. Stripe webhook funguje jako backup (server-to-server, s dedup přes `CONFIRMATION_SENT_{SLUG}`)
+
+### Template IDs (hardcoded v `api/send-confirmation.js` a `api/stripe-webhook.js`):
+- `ai-bezpecne` → Template ID **7**
+- `asistent-na-web` → Template ID **8**
+- Pro nový webinář: přidat řádek `'{slug}': {id}` do obou souborů a deploynout
 
 ### Povinný script na KAŽDÉ TY page (před `</body>`):
 ```javascript
