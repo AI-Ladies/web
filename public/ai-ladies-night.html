@@ -943,7 +943,7 @@
           });
         }
         regBtn.textContent = 'Přesměrovávám na platbu…';
-        try { localStorage.setItem('al_night_email', data.email); } catch (_) {}
+        document.cookie = 'al_night_email=' + encodeURIComponent(data.email) + ';path=/;max-age=7200;SameSite=Lax';
         const stripeUrl = 'https://buy.stripe.com/cNieVe3oO7mvbdf1yhes000'
           + '?prefilled_email=' + encodeURIComponent(data.email);
         window.location.href = stripeUrl;

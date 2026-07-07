@@ -367,9 +367,10 @@
 <script>
   (function sendConfirmation() {
     try {
-      const email = localStorage.getItem('al_night_email');
-      if (!email) return;
-      localStorage.removeItem('al_night_email');
+      const match = document.cookie.match(/(?:^|;\s*)al_night_email=([^;]+)/);
+      if (!match) return;
+      const email = decodeURIComponent(match[1]);
+      document.cookie = 'al_night_email=;path=/;max-age=0';
       fetch('/api/send-confirmation', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
