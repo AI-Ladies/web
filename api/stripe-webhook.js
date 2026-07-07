@@ -11,12 +11,33 @@ async function getRawBody(req) {
 }
 
 function verifySignature(payload, sigHeader, secret) {
-  const parts = Object.fromEntries(
-    sigHeader.split(',').map(p => { const [k, v] = p.split('='); return [k, v]; })
-  );
-  const signed = `${parts.t}.${payload}`;
+  const elements = sigHeader.split(',');
+  let timestamp = null;
+  let signatures = [];
+
+  for (const element of elements) {
+    const [prefix, value] = element.trim().split('=', 2);
+    if (prefix === 't') timestamp = value;
+    if (prefix === 'v1') signatures.push(value);
+  }
+
+  if (!timestamp || signatures.length === 0) {
+    throw new Error('Invalid signature header format');
+  }
+
+  const signed = `${timestamp}.${payload}`;
   const expected = crypto.createHmac('sha256', secret).update(signed).digest('hex');
-  return crypto.timingSafeEqual(Buffer.from(parts.v1, 'hex'), Buffer.from(expected, 'hex'));
+
+  return signatures.some(sig => {
+    try {
+      return crypto.timingSafeEqual(
+        Buffer.from(sig, 'utf8'),
+        Buffer.from(expected, 'utf8')
+      );
+    } catch {
+      return false;
+    }
+  });
 }
 
 function getTemplateForSlug(slug) {
@@ -38,23 +59,39 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Webhook not configured' });
   }
 
-  const rawBody = await getRawBody(req);
-  const sig = req.headers['stripe-signature'];
+  let rawBody;
+  try {
+    rawBody = await getRawBody(req);
+  } catch (err) {
+    console.error('Failed to read request body:', err.message);
+    return res.status(400).json({ error: 'Could not read body' });
+  }
 
+  const sig = req.headers['stripe-signature'];
   if (!sig) {
+    console.error('Missing stripe-signature header');
     return res.status(400).json({ error: 'Missing stripe-signature header' });
   }
 
+  const bodyStr = rawBody.toString('utf8');
+
   try {
-    if (!verifySignature(rawBody.toString('utf8'), sig, webhookSecret)) {
+    if (!verifySignature(bodyStr, sig, webhookSecret)) {
+      console.error('Signature mismatch - check STRIPE_WEBHOOK_SECRET');
       return res.status(400).json({ error: 'Invalid signature' });
     }
   } catch (err) {
-    console.error('Signature verification failed:', err.message);
-    return res.status(400).json({ error: 'Invalid signature' });
+    console.error('Signature verification error:', err.message);
+    return res.status(400).json({ error: 'Signature verification failed' });
   }
 
-  const event = JSON.parse(rawBody.toString('utf8'));
+  let event;
+  try {
+    event = JSON.parse(bodyStr);
+  } catch (err) {
+    console.error('Invalid JSON body:', err.message);
+    return res.status(400).json({ error: 'Invalid JSON' });
+  }
 
   if (event.type !== 'checkout.session.completed') {
     return res.status(200).json({ received: true });
@@ -74,14 +111,13 @@ export default async function handler(req, res) {
     return res.status(200).json({ received: true, note: 'brevo not configured' });
   }
 
-  // Determine which product was paid: webinar (metadata) or Night (fallback)
   const webinarSlug = session.metadata?.webinar_slug;
   let templateId;
 
   if (webinarSlug) {
     templateId = getTemplateForSlug(webinarSlug);
     if (!templateId) {
-      console.error(`No Brevo template configured for webinar: ${webinarSlug}`);
+      console.error(`No Brevo template for webinar slug: ${webinarSlug}`);
       return res.status(200).json({ received: true, note: `no template for ${webinarSlug}` });
     }
   } else {
@@ -112,7 +148,7 @@ export default async function handler(req, res) {
     firstName5pad = firstName;
   }
 
-  // Update Airtable status to "Zaplaceno" if webinar registration
+  // Update Airtable status to "Zaplaceno"
   if (webinarSlug) {
     try {
       const airtableToken = process.env.AIRTABLE_API_TOKEN;
@@ -145,7 +181,7 @@ export default async function handler(req, res) {
     }
   }
 
-  // Send confirmation email via Brevo transactional template
+  // Send confirmation email (webhook is backup — cookie approach on TY page is primary)
   try {
     const emailRes = await fetch('https://api.brevo.com/v3/smtp/email', {
       method: 'POST',
@@ -161,7 +197,7 @@ export default async function handler(req, res) {
       const errData = await emailRes.json().catch(() => ({}));
       console.error('Brevo email send error:', errData);
     } else {
-      console.log(`Confirmation email sent to ${email} (template ${templateId}, slug: ${webinarSlug || 'night'})`);
+      console.log(`Webhook: confirmation sent to ${email} (template ${templateId}, slug: ${webinarSlug || 'night'})`);
     }
   } catch (err) {
     console.error('Email send error:', err.message);
