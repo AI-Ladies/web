@@ -42,8 +42,8 @@ function verifySignature(payload, sigHeader, secret) {
 
 function getTemplateForSlug(slug) {
   const templates = {
-    'ai-bezpecne': Number(process.env.BREVO_TEMPLATE_AI_BEZPECNE) || null,
-    'asistent-na-web': Number(process.env.BREVO_TEMPLATE_ASISTENT_NA_WEB) || null,
+    'ai-bezpecne': 7,
+    'asistent-na-web': 8,
   };
   return templates[slug] || null;
 }

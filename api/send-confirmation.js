@@ -11,15 +11,14 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Not configured' });
   }
 
-  // Select template based on slug
+  // Template IDs in Brevo (hardcoded — not secrets, just IDs)
   const templates = {
-    'ai-bezpecne': Number(process.env.BREVO_TEMPLATE_AI_BEZPECNE) || null,
-    'asistent-na-web': Number(process.env.BREVO_TEMPLATE_ASISTENT_NA_WEB) || null,
+    'ai-bezpecne': 7,
+    'asistent-na-web': 8,
   };
+  const nightTemplateId = Number(process.env.BREVO_NIGHT_TEMPLATE_ID) || 6;
 
-  const templateId = slug
-    ? templates[slug]
-    : (Number(process.env.BREVO_NIGHT_TEMPLATE_ID) || 6);
+  const templateId = slug ? templates[slug] : nightTemplateId;
 
   if (!templateId) {
     console.error(`No template found for slug: ${slug}`);
