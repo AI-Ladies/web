@@ -187,6 +187,43 @@ npx vercel env add STRIPE_LINK_{SLUG} production <<< "https://buy.stripe.com/XXX
 ### Aktuální Stripe links:
 - `STRIPE_LINK_AI_BEZPECNE` = `https://buy.stripe.com/cNi5kEbVk22bchj1yhes001`
 
+## Confirmation email — cookie trigger (POVINNÉ!)
+
+TY page musí automaticky odeslat confirmation email po loadu. Používáme cookie mechanismus (Safari ITP smaže localStorage při cross-domain redirectu přes Stripe).
+
+### Jak to funguje:
+1. LP nastaví cookie před Stripe redirectem (SameSite=Lax přežije top-level navigaci)
+2. Po platbě Stripe redirectne na TY page
+3. TY page přečte cookie → zavolá API → smaže cookie
+4. Stripe webhook funguje jako backup (server-to-server, s dedup přes CONFIRMATION_SENT)
+
+### Povinný script na KAŽDÉ TY page (před `</body>`):
+```javascript
+(function sendConfirmation() {
+  try {
+    const emailMatch = document.cookie.match(/(?:^|;\s*)al_webinar_email=([^;]+)/);
+    const slugMatch = document.cookie.match(/(?:^|;\s*)al_webinar_slug=([^;]+)/);
+    if (!emailMatch) return;
+    const email = decodeURIComponent(emailMatch[1]);
+    const slug = slugMatch ? decodeURIComponent(slugMatch[1]) : '{slug-tohoto-webinare}';
+    document.cookie = 'al_webinar_email=;path=/;max-age=0';
+    document.cookie = 'al_webinar_slug=;path=/;max-age=0';
+    fetch('/api/send-confirmation', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, slug }),
+    }).catch(() => {});
+  } catch (_) {}
+})();
+```
+
+### Na co dát pozor:
+- Script MUSÍ být hned na začátku `<script>` bloku (před calendar funkcemi)
+- Default slug v fallbacku = slug konkrétního webináře dané TY page
+- Cookie jména: `al_webinar_email`, `al_webinar_slug` (sdílené pro všechny webináře)
+- Dedup: API kontroluje `CONFIRMATION_SENT` atribut v Brevo — nepošle dvakrát
+- Pokud cookie chybí (uživatel přišel přímo na URL), script nic neudělá — webhook se postará
+
 ## Sirotky a vdovy
 
 Stejná pravidla jako pro LP — `&nbsp;` za jednopísmenné předložky a spojky (v, s, k, z, u, o, a, i, na, ke, ze, do, od, po, pro, při, přes, bez).
@@ -216,10 +253,13 @@ Stejná pravidla jako pro LP — `&nbsp;` za jednopísmenné předložky a spojk
    - Google Calendar link — správné UTC časy + Meet link
    - Outlook link — správné lokální časy + Meet link
    - Apple Calendar JS — správné UTC časy + Meet link + UID
-4. Zkontroluj den v týdnu (ověřit!)
-5. Zkontroluj sirotky/vdovy
-6. Na Stripe: nastavit redirect po platbě na TY page URL
-7. Otestovat všechny 3 kalendářové buttony
+4. **Confirmation email script** — ověřit, že je `sendConfirmation()` na začátku `<script>` s default slugem tohoto webináře
+5. Zkontroluj den v týdnu (ověřit!)
+6. Zkontroluj sirotky/vdovy
+7. Na Stripe: nastavit redirect po platbě na TY page URL
+8. **Na LP**: ověřit, že před Stripe redirectem se nastavují cookies `al_webinar_email` + `al_webinar_slug`
+9. Otestovat všechny 3 kalendářové buttony
+10. **E2E test**: registrace → Stripe (test mode) → TY page → ověřit, že přišel confirmation email
 
 ## Referenční šablona
 

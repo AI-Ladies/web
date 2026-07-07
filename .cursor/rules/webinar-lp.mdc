@@ -69,8 +69,46 @@ Uložit do `public/img/webinar-{slug}-1.png` a `webinar-{slug}-2.png`.
    - Vytvoří záznam v **Airtable** tabulce "Registrace webináře"
    - Přidá/updatne kontakt v **Brevo** (list + atributy)
    - Vrátí Stripe payment link
-4. Frontend přesměruje na Stripe platbu (prefilled email)
-5. Po zaplacení Stripe webhook (TBD) updatne status v AT na "Zaplaceno"
+4. **Frontend PŘED redirectem na Stripe:**
+   - Nastaví cookie `al_webinar_email` (email, SameSite=Lax, max-age=7200, path=/)
+   - Nastaví cookie `al_webinar_slug` (slug webináře, SameSite=Lax, max-age=7200, path=/)
+   - Přesměruje na Stripe platbu (prefilled email)
+5. Po zaplacení Stripe redirectne na TY page
+6. **TY page IHNED po loadu:**
+   - Přečte cookies `al_webinar_email` + `al_webinar_slug`
+   - Zavolá `POST /api/send-confirmation` s `{ email, slug }`
+   - Smaže cookies (max-age=0)
+7. API pošle confirmation email (správný Brevo template podle slugu)
+8. Stripe webhook (backup) — také pošle email + updatne AT status na "Zaplaceno"
+9. Dedup: atribut `CONFIRMATION_SENT` v Brevo zabrání dvojímu odeslání
+
+### DŮLEŽITÉ — Cookie mechanismus (Safari ITP fix):
+- **PROČ:** localStorage se při přechodu přes buy.stripe.com smaže (Safari ITP, striktní privacy)
+- **ŘEŠENÍ:** Cookie s `SameSite=Lax` přežije top-level navigation redirect (Stripe → ailadies.cz)
+- **KÓDOVÝ VZOR na LP (před redirectem na Stripe):**
+```javascript
+document.cookie = 'al_webinar_email=' + encodeURIComponent(data.email) + ';path=/;max-age=7200;SameSite=Lax';
+document.cookie = 'al_webinar_slug={slug};path=/;max-age=7200;SameSite=Lax';
+```
+- **KÓDOVÝ VZOR na TY page (v `<script>` na konci):**
+```javascript
+(function sendConfirmation() {
+  try {
+    const emailMatch = document.cookie.match(/(?:^|;\s*)al_webinar_email=([^;]+)/);
+    const slugMatch = document.cookie.match(/(?:^|;\s*)al_webinar_slug=([^;]+)/);
+    if (!emailMatch) return;
+    const email = decodeURIComponent(emailMatch[1]);
+    const slug = slugMatch ? decodeURIComponent(slugMatch[1]) : '{default-slug}';
+    document.cookie = 'al_webinar_email=;path=/;max-age=0';
+    document.cookie = 'al_webinar_slug=;path=/;max-age=0';
+    fetch('/api/send-confirmation', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, slug }),
+    }).catch(() => {});
+  } catch (_) {}
+})();
+```
 
 ### Airtable — registrace
 - **Tabulka:** "Registrace webináře" (`tblRT1uYawygbVGio`)
