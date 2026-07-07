@@ -375,6 +375,56 @@
       line-height: 1.7;
     }
 
+    .newsletter-form {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    .newsletter-form input[type="email"] {
+      flex: 1;
+      min-width: 200px;
+      padding: 0.875rem 1.25rem;
+      border: 1.5px solid rgba(255,255,255,0.15);
+      border-radius: 50px;
+      font-size: 0.9375rem;
+      font-family: var(--font-dm-sans), sans-serif;
+      outline: none;
+      transition: border-color 0.2s;
+      background: rgba(255,255,255,0.06);
+      color: #fff;
+    }
+    .newsletter-form input[type="email"]::placeholder { color: rgba(255,255,255,0.35); }
+    .newsletter-form input[type="email"]:focus { border-color: var(--al-gold); }
+    .newsletter-consent {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.5rem;
+      margin-top: 1rem;
+      font-size: 0.8125rem;
+      color: rgba(255,255,255,0.55);
+      text-align: left;
+      max-width: 420px;
+      margin-left: auto;
+      margin-right: auto;
+      cursor: pointer;
+    }
+    .newsletter-consent input[type="checkbox"] {
+      margin-top: 0.2em;
+      width: 1rem;
+      height: 1rem;
+      flex-shrink: 0;
+      accent-color: var(--al-gold);
+    }
+    .newsletter-consent a { color: var(--al-gold); text-decoration: underline; }
+    .newsletter-micro {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.3);
+      margin-top: 0.75rem;
+    }
+
     /* FOOTER */
     footer { background: var(--al-dark); padding: 3rem 0 2rem; border-top: 1px solid rgba(255,255,255,0.06); }
     .footer-inner { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; }
@@ -573,14 +623,22 @@
   </div>
 </section>
 
-<!-- CTA -->
+<!-- CTA / NEWSLETTER -->
 <section class="cta-section">
   <div class="deco-ring" style="width:250px;height:250px;top:-60px;right:-40px;border-color:rgba(196,159,71,0.12);"></div>
   <div class="deco-ring" style="width:180px;height:180px;bottom:-30px;left:-30px;border-color:rgba(253,236,239,0.1);animation-delay:-8s;"></div>
   <div class="container reveal">
     <h2>Nechceš nic <span class="al-text-gold">propásnout?</span></h2>
     <p>Přihlas se k&nbsp;newsletteru. Pošleme ti pozvánky na další webináře a&nbsp;zákulisní novinky z&nbsp;AI Ladies.</p>
-    <a href="/#newsletter" class="btn-gold" style="padding:0.875rem 2.25rem;font-size:0.9375rem;">Přihlásit se k&nbsp;newsletteru →</a>
+    <form id="newsletter-form" class="newsletter-form" onsubmit="return false;">
+      <input type="email" id="nl-email" placeholder="Tvůj e-mail" aria-label="E-mailová adresa" required>
+      <button class="btn-gold" type="submit" id="nl-btn" style="padding:0.875rem 2.25rem;font-size:0.9375rem;">Přihlásit se</button>
+    </form>
+    <label class="newsletter-consent">
+      <input type="checkbox" id="nl-consent" required>
+      <span>Souhlasím se zasíláním marketingových sdělení od AI Ladies s.r.o. a beru na vědomí <a href="/ochrana-osobnich-udaju">zásady ochrany osobních údajů</a>.</span>
+    </label>
+    <p class="newsletter-micro" id="nl-message">Odhlásit se můžeš kdykoli jedním klikem.</p>
   </div>
 </section>
 
@@ -611,6 +669,51 @@
     });
   }, { threshold: 0.1 });
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Newsletter form
+  const nlForm = document.getElementById('newsletter-form');
+  const nlBtn = document.getElementById('nl-btn');
+  const nlEmail = document.getElementById('nl-email');
+  const nlConsent = document.getElementById('nl-consent');
+  const nlMessage = document.getElementById('nl-message');
+
+  nlForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = nlEmail.value.trim();
+    if (!email) return;
+    if (!nlConsent.checked) {
+      nlMessage.textContent = 'Potvrď prosím souhlas se zasíláním.';
+      nlMessage.style.color = 'var(--al-blush-400)';
+      return;
+    }
+    nlBtn.disabled = true;
+    nlBtn.textContent = 'Odesílám…';
+    try {
+      const res = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, consent: true }),
+      });
+      const result = await res.json();
+      if (result.success) {
+        nlForm.innerHTML = '<p style="color: var(--al-gold); font-weight: 600; font-size: 1rem;">✦ Díky! Jsi přihlášená.</p>';
+        nlMessage.textContent = result.alreadySubscribed
+          ? 'Tento e-mail už máme. Nic se neděje, novinky ti chodí.'
+          : 'Potvrzení ti přijde na e-mail.';
+        nlMessage.style.color = 'rgba(255,255,255,0.4)';
+      } else {
+        nlMessage.textContent = result.error || 'Něco se pokazilo. Zkus to znovu.';
+        nlMessage.style.color = 'var(--al-blush-400)';
+        nlBtn.disabled = false;
+        nlBtn.textContent = 'Přihlásit se';
+      }
+    } catch {
+      nlMessage.textContent = 'Nepodařilo se odeslat. Zkontroluj připojení.';
+      nlMessage.style.color = 'var(--al-blush-400)';
+      nlBtn.disabled = false;
+      nlBtn.textContent = 'Přihlásit se';
+    }
+  });
 </script>
 
 </body>
