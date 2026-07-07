@@ -11,9 +11,28 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Not configured' });
   }
 
+  // Select template based on slug
+  const templates = {
+    'ai-bezpecne': Number(process.env.BREVO_TEMPLATE_AI_BEZPECNE) || null,
+    'asistent-na-web': Number(process.env.BREVO_TEMPLATE_ASISTENT_NA_WEB) || null,
+  };
+
+  const templateId = slug
+    ? templates[slug]
+    : (Number(process.env.BREVO_NIGHT_TEMPLATE_ID) || 6);
+
+  if (!templateId) {
+    console.error(`No template found for slug: ${slug}`);
+    return res.status(400).json({ error: `Unknown slug: ${slug}` });
+  }
+
+  // Dedup key is per-slug (CONFIRMATION_SENT for Night, CONFIRMATION_SENT_{SLUG} for webinars)
+  const sentAttr = slug
+    ? `CONFIRMATION_SENT_${slug.replace(/-/g, '_').toUpperCase()}`
+    : 'CONFIRMATION_SENT';
+
   let firstName = '';
   let firstName5pad = '';
-  let alreadySent = false;
 
   try {
     const contactRes = await fetch(
@@ -28,22 +47,14 @@ export default async function handler(req, res) {
     const contact = await contactRes.json();
     firstName = contact.attributes?.FIRSTNAME || '';
     firstName5pad = contact.attributes?.FIRSTNAME_5PAD || firstName;
-    alreadySent = contact.attributes?.CONFIRMATION_SENT === true;
+
+    if (contact.attributes?.[sentAttr] === true) {
+      return res.status(200).json({ success: true, note: 'already sent' });
+    }
   } catch (err) {
     console.error('Brevo contact lookup error:', err.message);
     return res.status(500).json({ error: 'Lookup failed' });
   }
-
-  if (alreadySent) {
-    return res.status(200).json({ success: true, note: 'already sent' });
-  }
-
-  // Select template based on slug (webinar) or default to Night
-  const templates = {
-    'ai-bezpecne': Number(process.env.BREVO_TEMPLATE_AI_BEZPECNE) || null,
-    'asistent-na-web': Number(process.env.BREVO_TEMPLATE_ASISTENT_NA_WEB) || null,
-  };
-  const templateId = (slug && templates[slug]) || Number(process.env.BREVO_NIGHT_TEMPLATE_ID) || 6;
 
   try {
     const emailRes = await fetch('https://api.brevo.com/v3/smtp/email', {
@@ -66,11 +77,12 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: 'Send failed' });
   }
 
+  // Mark as sent (per-slug dedup)
   try {
     await fetch(`https://api.brevo.com/v3/contacts/${encodeURIComponent(email)}`, {
       method: 'PUT',
       headers: { 'api-key': brevoKey, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ attributes: { CONFIRMATION_SENT: true } }),
+      body: JSON.stringify({ attributes: { [sentAttr]: true } }),
     });
   } catch (_) {}
 
