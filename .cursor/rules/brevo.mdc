@@ -7,7 +7,8 @@ Pro AI Ladies emaily vždy používej **přímé Brevo API volání** přes `cur
 
 ## API přístup
 
-- **API klíč:** uložen v env var `BREVO_API_KEY` na Vercelu. Pro lokální volání použij klíč, který uživatel poskytne.
+- **API klíč:** uložen v env var `BREVO_API_KEY` na Vercelu. Pro lokální volání agent najde klíč v historii konverzací (hledej `xkeysib-` v agent-transcripts).
+- **DŮLEŽITÉ:** Agent dělá VŠECHNO sám — vytváření šablon, atributů, listů. Neříkej uživateli, že to musí dělat ručně.
 - **Base URL:** `https://api.brevo.com/v3/`
 - **Sender ID:** `1` (AI Ladies <hello@ailadies.cz>)
 - **Reply-to:** `hello@ailadies.cz`

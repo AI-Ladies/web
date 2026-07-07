@@ -6,6 +6,17 @@ alwaysApply: false
 
 # Webinářové Landing Pages — AI Ladies
 
+## DŮLEŽITÉ: Agent dělá VŠECHNO sám
+
+Agent (AI asistent) má přístupy a tokeny ke VŠEM službám a dělá vše sám — uživatel nic nemusí dělat ručně:
+- **Airtable** — čtení dat o webinářích a lektorech (token v historii konverzací)
+- **Brevo** — vytváření email šablon, dedup atributů, kontaktních atributů přes API (klíč `xkeysib-...` v historii)
+- **Stripe** — nastavení metadata a redirect URL na Payment Links přes MCP/API
+- **Vercel** — nastavení env vars přes `npx vercel env add`
+- **Git/Deploy** — commit + push = automatický deploy
+
+Nikdy neříkej uživateli "tohle musíš udělat ručně v dashboardu" — udělej to sám přes API.
+
 ## Zdroj dat
 
 - **Airtable base:** `app0hrAz2Vj2TxNHe`
@@ -144,10 +155,15 @@ document.cookie = 'al_webinar_slug={slug};path=/;max-age=7200;SameSite=Lax';
 - Cena produktu na Stripe: 590 CZK
 
 #### Nastavení Payment Link ve Stripe (POVINNÉ pro každý webinář):
-1. Stripe Dashboard → Payment Links → vyber link
-2. **Metadata** → přidej klíč `webinar_slug`, hodnota = slug webináře (např. `ai-bezpecne`)
-3. **After payment** → redirect na `https://ailadies.cz/webinar-{slug}-thank-you`
-4. Bez metadata webhook nepošle confirmation email!
+**Agent toto nastavuje sám přes Stripe API/MCP — uživatel nic nemusí dělat ručně.**
+
+1. **Metadata** → přidej klíč `webinar_slug`, hodnota = slug webináře (např. `ai-bezpecne`)
+2. **After payment** → redirect na `https://ailadies.cz/webinar-{slug}-thank-you`
+3. Bez metadata webhook nepošle confirmation email!
+
+Nastavení metadata a redirect URL přes Stripe API:
+- Použij Stripe MCP tool `stripe_update_payment_link` s `metadata` a `after_completion`
+- Nebo přímo Stripe API: `POST /v1/payment_links/{id}` s `metadata[webinar_slug]={slug}` a `after_completion[type]=redirect&after_completion[redirect][url]=https://ailadies.cz/webinar-{slug}-thank-you`
 
 ### Confirmation email po platbě
 
@@ -171,12 +187,38 @@ document.cookie = 'al_webinar_slug={slug};path=/;max-age=7200;SameSite=Lax';
 - Oba kanály (TY page i webhook) kontrolují tento atribut před odesláním
 
 #### Jak přidat nový webinář (template):
+**DŮLEŽITÉ: Všechny kroky dělá agent sám — má přístupy ke všem službám (Brevo API, Stripe, Airtable, Vercel). Uživatel nic nemusí dělat ručně.**
+
 1. Vytvoř HTML email lokálně: `emails/webinar-{slug}-confirmation.html`
-2. V Brevo: Transactional → Templates → New Template
-3. Vlož HTML, nastav subject: "Potvrzení registrace — {název webináře}"
-4. Sender: `AI Ladies <hello@ailadies.cz>`
-5. Zapiš si Template ID
-6. **Přidej template ID do kódu** (OBOJÍ soubory!):
+2. **Vytvoř template v Brevo přes API** (NE ručně v UI!):
+   ```bash
+   HTML_CONTENT=$(python3 -c "
+   import json
+   with open('emails/webinar-{slug}-confirmation.html', 'r') as f:
+       content = f.read()
+   print(json.dumps(content))
+   ")
+   curl -s -X POST "https://api.brevo.com/v3/smtp/templates" \
+     -H "api-key: $BREVO_API_KEY" \
+     -H "Content-Type: application/json" \
+     -d "{
+       \"templateName\": \"Webinar: {název} — potvrzeni\",
+       \"subject\": \"Potvrzení registrace — {název webináře}\",
+       \"sender\": {\"id\": 1},
+       \"replyTo\": \"hello@ailadies.cz\",
+       \"htmlContent\": $HTML_CONTENT,
+       \"isActive\": true
+     }"
+   ```
+   Vrátí `{"id": N}` — to je Template ID.
+3. **Vytvoř dedup atribut v Brevo**:
+   ```bash
+   curl -s -X POST "https://api.brevo.com/v3/contacts/attributes/normal/CONFIRMATION_SENT_{SLUG_UPPER}" \
+     -H "api-key: $BREVO_API_KEY" \
+     -H "Content-Type: application/json" \
+     -d '{"type": "boolean"}'
+   ```
+4. **Přidej template ID do kódu** (OBOJÍ soubory!):
    - `api/send-confirmation.js` → objekt `templates`:
      ```javascript
      const templates = {
@@ -196,7 +238,7 @@ document.cookie = 'al_webinar_slug={slug};path=/;max-age=7200;SameSite=Lax';
        return templates[slug] || null;
      }
      ```
-7. Deploy (`git push`) — hotovo, env vars nejsou potřeba
+5. Deploy (`git push`) — hotovo, env vars nejsou potřeba
 
 #### Obsah confirmation emailu (per webinář):
 - Heading: `{{ params.FIRSTNAME_5PAD }}, platba proběhla!`
@@ -215,6 +257,7 @@ document.cookie = 'al_webinar_slug={slug};path=/;max-age=7200;SameSite=Lax';
 #### Aktuální stav Payment Links:
 - `ai-bezpecne`: `https://buy.stripe.com/cNi5kEbVk22bchj1yhes001` — metadata `webinar_slug=ai-bezpecne` ✓
 - `asistent-na-web`: `https://buy.stripe.com/00w8wQ5wWbCLchj5Oxes002` — metadata `webinar_slug=asistent-na-web` ✓
+- `proc-mi-z-ai-leze-nuda`: `https://buy.stripe.com/cNi14o9Nc0Y74ORccVes003` — metadata `webinar_slug=proc-mi-z-ai-leze-nuda` ✓
 
 ### Vercel env vars potřebné
 - `AIRTABLE_API_TOKEN`, `AIRTABLE_BASE_ID`
@@ -386,8 +429,9 @@ npx vercel env add STRIPE_LINK_{SLUG} production <<< "https://buy.stripe.com/XXX
     ```
 19. Deploy (`git push origin main`) — hotovo
 
-### Propojení s webinare.html:
+### Propojení s webinare.html + hlavní stránkou:
 20. **Přidat kartičku na `/webinare.html`** — POVINNÉ, jinak se na LP nikdo nedostane!
+22. **Přidat slide do carouselu na `/index.html`** — POVINNÉ! V sekci "Nejbližší akce" (`#eventsCarousel`) přidat nový `event-slide` s unikátním gradientem pozadí (každý slide má jiný odstín). Přidat taky nový `carousel-dot` do navigace. Aktualizovat text v hero kartičce webinářů (seznam nejbližších datumů).
 
 #### Struktura kartičky na webinare.html:
 ```html

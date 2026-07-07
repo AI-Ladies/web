@@ -6,6 +6,19 @@ alwaysApply: false
 
 # Webinářové Thank You stránky — kompletní pravidla
 
+## DŮLEŽITÉ: Agent dělá VŠECHNO sám
+
+Agent (AI asistent) má přístupy ke VŠEM službám a provádí kompletní setup sám:
+- Vytvoření TY page (HTML soubor)
+- Nastavení Stripe Payment Link redirect URL + metadata přes MCP/API
+- Vytvoření Brevo email šablony přes API
+- Vytvoření dedup atributu v Brevo přes API
+- Přidání template ID do kódu (`api/send-confirmation.js` + `api/stripe-webhook.js`)
+- Nastavení Vercel env vars přes CLI
+- Deploy přes git push
+
+Nikdy neříkej uživateli "tohle musíš udělat ručně" — udělej to sám.
+
 ## Kdy vytvořit
 
 Pro každý placený webinář. Stránka se zobrazí po úspěšné platbě přes Stripe Payment Link (redirect po checkout).

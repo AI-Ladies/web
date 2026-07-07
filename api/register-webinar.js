@@ -29,6 +29,7 @@ export default async function handler(req, res) {
     const stripeLinks = {
       'ai-bezpecne': process.env.STRIPE_LINK_AI_BEZPECNE || '',
       'asistent-na-web': process.env.STRIPE_LINK_ASISTENT_NA_WEB || '',
+      'proc-mi-z-ai-leze-nuda': process.env.STRIPE_LINK_PROC_MI_Z_AI_LEZE_NUDA || '',
       'ai-texty': process.env.STRIPE_LINK_AI_TEXTY || '',
       'ai-zivot': process.env.STRIPE_LINK_AI_ZIVOT || '',
     };

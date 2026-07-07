@@ -44,6 +44,7 @@ function getTemplateForSlug(slug) {
   const templates = {
     'ai-bezpecne': 7,
     'asistent-na-web': 8,
+    'proc-mi-z-ai-leze-nuda': 9,
   };
   return templates[slug] || null;
 }

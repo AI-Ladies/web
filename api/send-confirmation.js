@@ -15,6 +15,7 @@ export default async function handler(req, res) {
   const templates = {
     'ai-bezpecne': 7,
     'asistent-na-web': 8,
+    'proc-mi-z-ai-leze-nuda': 9,
   };
   const nightTemplateId = Number(process.env.BREVO_NIGHT_TEMPLATE_ID) || 6;
 
