@@ -1279,6 +1279,8 @@
           });
         }
         regBtn.textContent = 'Přesměrovávám na platbu…';
+        document.cookie = 'al_webinar_email=' + encodeURIComponent(data.email) + ';path=/;max-age=7200;SameSite=Lax';
+        document.cookie = 'al_webinar_slug=ai-bezpecne;path=/;max-age=7200;SameSite=Lax';
         window.location.href = result.stripeUrl
           || ('https://buy.stripe.com/cNi5kEbVk22bchj1yhes001?prefilled_email=' + encodeURIComponent(data.email));
       } else {

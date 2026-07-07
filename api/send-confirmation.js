@@ -2,7 +2,7 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { email } = req.body || {};
+  const { email, slug } = req.body || {};
   if (!email) return res.status(400).json({ error: 'Email required' });
 
   const brevoKey = process.env.BREVO_API_KEY;
@@ -38,7 +38,12 @@ export default async function handler(req, res) {
     return res.status(200).json({ success: true, note: 'already sent' });
   }
 
-  const templateId = Number(process.env.BREVO_NIGHT_TEMPLATE_ID) || 6;
+  // Select template based on slug (webinar) or default to Night
+  const templates = {
+    'ai-bezpecne': Number(process.env.BREVO_TEMPLATE_AI_BEZPECNE) || null,
+    'asistent-na-web': Number(process.env.BREVO_TEMPLATE_ASISTENT_NA_WEB) || null,
+  };
+  const templateId = (slug && templates[slug]) || Number(process.env.BREVO_NIGHT_TEMPLATE_ID) || 6;
 
   try {
     const emailRes = await fetch('https://api.brevo.com/v3/smtp/email', {

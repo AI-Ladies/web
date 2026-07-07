@@ -391,6 +391,23 @@
 </footer>
 
 <script>
+  (function sendConfirmation() {
+    try {
+      const emailMatch = document.cookie.match(/(?:^|;\s*)al_webinar_email=([^;]+)/);
+      const slugMatch = document.cookie.match(/(?:^|;\s*)al_webinar_slug=([^;]+)/);
+      if (!emailMatch) return;
+      const email = decodeURIComponent(emailMatch[1]);
+      const slug = slugMatch ? decodeURIComponent(slugMatch[1]) : 'asistent-na-web';
+      document.cookie = 'al_webinar_email=;path=/;max-age=0';
+      document.cookie = 'al_webinar_slug=;path=/;max-age=0';
+      fetch('/api/send-confirmation', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, slug }),
+      }).catch(() => {});
+    } catch (_) {}
+  })();
+
   function openAppleCalendar() {
     const ics = [
       'BEGIN:VCALENDAR',

@@ -1277,6 +1277,8 @@
           });
         }
         regBtn.textContent = 'Přesměrovávám na platbu…';
+        document.cookie = 'al_webinar_email=' + encodeURIComponent(data.email) + ';path=/;max-age=7200;SameSite=Lax';
+        document.cookie = 'al_webinar_slug=asistent-na-web;path=/;max-age=7200;SameSite=Lax';
         window.location.href = result.stripeUrl
           || ('https://buy.stripe.com/00w8wQ5wWbCLchj5Oxes002?prefilled_email=' + encodeURIComponent(data.email));
       } else {
