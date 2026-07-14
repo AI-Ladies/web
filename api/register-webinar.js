@@ -71,9 +71,14 @@ export default async function handler(req, res) {
       }
     }
 
-    // --- Brevo: add contact to webinar list ---
+    // --- Brevo: add contact to webinar-specific list ---
     const brevoKey = process.env.BREVO_API_KEY;
-    const brevoWebinarListId = process.env.BREVO_WEBINAR_LIST_ID || '8';
+    const webinarLists = {
+      'ai-bezpecne': 8,
+      'asistent-na-web': 9,
+      'proc-mi-z-ai-leze-nuda': 10,
+    };
+    const brevoWebinarListId = webinarLists[webinar] || 8;
 
     if (brevoKey) {
       let fname5pad = fname;
