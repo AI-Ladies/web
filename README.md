@@ -2,6 +2,8 @@
 
 Oficiální webová stránka komunity AI Ladies.
 
+**Poslední aktualizace dokumentace:** 2026-08-05
+
 - **Web:** https://ailadies.cz
 - **Mentoring:** https://mentoring.ailadies.cz
 - **GitHub:** https://github.com/AI-Ladies/web
@@ -105,6 +107,9 @@ web/
 ├── api/                       ← Serverless funkce (NEMĚNIT bez rozmyslu)
 │   ├── register.js            ← API pro registraci na event
 │   └── newsletter.js          ← API pro newsletter signup
+│
+├── docs/                      ← Podklady pro návrh (nemění se nasazený web)
+│   └── MANTINELY_UVODNI_STRANKY.md  ← Mantinely úvodní stránky pro sloučení s Hubem
 │
 ├── vercel.json                ← Konfigurace Vercelu (routing, headers)
 ├── package.json               ← Node.js metadata
