@@ -6,6 +6,16 @@
       "source": "/mentoring",
       "destination": "https://mentoring.ailadies.cz",
       "permanent": false
+    },
+    {
+      "source": "/webinar-asistent-na-web",
+      "destination": "/webinare",
+      "permanent": false
+    },
+    {
+      "source": "/webinar-asistent-na-web-thank-you",
+      "destination": "/webinare",
+      "permanent": false
     }
   ],
   "headers": [
