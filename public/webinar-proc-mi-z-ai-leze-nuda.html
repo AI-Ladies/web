@@ -225,6 +225,197 @@
       color: rgba(255,255,255,0.45);
     }
 
+    /* FLOATING CTA BAR */
+    .floating-bar {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 48;
+      background: rgba(13,13,13,0.95);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-top: 1px solid rgba(196,159,71,0.2);
+      padding: 0.875rem 1.5rem;
+      padding-bottom: max(0.875rem, env(safe-area-inset-bottom));
+      transform: translateY(100%);
+      transition: transform 0.4s cubic-bezier(0.25,0.46,0.45,0.94);
+    }
+    .floating-bar.visible {
+      transform: translateY(0);
+    }
+    .floating-bar-inner {
+      max-width: 68rem;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.25rem 2rem;
+      flex-wrap: wrap;
+    }
+    .floating-bar-text {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .floating-bar-urgency {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: #fff;
+      white-space: nowrap;
+    }
+    .floating-bar-urgency strong {
+      color: var(--al-gold);
+    }
+    .floating-bar-meta {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+    .floating-bar-meta span {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.5);
+      white-space: nowrap;
+    }
+    .floating-bar-meta svg {
+      width: 13px;
+      height: 13px;
+      stroke: var(--al-gold);
+      fill: none;
+      stroke-width: 1.75;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .floating-bar-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--al-gold);
+      color: #fff;
+      font-size: 0.875rem;
+      font-weight: 600;
+      font-family: var(--font-dm-sans);
+      border: none;
+      border-radius: 50px;
+      padding: 0.75rem 1.75rem;
+      text-decoration: none;
+      transition: all 0.2s;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    .floating-bar-cta:hover {
+      background: #fff;
+      color: var(--al-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(196,159,71,0.3);
+    }
+    @media (max-width: 639px) {
+      .floating-bar { padding: 0.75rem 1rem; }
+      .floating-bar-inner { gap: 0.625rem; }
+      .floating-bar-meta { display: none; }
+      .floating-bar-urgency { font-size: 0.8125rem; text-align: center; width: 100%; }
+      .floating-bar-cta { width: 100%; justify-content: center; padding: 0.8rem; }
+    }
+
+    /* SOCIAL PROOF */
+    .social-proof {
+      padding: 4rem 0;
+      background: linear-gradient(160deg, #fdfcfa 0%, #fef7f8 50%, #fdfcfa 100%);
+    }
+    .social-proof-header {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .social-proof-header p {
+      font-size: 1rem;
+      color: var(--al-gray);
+      margin-top: 0.5rem;
+    }
+    .social-proof-grid {
+      display: grid;
+      gap: 1rem;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    @media (min-width: 640px) { .social-proof-grid { grid-template-columns: 1fr 1fr; } }
+    .sp-card {
+      background: #fff;
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: 1rem;
+      padding: 1.5rem;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.03);
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .sp-card:hover {
+      border-color: var(--al-gold);
+      box-shadow: 0 6px 24px rgba(196,159,71,0.1);
+    }
+    .sp-stars {
+      color: var(--al-gold);
+      font-size: 0.75rem;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.75rem;
+    }
+    .sp-text {
+      font-size: 0.875rem;
+      color: var(--al-text);
+      line-height: 1.65;
+      font-style: italic;
+      margin-bottom: 0.75rem;
+    }
+    .sp-author {
+      font-size: 0.8125rem;
+      color: var(--al-warm-gray);
+    }
+    .sp-author strong { color: var(--al-dark); font-weight: 600; }
+
+    /* COLLAPSED OPTIONAL FIELDS */
+    .optional-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      width: 100%;
+      background: none;
+      border: 1px dashed rgba(0,0,0,0.1);
+      border-radius: 0.75rem;
+      padding: 0.75rem;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: var(--al-gray);
+      font-family: var(--font-dm-sans);
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 0.5rem;
+    }
+    .optional-toggle:hover { border-color: var(--al-gold); color: var(--al-gold); }
+    .optional-toggle svg {
+      width: 14px;
+      height: 14px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      transition: transform 0.3s;
+    }
+    .optional-toggle.open svg { transform: rotate(180deg); }
+    .optional-fields {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.35s ease;
+    }
+    .optional-fields.open {
+      grid-template-rows: 1fr;
+    }
+    .optional-fields-inner {
+      overflow: hidden;
+    }
+
     /* FLOATING RINGS */
     .hero-ring {
       position: absolute;
@@ -247,18 +438,8 @@
       background: #fff;
       position: relative;
     }
-    .pain-section::before {
-      content: "";
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 80px;
-      background: linear-gradient(to bottom, rgba(13,13,13,0.02) 0%, transparent 100%);
-      pointer-events: none;
-    }
     .pain-inner {
-      max-width: 700px;
+      max-width: 640px;
       margin: 0 auto;
       text-align: center;
     }
@@ -266,47 +447,13 @@
       font-family: var(--font-dm-serif);
       font-size: clamp(1.5rem, 3vw, 2rem);
       color: var(--al-dark);
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.25rem;
       line-height: 1.3;
     }
     .pain-inner p {
       font-size: 1.0625rem;
       color: var(--al-gray);
       line-height: 1.8;
-      margin-bottom: 1rem;
-    }
-    .pain-quotes {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 0.625rem;
-      margin-top: 2rem;
-      text-align: left;
-      max-width: 520px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-    .pain-quotes li {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.75rem;
-      font-size: 1rem;
-      color: var(--al-text);
-      line-height: 1.6;
-      padding: 0.875rem 1.25rem;
-      background: var(--al-blush-50);
-      border-radius: 0.75rem;
-      border: 1px solid rgba(212,98,125,0.08);
-      font-style: italic;
-    }
-    .pain-quotes li::before {
-      content: "\201E";
-      font-weight: 700;
-      color: var(--al-blush-400);
-      flex-shrink: 0;
-      font-size: 1.25rem;
-      margin-top: -0.1em;
-      font-style: normal;
     }
 
     /* CONTENT SECTION WITH BACKGROUND IMAGE */
@@ -848,44 +995,6 @@
       75% { transform: translateY(-20px) translateX(3px); }
     }
 
-    /* STICKY MOBILE CTA */
-    .sticky-cta {
-      display: none;
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      z-index: 48;
-      padding: 0.75rem 1.25rem;
-      padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
-      background: rgba(13,13,13,0.92);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-top: 1px solid rgba(196,159,71,0.2);
-      transform: translateY(100%);
-      transition: transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94);
-    }
-    .sticky-cta.visible { transform: translateY(0); }
-    .sticky-cta a {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      width: 100%;
-      background: var(--al-gold);
-      color: #fff;
-      font-size: 0.9375rem;
-      font-weight: 600;
-      font-family: var(--font-dm-sans);
-      border-radius: 50px;
-      padding: 0.875rem;
-      text-decoration: none;
-      transition: background 0.2s;
-    }
-    .sticky-cta a:active { background: var(--al-gold-hover); }
-    @media (min-width: 768px) { .sticky-cta { display: none !important; } }
-    @media (max-width: 767px) { .sticky-cta { display: block; } }
-
     /* MOBILE OPTIMIZATIONS */
     @media (max-width: 639px) {
       .hero { padding: 7rem 1rem 8rem; }
@@ -894,8 +1003,7 @@
       .hero-meta { gap: 0.75rem 1.25rem; }
       .hero-meta-item { font-size: 0.8125rem; }
       .hero-cta { padding: 0.875rem 2rem; font-size: 0.9375rem; }
-      .pain-inner h2 { font-size: 1.375rem; }
-      .pain-quotes li { padding: 0.75rem 1rem; font-size: 0.9375rem; }
+      .pain-inner h2 { font-size: 1.25rem; }
       .content-section { padding: 3.5rem 0; }
       .topics-list li { font-size: 0.875rem; gap: 0.75rem; padding: 1rem 0; }
       .img-break img { height: 250px; }
@@ -986,14 +1094,8 @@
 <section class="pain-section">
   <div class="container">
     <div class="pain-inner reveal">
-      <h2>Poznáváš to? Slyšíš to kolem sebe?</h2>
-      <p>Jsou to mýty, nebo je na&nbsp;tom něco pravdy? Projdeme si to —&nbsp;a&nbsp;ukážeme, že tenhle dojem většinou nevzniká kvůli AI, ale kvůli tomu, jak s&nbsp;ní pracujeme.</p>
-      <ul class="pain-quotes">
-        <li>AI píše špatně.</li>
-        <li>Všechno z&nbsp;ChatGPT zní stejně.</li>
-        <li>Stejně to pak celé přepíšu.</li>
-        <li>AI neumí psát jako člověk.</li>
-      </ul>
+      <h2>„AI píše špatně." „Všechno z&nbsp;ChatGPT zní stejně." „Stejně to pak celé přepíšu."</h2>
+      <p>Tohle slyšíš pořád. A&nbsp;možná si to říkáš taky. Projdeme si, co je na&nbsp;tom pravdy — a&nbsp;co se změní, když AI zadáš text trochu jinak.</p>
     </div>
   </div>
 </section>
@@ -1014,7 +1116,7 @@
 
       <ul class="topics-list">
         <li>Nejčastější mýty o&nbsp;psaní s&nbsp;AI —&nbsp;co slyšíš kolem sebe a&nbsp;co je na&nbsp;tom pravdy</li>
-        <li>Proč AI píše plošě —&nbsp;zadání, kontext, vzor, publikum: co přesně v&nbsp;zadání chybí</li>
+        <li>Proč AI píše ploše —&nbsp;zadání, kontext, vzor, publikum: co přesně v&nbsp;zadání chybí</li>
         <li>Co všechno musíš AI dodat —&nbsp;a&nbsp;jednoduchá kostra zadání, kterou si pak zopakuješ sama</li>
         <li>Naživo: vezmeme plochý text z&nbsp;AI a&nbsp;projdeme, jak mu vrátit tón, konkrétnost a&nbsp;tvůj hlas</li>
         <li>Prostor pro&nbsp;tvoje otázky —&nbsp;přines si téma, o&nbsp;kterém chceš napsat</li>
@@ -1022,50 +1124,6 @@
     </div>
   </div>
 </section>
-
-<!-- OUTCOMES -->
-<section class="content-section" style="padding-top: 3rem;">
-  <div class="container">
-    <div class="content-narrow reveal">
-      <span class="section-label">✦ Co si odneseš</span>
-      <h2>Po webináři budeš vědět:</h2>
-
-      <ul class="outcomes-list">
-        <li>
-          <span class="outcome-icon">💡</span>
-          <span>Vyvrácené nejčastější mýty o&nbsp;psaní s&nbsp;AI</span>
-        </li>
-        <li>
-          <span class="outcome-icon">🔍</span>
-          <span>Pochopení, proč texty z&nbsp;AI znějí genericky —&nbsp;a&nbsp;co přesně to změní</span>
-        </li>
-        <li>
-          <span class="outcome-icon">📋</span>
-          <span>Seznam věcí, které musíš AI dodat, aby texty stály za&nbsp;to</span>
-        </li>
-        <li>
-          <span class="outcome-icon">✏️</span>
-          <span>Jednoduchou kostru zadání, kterou si pak zopakuješ sama</span>
-        </li>
-        <li>
-          <span class="outcome-icon">✨</span>
-          <span>Pocit, že z&nbsp;AI může vylezout něco, pod&nbsp;co se podepíšeš</span>
-        </li>
-        <li>
-          <span class="outcome-icon">🎬</span>
-          <span>Záznam, přepis a&nbsp;kostru zadání —&nbsp;ke&nbsp;stažení po&nbsp;webináři</span>
-        </li>
-      </ul>
-    </div>
-  </div>
-</section>
-
-<!-- IMAGE BREAK -->
-<div class="img-break">
-  <img src="img/webinar-proc-mi-z-ai-leze-nuda-2.png" alt="Proč z AI leze nuda — od plochého textu k autentickému hlasu" loading="lazy">
-  <div class="img-break-fade-top"></div>
-  <div class="img-break-fade-bottom"></div>
-</div>
 
 <!-- FOR/NOT FOR -->
 <section class="content-section" id="pro-koho">
@@ -1085,11 +1143,11 @@
           </ul>
         </div>
         <div class="for-box for-no">
-          <h3>× Není pro tebe, pokud:</h3>
+          <h3>× Možná to zatím není pro tebe:</h3>
           <ul class="for-list">
-            <li>Ještě jsi neotevřela chat s&nbsp;AI —&nbsp;raději začni úvodním webinářem</li>
-            <li>Hledáš copywriterský kurz nebo školu pravopisu</li>
-            <li>Chceš hotový článek na&nbsp;celý měsíc —&nbsp;tady odcházíš s&nbsp;pochopením a&nbsp;kostrou</li>
+            <li>Pokud jsi AI ještě vůbec nezkoušela — máme pro tebe úvodní webinář, kde začneš od&nbsp;nuly</li>
+            <li>Pokud hledáš komplexní copywriterský kurz — tady se zaměříme na&nbsp;jedno konkrétní téma</li>
+            <li>Odneseš si pochopení a&nbsp;kostru zadání, ne hotové texty na&nbsp;celý měsíc</li>
           </ul>
         </div>
       </div>
@@ -1119,30 +1177,33 @@
   </div>
 </section>
 
-<!-- WHAT'S INCLUDED -->
-<section class="included-strip">
-  <div class="container reveal">
-    <h2>Co v&nbsp;ceně dostaneš</h2>
-    <div class="included-grid">
-      <div class="included-item">
-        <span class="included-item-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></span>
-        <strong>60 minut online</strong>
-        <span>Efektivně a&nbsp;bez zbytečností</span>
+<!-- SOCIAL PROOF -->
+<section class="social-proof">
+  <div class="container">
+    <div class="social-proof-header reveal">
+      <span class="section-label">✦ Co říkají účastnice</span>
+      <p>Ohlasy z&nbsp;našich akcí a&nbsp;webinářů</p>
+    </div>
+    <div class="social-proof-grid reveal">
+      <div class="sp-card">
+        <div class="sp-stars">★★★★★</div>
+        <p class="sp-text">„Skvěle zorganizované, úžasná neformální atmosféra, spousta skvělých postřehů a&nbsp;tipů od&nbsp;všech."</p>
+        <p class="sp-author"><strong>Petra</strong> · účastnice AI Ladies</p>
       </div>
-      <div class="included-item">
-        <span class="included-item-icon"><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></span>
-        <strong>Sdílená obrazovka</strong>
-        <span>Ukazujeme naživo, na&nbsp;příkladech</span>
+      <div class="sp-card">
+        <div class="sp-stars">★★★★★</div>
+        <p class="sp-text">„Přátelská atmosféra a&nbsp;skvělé ženy. Bylo cítit, že si každá může říct, co chce, bez&nbsp;hodnocení."</p>
+        <p class="sp-author"><strong>Antonina</strong> · účastnice AI Ladies</p>
       </div>
-      <div class="included-item">
-        <span class="included-item-icon"><svg viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></span>
-        <strong>Záznam + přepis</strong>
-        <span>Nic nezmeškáš, i&nbsp;když nestíháš</span>
+      <div class="sp-card">
+        <div class="sp-stars">★★★★★</div>
+        <p class="sp-text">„Přátelské a&nbsp;bezpečné prostředí, kde jsme mohly sdílet zkušenosti a&nbsp;myšlenky bez&nbsp;obav."</p>
+        <p class="sp-author"><strong>Martina</strong> · účastnice AI Ladies</p>
       </div>
-      <div class="included-item">
-        <span class="included-item-icon"><svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></span>
-        <strong>Kostra zadání</strong>
-        <span>Připravená k&nbsp;použití hned po&nbsp;webináři</span>
+      <div class="sp-card">
+        <div class="sp-stars">★★★★★</div>
+        <p class="sp-text">„Inspirace, sdílení a&nbsp;propojení AI s&nbsp;praxí. Fakt to bylo pěkný — pokračujte dál!"</p>
+        <p class="sp-author"><strong>Jana</strong> · účastnice AI Ladies</p>
       </div>
     </div>
   </div>
@@ -1153,7 +1214,7 @@
   <div class="container">
     <div class="reg-inner reveal">
       <h2>Rezervuj si <span class="al-text-gold">místo.</span></h2>
-      <p class="reg-subtitle">Po vyplnění tě přesměrujeme na&nbsp;bezpečnou platbu přes&nbsp;Stripe.</p>
+      <p class="reg-subtitle">Webinář už příští úterý. Po vyplnění tě přesměrujeme na&nbsp;bezpečnou platbu.</p>
 
       <div class="reg-card">
         <div class="reg-card-header">
@@ -1162,10 +1223,10 @@
         </div>
 
         <ul class="reg-card-details">
-          <li><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> Úterý 11. 8. 2026</li>
-          <li><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 14:00 – 15:00</li>
-          <li><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg> Online (Google Meet)</li>
-          <li><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg> Záznam, přepis + podklady po&nbsp;webináři</li>
+          <li><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> <strong>Úterý 11. 8. 2026</strong> · už příští týden</li>
+          <li><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 14:00 – 15:00 · 60 minut</li>
+          <li><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg> Online · sdílená obrazovka, live ukázky</li>
+          <li><svg viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg> Záznam, přepis + kostra zadání v&nbsp;ceně</li>
         </ul>
 
         <form id="webinar-reg-form">
@@ -1183,52 +1244,73 @@
             <label for="email">E-mail *</label>
             <input type="email" id="email" name="email" required placeholder="jana@email.cz">
           </div>
-          <div class="form-row form-group">
-            <div>
-              <label for="field">Obor</label>
-              <select id="field" name="field">
-                <option value="">— Vyber obor —</option>
-                <option value="marketing">Marketing a komunikace</option>
-                <option value="hr">HR a People</option>
-                <option value="finance">Finance a účetnictví</option>
-                <option value="it">IT a vývoj</option>
-                <option value="design">Design a kreativa</option>
-                <option value="consulting">Poradenství</option>
-                <option value="education">Vzdělávání</option>
-                <option value="sales">Sales a obchod</option>
-                <option value="management">Management</option>
-                <option value="other">Jiný</option>
-              </select>
-            </div>
-            <div>
-              <label for="seniority">Seniorita</label>
-              <select id="seniority" name="seniority">
-                <option value="">— Vyber úroveň —</option>
-                <option value="student">Studentka</option>
-                <option value="junior">Junior (0–2 roky)</option>
-                <option value="mid">Mid (3–5 let)</option>
-                <option value="senior">Senior (6+ let)</option>
-                <option value="lead">Lead / manažerka</option>
-                <option value="freelancer">Freelancerka / OSVČ</option>
-                <option value="founder">Zakladatelka / CEO</option>
-              </select>
+
+          <button type="button" class="optional-toggle" id="optionalToggle" onclick="this.classList.toggle('open');document.getElementById('optionalFields').classList.toggle('open');">
+            Chceš nám říct víc o&nbsp;sobě?
+            <svg viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="optional-fields" id="optionalFields">
+            <div class="optional-fields-inner">
+              <div class="form-row form-group" style="padding-top:0.5rem;">
+                <div>
+                  <label for="field">Obor</label>
+                  <select id="field" name="field">
+                    <option value="">— Vyber obor —</option>
+                    <option value="marketing">Marketing a komunikace</option>
+                    <option value="hr">HR a People</option>
+                    <option value="finance">Finance a účetnictví</option>
+                    <option value="it">IT a vývoj</option>
+                    <option value="design">Design a kreativa</option>
+                    <option value="consulting">Poradenství</option>
+                    <option value="education">Vzdělávání</option>
+                    <option value="sales">Sales a obchod</option>
+                    <option value="management">Management</option>
+                    <option value="other">Jiný</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="seniority">Seniorita</label>
+                  <select id="seniority" name="seniority">
+                    <option value="">— Vyber úroveň —</option>
+                    <option value="student">Studentka</option>
+                    <option value="junior">Junior (0–2 roky)</option>
+                    <option value="mid">Mid (3–5 let)</option>
+                    <option value="senior">Senior (6+ let)</option>
+                    <option value="lead">Lead / manažerka</option>
+                    <option value="freelancer">Freelancerka / OSVČ</option>
+                    <option value="founder">Zakladatelka / CEO</option>
+                  </select>
+                </div>
+              </div>
             </div>
           </div>
+
           <div class="form-checkbox">
             <input type="checkbox" id="gdpr" name="gdpr" required>
             <label for="gdpr">Souhlasím s&nbsp;<a href="/obchodni-podminky">obchodními podmínkami</a> a&nbsp;beru na&nbsp;vědomí <a href="/ochrana-osobnich-udaju">zásady ochrany osobních údajů</a>.</label>
           </div>
           <button type="submit" class="btn-submit">Registrovat a&nbsp;zaplatit →</button>
           <p class="reg-note">Platba proběhne bezpečně přes&nbsp;Stripe. Můžeš platit kartou.</p>
+          <p class="reg-note" style="margin-top:0.375rem;color:var(--al-gold);font-weight:500;">Včetně záznamu a&nbsp;přepisu — nic nezmeškáš, i&nbsp;kdyby ti to časově nevyšlo.</p>
         </form>
       </div>
     </div>
   </div>
 </section>
 
-<!-- STICKY MOBILE CTA -->
-<div class="sticky-cta" id="stickyCta">
-  <a href="#registrace">Chci být u&nbsp;toho →</a>
+<!-- FLOATING CTA BAR -->
+<div class="floating-bar" id="floatingBar">
+  <div class="floating-bar-inner">
+    <div class="floating-bar-text">
+      <span class="floating-bar-urgency">Už <strong>příští úterý 11.&nbsp;8.</strong></span>
+      <div class="floating-bar-meta">
+        <span><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 14:00–15:00</span>
+        <span><svg viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg> Online</span>
+        <span><svg viewBox="0 0 24 24"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg> Záznam v&nbsp;ceně</span>
+      </div>
+    </div>
+    <a href="#registrace" class="floating-bar-cta">Chci se přihlásit →</a>
+  </div>
 </div>
 
 <!-- FOOTER -->
@@ -1260,7 +1342,7 @@
   }, { threshold: 0.1 });
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-  const stickyCta = document.getElementById('stickyCta');
+  const floatingBar = document.getElementById('floatingBar');
   const heroSection = document.querySelector('.hero');
   const regSection = document.getElementById('registrace');
 
@@ -1271,10 +1353,10 @@
       ring.style.transform = `translateY(${scrollY * speed}px)`;
     });
 
-    if (stickyCta && heroSection && regSection) {
-      const pastHero = scrollY > heroSection.offsetHeight - 100;
+    if (floatingBar && heroSection && regSection) {
+      const pastHero = scrollY > heroSection.offsetHeight * 0.6;
       const nearReg = scrollY + window.innerHeight > regSection.offsetTop + 80;
-      stickyCta.classList.toggle('visible', pastHero && !nearReg);
+      floatingBar.classList.toggle('visible', pastHero && !nearReg);
     }
   }, { passive: true });
 

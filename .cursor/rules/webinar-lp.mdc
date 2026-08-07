@@ -29,26 +29,27 @@ Nikdy neříkej uživateli "tohle musíš udělat ručně v dashboardu" — udě
 
 1. **Navigace** — logo AI Ladies (link na /), sekční odkazy: "Co se dozvíš", "Pro koho to je", "Kdo tě provede" + zlatý CTA "Rezervovat místo →". Mobilní hamburger menu se stejnými linky.
 2. **Hero** — tmavý, centered, fotka na pozadí (opacity 0.35), floating rings, gold glow. Outcome headline (ne název webináře!), subtitle, meta info (datum, čas, online, délka), CTA button, cena. Padding: `8.5rem top, 11rem bottom`. Smooth fade dole (200px gradient do bílé).
-3. **Pain / intro section** — bílá, centered, empatie s čtenářkou. Formát přizpůsobit tématu webináře:
-   - **Otázky** — růžové kartičky s "?" prefixem (vhodné, když se téma dá uchopit přes bolesti/pochybnosti)
-   - **Textový úvod** — krátký empatie-odstavec s vizuálním dělením (vhodné pro pozitivní / praktické téma)
-   - **Mix** — 2-3 body s ikonami nebo krátké bullet points
-   - Pravidlo: obsah musí dávat smysl pro konkrétní téma. Nenutit otázky tam, kde se nehodí.
+3. **Pain / intro section** — bílá, centered, jednoduchý hero blok. Pain pointy přímo v nadpisu v uvozovkách (např. „AI píše špatně." „Všechno z ChatGPT zní stejně.") — ať je jasné, že citujeme, ne že to říkáme my. Pod tím krátký odstavec, který to přebíjí. Žádné kartičky ani kolonky — čistý text.
 4. **Co se dozvíš** — fotka ženy (generovaná, tematická) jako subtle pozadí (opacity 0.14, CSS mask fade). Číslované téma body. Floating gold dots jako dekorace.
-5. **Co si odneseš** — outcome karty v 2-column gridu s emoji ikonami v gold čtvercích. Hover efekt (translateY + shadow). **Vždy 6 položek** (nebo 4), nikdy 5 — kvůli zarovnání gridu.
-6. **Image break** — full-width obrázek (generovaný, abstraktní/tematický). Fade nahoře i dole (50% bílý gradient z obou stran). Hover scale efekt + parallax.
-7. **Je to pro tebe?** — dvě karty: "Přijď, pokud" (gold background/border) a "Není pro tebe" (šedá). Centrovaný nadpis jako otázka.
-8. **Lektorka** — fotka z AT (kulatá, gold ring), jméno (DM Serif), role (gold), bio, LinkedIn link. Desktop: fotka vlevo, text vpravo. Label "✦ Kdo tě provede" zarovnaný doleva.
-9. **Co v ceně dostaneš** — 4 karty na šířku (SVG ikony v gold čtvercích, ne emoji!). Gradient pozadí, fade nahoře (80px bílý gradient).
-10. **Registrace** — tmavá sekce. Heading se zlatým gradientem na klíčovém slově. Bílá karta: název webináře (DM Serif), cena (590 Kč), detaily (datum, čas, formát, co dostaneš), formulář.
-11. **Footer** — standardní AI Ladies footer (legal, firma, "Všechny webináře" + email).
-12. **Sticky mobile CTA** — plovoucí tlačítko fixně na spodku obrazovky, jen na mobilu (pod 768px). Odkaz na `#registrace`. Text buttonu se volí per webinář (např. "Chci být u toho →"). Zobrazí se po odscrollování z hero, schová se u registrační sekce.
+5. **Je to pro tebe?** — dvě karty: "Přijď, pokud" (gold background/border) a "Možná to zatím není pro tebe" (šedá). Centrovaný nadpis jako otázka. Sekce "Není pro tebe" musí být formulovaná **jemně a vstřícně** — neodrazovat, ale nasměrovat jinam (např. "Máme pro tebe úvodní webinář"). Nikdy neříkat "Tohle není pro tebe" ostře.
+6. **Lektorka** — fotka z AT (kulatá, gold ring), jméno (DM Serif), role (gold), bio, LinkedIn link. Desktop: fotka vlevo, text vpravo. Label "✦ Kdo tě provede" zarovnaný doleva.
+7. **Social proof** — 4 recenze v 2-column gridu. Hvězdičky, krátký citát v kurzívě, jméno + "účastnice AI Ladies". Warm gradient pozadí. Recenze z AI Ladies Night nebo minulých webinářů.
+8. **Registrace** — tmavá sekce. Heading se zlatým gradientem na klíčovém slově + urgence v subtitlu (např. "Webinář už příští úterý."). Bílá karta: název webináře (DM Serif), cena (590 Kč), detaily (datum s urgencí "už příští týden", čas, formát, co dostaneš vč. záznamu/přepisu/kostry). Formulář se zjednodušenými poli (viz níže). Risk reversal pod CTA buttonem.
+9. **Footer** — standardní AI Ladies footer (legal, firma, "Všechny webináře" + email).
+10. **Floating CTA bar** — plovoucí tmavý bar fixně na spodku obrazovky, na **desktopu i mobilu**. Obsahuje urgenci (datum), meta info (čas, online, záznam — na mobilu skryté) a zlatý CTA button. Zobrazí se po odscrollování 60 % hero, schová se u registrační sekce. Slide-up animace.
+
+### Sekce, které NEPOUŽÍVÁME (odstraněny při optimalizaci konverze srpen 2026):
+- ~~**Co si odneseš**~~ — outcome karty říkaly totéž co sekce "Co se dozvíš", zbytečně prodlužovaly stránku
+- ~~**Image break**~~ — dekorativní full-width obrázek, přidával scrollování bez konverzní hodnoty
+- ~~**Co v ceně dostaneš**~~ — sloučeno přímo do registrační karty (detaily v reg-card-details)
+- ~~**Sticky mobile CTA**~~ — nahrazeno Floating CTA barem, který funguje na desktopu i mobilu
 
 ## Formulář registrace
 
-- Povinné: Jméno, Příjmení, E-mail, GDPR checkbox
-- Nepovinné: Obor (select), Seniorita (select)
+- **Povinné (vždy viditelné):** Jméno, Příjmení, E-mail, GDPR checkbox
+- **Nepovinné (collapsed):** Obor (select), Seniorita (select) — schované pod tlačítkem "Chceš nám říct víc o sobě?" s expand/collapse animací (CSS `grid-template-rows: 0fr → 1fr`). Snižuje tření — kdo chce vyplnit, rozklikne.
 - Submit: "Registrovat a zaplatit →" → volá `/api/register-webinar`
+- **Risk reversal** pod CTA: zlatý text "Včetně záznamu a přepisu — nic nezmeškáš, i kdyby ti to časově nevyšlo."
 - Po úspěchu: FB Pixel `InitiateCheckout` + redirect na Stripe
 
 ## Design pravidla
@@ -58,10 +59,10 @@ Nikdy neříkej uživateli "tohle musíš udělat ručně v dashboardu" — udě
 - **Zlatý gradient:** `linear-gradient(115deg, #7a5a1e ... #7a5a1e)` — použít na klíčová slova v headings
 - **Smooth přechody:** žádné ostré předěly! Mezi sekcemi vždy gradient fade (min 100-200px)
 - **Hero → bílá:** 200px gradient s 6 kroky (transparent → white)
-- **Image break:** fade top 50% + fade bottom 50% (bílý gradient)
-- **Dynamické prvky:** floating rings (hero), floating dots (sekce), parallax hero rings na scroll, hover efekty na kartách, animated gradient na included-strip
+- **Dynamické prvky:** floating rings (hero), floating dots (sekce), parallax hero rings na scroll, hover efekty na kartách
 - **Reveal animace:** `.reveal` class + IntersectionObserver (opacity 0 → 1, translateY 24px → 0)
 - **Navigace:** fixed, tmavá, backdrop-blur
+- **Floating CTA bar:** scroll-based trigger (ne IntersectionObserver — ten nefunguje spolehlivě pro prvky s negativním marginem/overlap)
 
 ## Generování fotek
 
@@ -310,14 +311,16 @@ npx vercel env add STRIPE_LINK_{SLUG} production <<< "https://buy.stripe.com/XXX
 - **E-mail** — email, placeholder "jana@email.cz"
 - **GDPR** — checkbox, odkaz na obchodní podmínky + ochranu osobních údajů
 
-### Nepovinné:
+### Nepovinné (collapsed — tlačítko "Chceš nám říct víc o sobě?"):
 - **Obor** — select: Marketing a komunikace, HR a People, Finance a účetnictví, IT a vývoj, Design a kreativa, Poradenství, Vzdělávání, Sales a obchod, Management, Jiný
 - **Seniorita** — select: Studentka, Junior (0–2 roky), Mid (3–5 let), Senior (6+ let), Lead / manažerka, Freelancerka / OSVČ, Zakladatelka / CEO
+- Collapsed přes `grid-template-rows: 0fr/1fr` animaci, toggle button s chevron ikonou
 
 ### Styling formuláře:
 - Inputy: `border-radius: 0.75rem`, border `1.5px solid rgba(0,0,0,0.1)`, focus: gold border + gold box-shadow
 - Select: custom dropdown arrow (SVG data URI), `appearance: none`
 - Button: full-width, dark bg, rounded pill (`border-radius: 50px`), hover → gold
+- **Risk reversal** pod submit buttonem: zlatý text s jistotou (záznam, přepis)
 
 ## Cena
 
@@ -335,6 +338,26 @@ npx vercel env add STRIPE_LINK_{SLUG} production <<< "https://buy.stripe.com/XXX
 - V reg. kartě vždy zobrazit název webináře (DM Serif font) nad cenou
 - Detail v reg. kartě: "Záznam, přepis + podklady po webináři" (ne jen "Záznam + přepis")
 - Žádné "Jednorázová platba" ani "Včetně záznamu" pod cenou — zbytečné, info je v bodech
+
+## Konverzní optimalizace (poučení ze srpna 2026)
+
+Při kampani na webinář "Proč mi z AI leze nuda" (5.–7. 8. 2026) jsme měli 864 kliků z reklam (CPC 1,89 Kč, CTR 2,3 %) ale jen ~1 konverzi. Problém byl LP, ne reklamy. Změny, které jsme udělali:
+
+### Co funguje (aplikovat na všechny nové LP):
+1. **Krátká LP** — max 6–7 sekcí. Odstraněny: outcomes (duplikát "co se dozvíš"), image break (dekorace), "co v ceně" (sloučeno do reg karty)
+2. **Floating CTA bar** místo sticky mobile CTA — funguje na desktopu i mobilu, urgence + CTA vždy po ruce
+3. **Urgence v registraci** — datum s "už příští týden/úterý" přímo v reg kartě
+4. **Collapsed optional pole** — Obor a Seniorita schované pod "Chceš nám říct víc?" → méně tření
+5. **Risk reversal** — "Včetně záznamu a přepisu — nic nezmeškáš" pod CTA
+6. **Social proof** — recenze z Night/minulých akcí, 4 karty v gridu
+7. **Pain section jako čistý text** — uvozovky kolem pain pointů (ne kartičky), jeden krátký hero blok
+8. **"Není pro tebe" formulovat jemně** — "Možná to zatím není pro tebe", vstřícně nasměrovat jinam
+
+### Co NEFUNGUJE:
+- Statické CTA boxy pod hero s IntersectionObserver (nespolehlivé s negativním marginem)
+- Příliš dlouhé LP z placené reklamy (lidi z IG Stories mají pozornost 5–10s)
+- Růžové/barevné kartičky na pain pointy (vypadají jako UI elementy, ne jako obsah)
+- Ostré "Není pro tebe, pokud:" — odrazuje zbytečně
 
 ## Sirotky a vdovy (typografie)
 
@@ -406,81 +429,46 @@ npx vercel env add STRIPE_LINK_{SLUG} production <<< "https://buy.stripe.com/XXX
 }
 ```
 
-### Sticky mobile CTA (POVINNÉ na každé LP):
+### Floating CTA bar (POVINNÉ na každé LP):
 
-Plovoucí tlačítko registrace na mobilu — uživatelka má vždy CTA po ruce při scrollování.
+Plovoucí tmavý bar s urgencí a CTA — na desktopu i mobilu.
 
 **Chování:**
-- Zobrazuje se jen pod 768px (kde je schovaná desktopová navigace s CTA)
-- Přijede zdola animací po odscrollování z hero sekce
-- Schová se, když se uživatelka přiblíží k registrační sekci (tam je formulář)
+- Zobrazuje se na desktopu i mobilu (nahrazuje starý sticky mobile CTA)
+- Přijede zdola po odscrollování 60 % hero sekce
+- Schová se, když je vidět registrační sekce
 - Respektuje `safe-area-inset-bottom` (iPhone Home Indicator)
+- Na mobilu: skryje meta info, zobrazí jen urgenci + full-width CTA button
 
 **HTML** (před `<footer>`):
 ```html
-<div class="sticky-cta" id="stickyCta">
-  <a href="#registrace">{Text buttonu} →</a>
+<div class="floating-bar" id="floatingBar">
+  <div class="floating-bar-inner">
+    <div class="floating-bar-text">
+      <span class="floating-bar-urgency">Už <strong>příští úterý {datum}</strong></span>
+      <div class="floating-bar-meta">
+        <span><svg>...</svg> {čas}</span>
+        <span><svg>...</svg> Online</span>
+        <span><svg>...</svg> Záznam v ceně</span>
+      </div>
+    </div>
+    <a href="#registrace" class="floating-bar-cta">Chci se přihlásit →</a>
+  </div>
 </div>
 ```
 
-**CSS:**
-```css
-.sticky-cta {
-  display: none;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 48;
-  padding: 0.75rem 1.25rem;
-  padding-bottom: max(0.75rem, env(safe-area-inset-bottom));
-  background: rgba(13,13,13,0.92);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-top: 1px solid rgba(196,159,71,0.2);
-  transform: translateY(100%);
-  transition: transform 0.35s cubic-bezier(0.25,0.46,0.45,0.94);
-}
-.sticky-cta.visible { transform: translateY(0); }
-.sticky-cta a {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  width: 100%;
-  background: var(--al-gold);
-  color: #fff;
-  font-size: 0.9375rem;
-  font-weight: 600;
-  font-family: var(--font-dm-sans);
-  border-radius: 50px;
-  padding: 0.875rem;
-  text-decoration: none;
-  transition: background 0.2s;
-}
-.sticky-cta a:active { background: var(--al-gold-hover); }
-@media (min-width: 768px) { .sticky-cta { display: none !important; } }
-@media (max-width: 767px) { .sticky-cta { display: block; } }
-```
-
-**JS** (přidat do scroll listeneru):
+**JS** (ve scroll listeneru):
 ```javascript
-const stickyCta = document.getElementById('stickyCta');
+const floatingBar = document.getElementById('floatingBar');
 const heroSection = document.querySelector('.hero');
 const regSection = document.getElementById('registrace');
 
-// uvnitř scroll listeneru:
-if (stickyCta && heroSection && regSection) {
-  const pastHero = scrollY > heroSection.offsetHeight - 100;
+if (floatingBar && heroSection && regSection) {
+  const pastHero = scrollY > heroSection.offsetHeight * 0.6;
   const nearReg = scrollY + window.innerHeight > regSection.offsetTop + 80;
-  stickyCta.classList.toggle('visible', pastHero && !nearReg);
+  floatingBar.classList.toggle('visible', pastHero && !nearReg);
 }
 ```
-
-**Text buttonu** — volí se per webinář, příklady:
-- "Chci být u toho →"
-- "Rezervovat místo →"
-- "Chci se přihlásit →"
 
 ### Testování na mobilu — checklist:
 1. Hero text se nelomí neočekávaně (`<br>` skrytý na mobilu)
