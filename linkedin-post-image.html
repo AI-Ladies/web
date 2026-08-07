@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --al-gold: #c49f47;
+      --al-gold-gradient: linear-gradient(115deg, #7a5a1e 0%, #b8892a 22%, #c49f47 40%, #d4bc6a 55%, #c49f47 68%, #9a7428 84%, #7a5a1e 100%);
+      --font-dm-serif: "DM Serif Display", Georgia, serif;
+      --font-dm-sans: "DM Sans", system-ui, sans-serif;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    .canvas {
+      width: 1920px;
+      height: 1080px;
+      position: relative;
+      overflow: hidden;
+      background: #0d0d0d;
+    }
+
+    .photo-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background: url('team-photo.png') center center / cover no-repeat;
+      opacity: 0.75;
+      filter: grayscale(10%) brightness(1.25);
+    }
+
+    .dark-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      background: radial-gradient(ellipse 80% 80% at 50% 50%, rgba(13,13,13,0.45) 0%, rgba(13,13,13,0.88) 75%);
+    }
+
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+      z-index: 3;
+    }
+    .orb-1 {
+      width: 700px; height: 550px;
+      top: -180px; left: -100px;
+      background: radial-gradient(ellipse, rgba(196, 159, 71, 0.2) 0%, transparent 65%);
+    }
+    .orb-2 {
+      width: 500px; height: 450px;
+      bottom: -180px; right: 80px;
+      background: radial-gradient(ellipse, rgba(196, 159, 71, 0.1) 0%, transparent 65%);
+    }
+    .orb-3 {
+      width: 400px; height: 400px;
+      top: -80px; right: -60px;
+      background: radial-gradient(ellipse, rgba(196, 159, 71, 0.08) 0%, transparent 60%);
+    }
+
+    .grid-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      background-image:
+        linear-gradient(rgba(196, 159, 71, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(196, 159, 71, 0.03) 1px, transparent 1px);
+      background-size: 80px 80px;
+      mask-image: radial-gradient(ellipse 65% 65% at 50% 50%, black 30%, transparent 70%);
+      -webkit-mask-image: radial-gradient(ellipse 65% 65% at 50% 50%, black 30%, transparent 70%);
+    }
+
+    .arc {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      border: 1px solid transparent;
+      z-index: 3;
+    }
+    .arc-1 {
+      width: 900px; height: 900px;
+      top: -450px; left: 50%; transform: translateX(-50%);
+      border-color: rgba(196, 159, 71, 0.06);
+    }
+    .arc-2 {
+      width: 1200px; height: 1200px;
+      top: -620px; left: 50%; transform: translateX(-50%);
+      border-color: rgba(196, 159, 71, 0.03);
+    }
+    .arc-3 {
+      width: 650px; height: 650px;
+      bottom: -440px; left: 50%; transform: translateX(-50%);
+      border-color: rgba(196, 159, 71, 0.05);
+    }
+
+    .stars {
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      pointer-events: none;
+    }
+    .stars span {
+      position: absolute;
+      background: var(--al-gold-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .content {
+      position: relative;
+      z-index: 5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      padding: 0 140px;
+      text-align: center;
+      gap: 50px;
+    }
+
+    .text-block {
+      max-width: 1400px;
+    }
+
+    .line1 {
+      font-family: var(--font-dm-sans);
+      font-size: 56px;
+      font-weight: 400;
+      color: rgba(255,255,255,0.75);
+      line-height: 1.4;
+      margin-bottom: 20px;
+      text-shadow: 0 2px 20px rgba(0,0,0,0.5);
+    }
+
+    .line2 {
+      font-family: var(--font-dm-serif);
+      font-size: 100px;
+      color: #fff;
+      line-height: 1.15;
+      text-shadow: 0 3px 30px rgba(0,0,0,0.5);
+    }
+
+    .gold {
+      background: var(--al-gold-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .footer {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .line-left, .line-right {
+      width: 100px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(196, 159, 71, 0.3));
+    }
+    .line-right {
+      background: linear-gradient(90deg, rgba(196, 159, 71, 0.3), transparent);
+    }
+
+    .logo {
+      font-family: var(--font-dm-serif);
+      font-size: 48px;
+      line-height: 1;
+    }
+    .logo .ai { color: #fff; }
+    .logo .ladies {
+      background: var(--al-gold-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .dot {
+      font-size: 16px;
+      background: var(--al-gold-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .url {
+      font-size: 30px;
+      font-weight: 500;
+      color: rgba(255,255,255,0.35);
+      letter-spacing: 0.04em;
+    }
+  </style>
+</head>
+<body style="margin:0; background:#222;">
+  <div class="canvas" id="linkedin-post">
+    <div class="photo-bg"></div>
+    <div class="dark-overlay"></div>
+
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="grid-overlay"></div>
+    <div class="arc arc-1"></div>
+    <div class="arc arc-2"></div>
+    <div class="arc arc-3"></div>
+
+    <div class="stars">
+      <span style="top:60px;left:100px;font-size:18px;opacity:0.2">✦</span>
+      <span style="top:100px;right:140px;font-size:22px;opacity:0.25">✦</span>
+      <span style="bottom:80px;left:300px;font-size:13px;opacity:0.15">✦</span>
+      <span style="bottom:70px;right:350px;font-size:15px;opacity:0.2">✦</span>
+      <span style="top:70px;left:48%;font-size:10px;opacity:0.12">✦</span>
+      <span style="bottom:120px;right:650px;font-size:18px;opacity:0.18">✦</span>
+      <span style="top:200px;left:250px;font-size:9px;opacity:0.1">✦</span>
+      <span style="bottom:200px;right:180px;font-size:11px;opacity:0.14">✦</span>
+    </div>
+
+    <div class="content">
+      <div class="text-block">
+        <div class="line1">Hledaly jsme místo, kde se ženy baví o&nbsp;<span class="gold">AI</span>.</div>
+        <div class="line2">Nenašly. <span class="gold">Tak jsme ho založily.</span></div>
+      </div>
+      <div class="footer">
+        <div class="line-left"></div>
+        <div class="logo"><span class="ai">AI</span><span class="ladies">Ladies</span></div>
+        <div class="dot">✦</div>
+        <div class="url">ailadies.cz</div>
+        <div class="line-right"></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

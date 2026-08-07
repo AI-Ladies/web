@@ -26,10 +26,58 @@ alwaysApply: true
 3. `git add . && git commit -m "popis" && git push`
 4. Vercel deployne automaticky — netřeba nic dalšího
 
+## Vercel — správný účet a CLI
+
+- **Vercel team:** `ai-ladies-projects` (účet `hello@ailadies.cz`)
+- **Projekt:** `ailadies-web`
+- **POZOR na CLI scope:** Vercel CLI musí být přihlášena pod `hello@ailadies.cz`, NE pod osobním účtem! Jinak se env vars přidávají na špatný projekt.
+- **Ověření správného scope:**
+  ```bash
+  npx vercel whoami            # → hello@ailadies.cz
+  npx vercel env ls            # → ai-ladies-projects/ailadies-web
+  ```
+- **Pokud je CLI na špatném účtu:**
+  ```bash
+  rm -rf .vercel && npx vercel login && npx vercel link
+  ```
+  Vybrat tým `ai-ladies-projects` → projekt `ailadies-web`.
+- **Po přidání env vars vždy udělej redeploy** (push nebo prázdný commit), jinak se nové vars neprojeví v serverless funkcích.
+
 ## Environment variables (na Vercelu, NE v kódu)
 
-- `AIRTABLE_API_TOKEN`, `AIRTABLE_BASE_ID` — přístup k Airtable
-- `BREVO_API_KEY`, `BREVO_NIGHT_LIST_ID` (4), `BREVO_NEWSLETTER_LIST_ID` (5) — přístup k Brevo
+Kompletní seznam env vars potřebných pro `ai-ladies-projects/ailadies-web`:
+
+| Proměnná | Účel |
+|---|---|
+| `AIRTABLE_API_TOKEN` | Airtable Personal Access Token |
+| `AIRTABLE_BASE_ID` | Airtable base ID (`app0hrAz2Vj2TxNHe`) |
+| `BREVO_API_KEY` | Brevo (ex-Sendinblue) API klíč |
+| `BREVO_NEWSLETTER_LIST_ID` | Brevo list pro newsletter (5) |
+| `BREVO_NIGHT_LIST_ID` | Brevo list pro AI Ladies Night (4) |
+| ~~`BREVO_WEBINAR_LIST_ID`~~ | **DEPRECATED** — list IDs jsou nyní hardcoded per webinář v `api/complete-registration.js` a `api/stripe-webhook.js` (mapping `webinarLists`) |
+| `BREVO_NIGHT_TEMPLATE_ID` | Brevo template pro Night confirmation (6) |
+| `SKLONOVANI_API_KEY` | API pro české skloňování jmen (5. pád) |
+| `STRIPE_WEBHOOK_SECRET` | Stripe webhook signing secret |
+| `STRIPE_LINK_AI_BEZPECNE` | Stripe Payment Link pro webinář AI bezpečně |
+| `STRIPE_LINK_ASISTENT_NA_WEB` | Stripe Payment Link pro webinář Asistent na web |
+| `STRIPE_LINK_PROC_MI_Z_AI_LEZE_NUDA` | Stripe Payment Link pro webinář Proč mi z AI leze nuda |
+
+Při přidání nového webináře přidej `STRIPE_LINK_{SLUG}` (slug CAPS, pomlčky → podtržítka).
+
+## Brevo dedup atributy
+
+Pro každý webinář musí v Brevo existovat boolean atribut pro deduplication confirmation emailů:
+- `CONFIRMATION_SENT` — pro AI Ladies Night (typ: text, historicky)
+- `CONFIRMATION_SENT_AI_BEZPECNE` — boolean
+- `CONFIRMATION_SENT_ASISTENT_NA_WEB` — boolean
+- `CONFIRMATION_SENT_PROC_MI_Z_AI_LEZE_NUDA` — boolean
+
+Při novém webináři vytvořit přes API:
+```bash
+curl -X POST "https://api.brevo.com/v3/contacts/attributes/normal/CONFIRMATION_SENT_{SLUG}" \
+  -H "api-key: $BREVO_API_KEY" -H "Content-Type: application/json" \
+  -d '{"type": "boolean"}'
+```
 
 ## Důležitá pravidla
 
@@ -38,3 +86,4 @@ alwaysApply: true
 - **Email komunity:** hello@ailadies.cz (ne ahoj@, ne info@)
 - **Git email pro tento repo:** hello@ailadies.cz (lokální config, kvůli Vercel Hobby plan)
 - **DNS (Forpsi):** nesahej na MX, SPF, DKIM, DMARC záznamy — rozbije to emaily
+- **GitHub Push Protection:** nedávej žádné API klíče/tokeny do commitů — GitHub je zablokuje

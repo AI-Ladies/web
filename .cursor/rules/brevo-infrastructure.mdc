@@ -1,0 +1,125 @@
+---
+description: Brevo infrastruktura — listy, šablony, kampaně, jak posílat emaily
+globs: 
+alwaysApply: true
+---
+
+# Brevo infrastruktura — AI Ladies
+
+## Přihlašovací údaje
+
+- **API klíč:** env var `BREVO_API_KEY` (nikdy necommitovat!)
+- **Sender:** AI Ladies <hello@ailadies.cz> (sender ID: 1)
+- **Účet:** hello@ailadies.cz
+
+## Listy (kontaktní seznamy)
+
+Každý webinář/událost má VLASTNÍ list. Žádné sdílené listy, žádné segmenty.
+
+| List ID | Název | Složka | Účel |
+|---------|-------|--------|------|
+| 4 | AI Ladies Night 18.6.2026 | Events | Night červen |
+| 5 | AI Ladies Newsletter | General | Newsletter odběratelky |
+| 6 | AI Ladies Night — 27.8.2026 | General | Night srpen |
+| 8 | Webinář: AI bezpečně | Webináře (7) | Registrace webináře |
+| 9 | Webinář: Asistent na web | Webináře (7) | Registrace webináře |
+| 10 | Webinář: Proč mi z AI leze nuda | Webináře (7) | Registrace webináře |
+
+### Kde je mapping v kódu
+
+`api/complete-registration.js` → objekt `webinarLists` (+ backup v `api/stripe-webhook.js`):
+```javascript
+const webinarLists = {
+  'ai-bezpecne': 8,
+  'asistent-na-web': 9,
+  'proc-mi-z-ai-leze-nuda': 10,
+};
+```
+
+### Přidání nového listu (při novém webináři)
+
+```bash
+curl -s -X POST "https://api.brevo.com/v3/contacts/lists" \
+  -H "api-key: $BREVO_API_KEY" -H "Content-Type: application/json" \
+  -d '{"name": "Webinář: {název}", "folderId": 7}'
+```
+→ Vrátí `{"id": N}` → přidat do `webinarLists` v `api/complete-registration.js` i `api/stripe-webhook.js`.
+
+## Transactional šablony (confirmation emaily)
+
+Template IDs jsou **hardcoded v kódu** (ne env vars):
+
+| Template ID | Webinář | Soubory v kódu |
+|-------------|---------|----------------|
+| 6 | AI Ladies Night | env `BREVO_NIGHT_TEMPLATE_ID` |
+| 7 | AI bezpečně | `api/complete-registration.js`, `api/stripe-webhook.js` |
+| 8 | Asistent na web | `api/complete-registration.js`, `api/stripe-webhook.js` |
+| 9 | Proč mi z AI leze nuda | `api/complete-registration.js`, `api/stripe-webhook.js` |
+
+Šablony jsou uložené lokálně v `emails/webinar-{slug}-confirmation.html` A zároveň v Brevo (Transactional → Templates). Při změně updatovat obojí.
+
+## Kampaňové emaily (remindery, follow-upy, newsletter)
+
+### Jak poslat kampaň pro konkrétní webinář
+
+1. Vytvoř draft přes API:
+```python
+payload = {
+    'name': 'Název kampaně',
+    'subject': 'Subject line',
+    'sender': {'name': 'AI Ladies', 'email': 'hello@ailadies.cz'},
+    'type': 'classic',
+    'htmlContent': html_content,
+    'recipients': {'listIds': [LIST_ID]},  # příslušný list webináře
+    'previewText': 'Preheader text'
+}
+# POST https://api.brevo.com/v3/emailCampaigns
+```
+
+2. V Brevo UI: Campaigns → Email → najdi draft → Review → Send/Schedule
+
+### Placeholdery v kampaních
+- `{{ contact.FIRSTNAME }}` — jméno
+- `{{ contact.FIRSTNAME_5PAD }}` — vokativ (5. pád)
+- `{{ unsubscribe }}` — POVINNÝ odkaz na odhlášení
+- `{{ mirror }}` — zobrazit v prohlížeči
+
+### Placeholdery v transakčních emailech
+- `{{ params.FIRSTNAME }}` — předáváno v API callu
+- `{{ params.FIRSTNAME_5PAD }}` — vokativ
+
+## Dedup atributy (confirmation emaily)
+
+Aby se confirmation email neposlal 2x (TY page + webhook):
+
+| Atribut | Webinář |
+|---------|---------|
+| `CONFIRMATION_SENT` | AI Ladies Night |
+| `CONFIRMATION_SENT_AI_BEZPECNE` | AI bezpečně |
+| `CONFIRMATION_SENT_ASISTENT_NA_WEB` | Asistent na web |
+| `CONFIRMATION_SENT_PROC_MI_Z_AI_LEZE_NUDA` | Proč mi z AI leze nuda |
+
+Při novém webináři vytvořit:
+```bash
+curl -X POST "https://api.brevo.com/v3/contacts/attributes/normal/CONFIRMATION_SENT_{SLUG_CAPS}" \
+  -H "api-key: $BREVO_API_KEY" -H "Content-Type: application/json" \
+  -d '{"type": "boolean"}'
+```
+
+## Složky (folders)
+
+| Folder ID | Název |
+|-----------|-------|
+| 1 | General |
+| 3 | Events |
+| 7 | Webináře |
+
+## Checklist: Nový webinář v Brevo
+
+1. Vytvoř list (folder 7) → zapiš ID
+2. Přidej ID do `webinarLists` v `api/complete-registration.js` i `api/stripe-webhook.js`
+3. Vytvoř dedup atribut `CONFIRMATION_SENT_{SLUG}`
+4. Vytvoř transactional šablonu → zapiš template ID
+5. Přidej template ID do `api/complete-registration.js` i `api/stripe-webhook.js`
+6. Vytvoř lokální HTML: `emails/webinar-{slug}-confirmation.html`
+7. Deploy (git push)

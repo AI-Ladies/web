@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <title>AI Ladies — Facebook Page Logo</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --al-gold: #c49f47;
+      --al-gold-dark: #7a5a1e;
+      --al-gold-gradient: linear-gradient(135deg, #7a5a1e 0%, #b8892a 22%, #c49f47 40%, #d4bc6a 55%, #c49f47 68%, #9a7428 84%, #7a5a1e 100%);
+      --font-dm-serif: "DM Serif Display", Georgia, serif;
+      --font-dm-sans: "DM Sans", system-ui, sans-serif;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: var(--font-dm-sans);
+      background: #e5e5e5;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 48px;
+    }
+    .label {
+      font-size: 13px; font-weight: 500; color: #666;
+      margin-bottom: 8px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .label .size {
+      font-size: 11px; color: #999;
+      background: #ddd; padding: 2px 8px; border-radius: 4px;
+    }
+    .tip {
+      font-size: 12px; color: #888;
+      margin-top: 8px; font-style: italic;
+    }
+    .variant { display: flex; flex-direction: column; }
+
+    .logo-box {
+      width: 1080px;
+      height: 1080px;
+      position: relative;
+      overflow: hidden;
+      background: #ffffff;
+    }
+
+    .logo-box .content {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      z-index: 2;
+    }
+
+    .logo-box .text-ai {
+      font-family: var(--font-dm-serif);
+      font-size: 280px;
+      line-height: 1;
+      color: #0d0d0d;
+      letter-spacing: -0.02em;
+    }
+    .logo-box .text-ladies {
+      font-family: var(--font-dm-serif);
+      font-size: 165px;
+      line-height: 1;
+      background: var(--al-gold-gradient);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-top: -8px;
+    }
+
+    /* Subtle gold decorative elements */
+    .logo-box .accent-line {
+      position: absolute;
+      z-index: 1;
+    }
+    .logo-box .line-top {
+      top: 80px; left: 50%;
+      transform: translateX(-50%);
+      width: 120px; height: 2px;
+      background: var(--al-gold-gradient);
+      opacity: 0.4;
+      border-radius: 1px;
+    }
+    .logo-box .line-bottom {
+      bottom: 80px; left: 50%;
+      transform: translateX(-50%);
+      width: 120px; height: 2px;
+      background: var(--al-gold-gradient);
+      opacity: 0.4;
+      border-radius: 1px;
+    }
+    .logo-box .star {
+      position: absolute; z-index: 2;
+      background: var(--al-gold-gradient);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* Soft gold glow behind text for depth */
+    .logo-box .glow {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px; height: 350px;
+      border-radius: 50%;
+      background: radial-gradient(ellipse, rgba(196, 159, 71, 0.06) 0%, transparent 70%);
+      filter: blur(40px);
+      z-index: 0;
+    }
+
+    /* Preview circles to simulate FB profile pic */
+    .preview-row {
+      display: flex; gap: 20px; align-items: flex-end;
+      margin-top: 12px;
+    }
+    .preview-box {
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+      border: 1px solid #eee;
+    }
+    .preview-box img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
+
+    /* Export helper */
+    .export-btn {
+      margin-top: 16px;
+      padding: 10px 24px;
+      font-family: var(--font-dm-sans);
+      font-size: 14px; font-weight: 600;
+      background: #0d0d0d; color: #fff;
+      border: none; border-radius: 8px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .export-btn:hover { opacity: 0.8; }
+  </style>
+</head>
+<body>
+
+  <h1 style="font-family: var(--font-dm-serif); font-size: 28px; color: #0d0d0d;">
+    Facebook Page Logo — AI Ladies
+  </h1>
+  <p style="color: #666; font-size: 15px;">
+    Doporučená velikost: 1080 × 1080 px &nbsp;·&nbsp; FB ořízne do kruhu u profilu
+  </p>
+
+  <!-- ===== Main: White + Black AI + Gold Ladies ===== -->
+  <div class="variant">
+    <div class="label">
+      Bílé pozadí — AI černě, Ladies zlatým gradientem
+      <span class="size">1080 × 1080 px</span>
+    </div>
+    <div class="logo-box" id="fb-logo">
+      <div class="glow"></div>
+      <div class="accent-line line-top"></div>
+      <div class="accent-line line-bottom"></div>
+      <span class="star" style="top:140px;right:240px;font-size:18px;opacity:0.25">✦</span>
+      <span class="star" style="bottom:150px;left:250px;font-size:14px;opacity:0.2">✦</span>
+      <div class="content">
+        <div class="text-ai">AI</div>
+        <div class="text-ladies">Ladies</div>
+      </div>
+    </div>
+    <div class="tip">Čistý bílý podklad — ideální pro Facebook profilový obrázek</div>
+    <button class="export-btn" onclick="exportLogo()">📥 Exportovat PNG</button>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script>
+    async function exportLogo() {
+      const el = document.getElementById('fb-logo');
+      const canvas = await html2canvas(el, {
+        scale: 1,
+        useCORS: true,
+        backgroundColor: '#ffffff',
+        width: 1080,
+        height: 1080
+      });
+      const link = document.createElement('a');
+      link.download = 'ai-ladies-fb-logo.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+  </script>
+
+</body>
+</html>

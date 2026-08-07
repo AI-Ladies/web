@@ -74,6 +74,15 @@ Datumy a krátké výrazy: `17.&nbsp;června`, `Praha&nbsp;1`
 - **Campaign email:** `{{ contact.FIRSTNAME }}`, `{{ unsubscribe }}`, `{{ mirror }}`
 - NIKDY `{{ unsubscribe_url }}` — v Brevo nefunguje!
 
+## Oslovení (5. pád / vokativ)
+
+- **Kdekoli v emailu oslovujeme jménem** (Ahoj …, Díky …, apod.), VŽDY použít skloňovaný tvar:
+  - Campaign: `{{ contact.FIRSTNAME_5PAD }}`
+  - Transactional: `{{ params.FIRSTNAME_5PAD }}`
+- NIKDY nepoužívat `{{ contact.FIRSTNAME }}` / `{{ params.FIRSTNAME }}` pro oslovení — to je 1. pád (nominativ), ne 5. pád.
+- Atribut `FIRSTNAME_5PAD` se plní automaticky při registraci přes skloňování API (`sklonovani-jmen.cz`).
+- Pokud se z nějakého důvodu atribut nevyplní, Brevo zobrazí prázdný string — proto se v subject line nepoužívá (fallback nefunguje hezky).
+
 ## Footer — transakční emaily
 
 Stačí minimální: proč email přišel + kontakt. Unsubscribe není povinný u transakčních.

@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Ladies — LinkedIn Bannery</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --al-gold: #c49f47;
+      --al-gold-dark: #7a5a1e;
+      --al-gold-light: #f8f2e4;
+      --al-dark: #0d0d0d;
+      --al-text: #2a2a2a;
+      --al-blush-50: #fef7f8;
+      --al-blush-100: #fdecef;
+      --al-blush-200: #f9d4da;
+      --al-blush-300: #f2adb8;
+      --al-blush-400: #e8849a;
+      --al-blush-500: #d4627d;
+      --al-blush-600: #b8445f;
+      --al-gold-gradient: linear-gradient(115deg, #7a5a1e 0%, #b8892a 22%, #c49f47 40%, #d4bc6a 55%, #c49f47 68%, #9a7428 84%, #7a5a1e 100%);
+      --al-rose-gold-gradient: linear-gradient(135deg, #c49f47 0%, #d4a85c 25%, #d4927a 50%, #d4627d 75%, #b8445f 100%);
+      --font-dm-serif: "DM Serif Display", Georgia, serif;
+      --font-dm-sans: "DM Sans", system-ui, sans-serif;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: var(--font-dm-sans);
+      background: #f5f5f5;
+      padding: 40px;
+    }
+
+    h2.section-title {
+      font-family: var(--font-dm-sans);
+      font-size: 14px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #999;
+      margin-bottom: 12px;
+    }
+
+    .banner-wrapper {
+      margin-bottom: 48px;
+    }
+
+    .banner-label {
+      font-family: var(--font-dm-sans);
+      font-size: 13px;
+      font-weight: 500;
+      color: #666;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .banner-label .size {
+      font-size: 11px;
+      color: #999;
+      background: #eee;
+      padding: 2px 8px;
+      border-radius: 4px;
+    }
+
+    .banner {
+      width: 1584px;
+      height: 396px;
+      position: relative;
+      overflow: hidden;
+      border-radius: 8px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+    }
+
+    .tip {
+      font-size: 12px;
+      color: #888;
+      margin-top: 6px;
+      font-style: italic;
+    }
+
+    /* ===== VARIANT 1: Dark + Gold motto ===== */
+    .v1 {
+      background: var(--al-dark);
+    }
+    .v1 .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      pointer-events: none;
+    }
+    .v1 .orb-1 {
+      top: -120px; right: -60px;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(196, 159, 71, 0.3) 0%, transparent 70%);
+    }
+    .v1 .orb-2 {
+      bottom: -80px; left: 200px;
+      width: 350px; height: 350px;
+      background: radial-gradient(circle, rgba(232, 132, 154, 0.15) 0%, transparent 70%);
+    }
+    .v1 .content {
+      position: relative; z-index: 2;
+      display: flex; align-items: center;
+      height: 100%; padding: 0 100px;
+      gap: 60px;
+    }
+    .v1 .logo-area {
+      flex-shrink: 0;
+    }
+    .v1 .logo {
+      font-family: var(--font-dm-serif);
+      font-size: 48px;
+      line-height: 1;
+    }
+    .v1 .logo .ai { color: #fff; }
+    .v1 .logo .ladies {
+      background: var(--al-gold-gradient);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .v1 .divider-line {
+      width: 1px; height: 120px;
+      background: linear-gradient(to bottom, transparent, rgba(196, 159, 71, 0.4), transparent);
+      flex-shrink: 0;
+    }
+    .v1 .text-area { flex: 1; }
+    .v1 .motto {
+      font-family: var(--font-dm-serif);
+      font-size: 36px;
+      color: #fff;
+      line-height: 1.3;
+    }
+    .v1 .motto .gold {
+      background: var(--al-gold-gradient);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .v1 .sub {
+      font-size: 16px;
+      color: rgba(255,255,255,0.55);
+      margin-top: 16px;
+      letter-spacing: 0.04em;
+    }
+    .v1 .stars {
+      position: absolute; z-index: 1;
+      color: rgba(196, 159, 71, 0.2);
+      font-size: 18px;
+    }
+    .v1 .star-1 { top: 40px; left: 60px; }
+    .v1 .star-2 { top: 80px; right: 120px; }
+    .v1 .star-3 { bottom: 50px; right: 300px; font-size: 14px; }
+    .v1 .star-4 { bottom: 30px; left: 400px; font-size: 12px; }
+
+    /* ===== VARIANT 2: Blush gradient + Dark text ===== */
+    .v2 {
+      background: linear-gradient(135deg, #fef7f8 0%, #fdecef 35%, #f9d4da 70%, #f2adb8 100%);
+    }
+    .v2 .deco-blob {
+      position: absolute;
+      border-radius: 40% 60% 55% 45% / 55% 40% 60% 45%;
+      filter: blur(60px);
+      pointer-events: none;
+    }
+    .v2 .blob-1 {
+      top: -80px; right: 100px;
+      width: 350px; height: 300px;
+      background: radial-gradient(ellipse, rgba(196, 159, 71, 0.2) 0%, transparent 70%);
+    }
+    .v2 .blob-2 {
+      bottom: -60px; left: -40px;
+      width: 280px; height: 280px;
+      background: radial-gradient(ellipse, rgba(212, 98, 125, 0.15) 0%, transparent 70%);
+    }
+    .v2 .content {
+      position: relative; z-index: 2;
+      display: flex; align-items: center; justify-content: center;
+      height: 100%; padding: 0 100px;
+      text-align: center;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .v2 .label {
+      font-size: 12px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.12em;
+      background: var(--al-gold-gradient);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .v2 .motto {
+      font-family: var(--font-dm-serif);
+      font-size: 40px; color: var(--al-dark);
+      line-height: 1.25;
+    }
+    .v2 .motto .gold {
+      background: var(--al-gold-gradient);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .v2 .sub {
+      font-size: 16px; color: #6b7280;
+      max-width: 700px;
+    }
+    .v2 .stars {
+      position: absolute; z-index: 1;
+    }
+    .v2 .stars span {
+      position: absolute;
+      background: var(--al-gold-gradient);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+      opacity: 0.35;
+    }
+    .v2 .s1 { top: 30px; left: 80px; font-size: 20px; }
+    .v2 .s2 { bottom: 40px; right: 100px; font-size: 16px; }
+    .v2 .s3 { top: 60px; right: 250px; font-size: 12px; }
+
+    /* ===== VARIANT 3: Dark minimalist — no text ===== */
+    .v3 {
+      background: var(--al-dark);
+    }
+    .v3 .pattern {
+      position: absolute; inset: 0; z-index: 1;
+      overflow: hidden;
+    }
+    .v3 .ring {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(196, 159, 71, 0.12);
+    }
+    .v3 .ring-1 { width: 600px; height: 600px; top: -200px; right: -100px; }
+    .v3 .ring-2 { width: 400px; height: 400px; top: -100px; right: 0px; border-color: rgba(196, 159, 71, 0.08); }
+    .v3 .ring-3 { width: 500px; height: 500px; bottom: -300px; left: 100px; border-color: rgba(232, 132, 154, 0.08); }
+    .v3 .ring-4 { width: 300px; height: 300px; bottom: -200px; left: 200px; border-color: rgba(232, 132, 154, 0.06); }
+    .v3 .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+    }
+    .v3 .orb-g {
+      width: 400px; height: 400px;
+      top: -100px; right: -50px;
+      background: radial-gradient(circle, rgba(196, 159, 71, 0.25) 0%, transparent 70%);
+    }
+    .v3 .orb-b {
+      width: 300px; height: 300px;
+      bottom: -100px; left: 300px;
+      background: radial-gradient(circle, rgba(212, 98, 125, 0.12) 0%, transparent 70%);
+    }
+    .v3 .content {
+      position: relative; z-index: 2;
+      display: flex; align-items: center; justify-content: center;
+      height: 100%; padding: 0 100px;
+    }
+    .v3 .logo {
+      font-family: var(--font-dm-serif);
+      font-size: 64px; line-height: 1;
+    }
+    .v3 .logo .ai { color: #fff; }
+    .v3 .logo .ladies {
+      background: var(--al-gold-gradient);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .v3 .dot-grid {
+      position: absolute; z-index: 1;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-image: radial-gradient(rgba(196, 159, 71, 0.06) 1px, transparent 1px);
+      background-size: 32px 32px;
+    }
+
+    /* ===== VARIANT 4: Rose-gold gradient strip — no text ===== */
+    .v4 {
+      background: var(--al-dark);
+    }
+    .v4 .gradient-strip {
+      position: absolute; z-index: 1;
+      height: 100%; width: 100%;
+    }
+    .v4 .strip-inner {
+      position: absolute;
+      height: 4px;
+      border-radius: 2px;
+    }
+    .v4 .s-1 {
+      background: linear-gradient(90deg, transparent 0%, #7a5a1e 15%, #c49f47 35%, #d4927a 55%, #d4627d 75%, transparent 100%);
+      bottom: 50%; left: 0; right: 0;
+      opacity: 0.6;
+    }
+    .v4 .s-2 {
+      background: linear-gradient(90deg, transparent 0%, #c49f47 20%, #d4bc6a 40%, transparent 70%);
+      bottom: calc(50% + 20px); left: 5%; right: 15%;
+      height: 1px; opacity: 0.3;
+    }
+    .v4 .s-3 {
+      background: linear-gradient(90deg, transparent 10%, #d4627d 40%, #e8849a 60%, transparent 90%);
+      bottom: calc(50% - 20px); left: 10%; right: 5%;
+      height: 1px; opacity: 0.25;
+    }
+    .v4 .orb-left {
+      position: absolute; left: -50px; top: 50%; transform: translateY(-50%);
+      width: 500px; height: 300px;
+      background: radial-gradient(ellipse, rgba(196, 159, 71, 0.2) 0%, transparent 70%);
+      filter: blur(60px);
+      border-radius: 50%;
+    }
+    .v4 .orb-right {
+      position: absolute; right: -50px; top: 50%; transform: translateY(-50%);
+      width: 400px; height: 250px;
+      background: radial-gradient(ellipse, rgba(212, 98, 125, 0.15) 0%, transparent 70%);
+      filter: blur(60px);
+      border-radius: 50%;
+    }
+    .v4 .content {
+      position: relative; z-index: 2;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 100%; padding: 0 100px;
+    }
+    .v4 .logo {
+      font-family: var(--font-dm-serif);
+      font-size: 56px; line-height: 1;
+    }
+    .v4 .logo .ai { color: #fff; }
+    .v4 .logo .ladies {
+      background: var(--al-gold-gradient);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .v4 .url {
+      font-size: 18px; font-weight: 500;
+      color: rgba(255,255,255,0.4);
+      letter-spacing: 0.06em;
+    }
+
+    /* ===== VARIANT 5: Blush clean — just URL ===== */
+    .v5 {
+      background: linear-gradient(160deg, #fef7f8 0%, #fdecef 40%, #f9d4da 100%);
+    }
+    .v5 .content {
+      position: relative; z-index: 2;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 100%; padding: 0 100px;
+    }
+    .v5 .left {
+      display: flex; align-items: center; gap: 40px;
+    }
+    .v5 .logo {
+      font-family: var(--font-dm-serif);
+      font-size: 52px; line-height: 1;
+    }
+    .v5 .logo .ai { color: var(--al-dark); }
+    .v5 .logo .ladies {
+      background: var(--al-gold-gradient);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .v5 .divider-v {
+      width: 1px; height: 80px;
+      background: linear-gradient(to bottom, transparent, rgba(196, 159, 71, 0.35), transparent);
+    }
+    .v5 .tagline {
+      font-size: 17px; color: var(--al-text);
+      line-height: 1.5; max-width: 400px;
+    }
+    .v5 .tagline strong {
+      background: var(--al-gold-gradient);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: 600;
+    }
+    .v5 .right {
+      text-align: right;
+    }
+    .v5 .url {
+      font-size: 20px; font-weight: 600;
+      background: var(--al-gold-gradient);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .v5 .stars-deco {
+      position: absolute; z-index: 1;
+    }
+    .v5 .stars-deco span {
+      position: absolute;
+      background: var(--al-gold-gradient);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+      opacity: 0.25;
+    }
+    .v5 .sd1 { top: 25px; right: 200px; font-size: 18px; }
+    .v5 .sd2 { bottom: 30px; left: 300px; font-size: 14px; }
+    .v5 .blob-r {
+      position: absolute; top: -40px; right: -60px;
+      width: 300px; height: 300px;
+      border-radius: 40% 60% 55% 45% / 55% 40% 60% 45%;
+      background: radial-gradient(ellipse, rgba(196, 159, 71, 0.12) 0%, transparent 70%);
+      filter: blur(40px);
+    }
+
+    /* ===== VARIANT 6: Dark + Bold motto ===== */
+    .v6 {
+      background: var(--al-dark);
+    }
+    .v6 .bg-elements {
+      position: absolute; inset: 0; z-index: 1; overflow: hidden;
+    }
+    .v6 .mesh-1 {
+      position: absolute; top: -150px; left: -100px;
+      width: 600px; height: 600px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(196, 159, 71, 0.18) 0%, transparent 60%);
+      filter: blur(70px);
+    }
+    .v6 .mesh-2 {
+      position: absolute; bottom: -200px; right: 200px;
+      width: 500px; height: 500px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(212, 98, 125, 0.1) 0%, transparent 60%);
+      filter: blur(80px);
+    }
+    .v6 .mesh-3 {
+      position: absolute; top: 0; right: -80px;
+      width: 400px; height: 400px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(196, 159, 71, 0.08) 0%, transparent 60%);
+      filter: blur(50px);
+    }
+    .v6 .line-h {
+      position: absolute; z-index: 1;
+      height: 1px; left: 80px; right: 80px;
+      top: 50%;
+      background: linear-gradient(90deg, transparent, rgba(196, 159, 71, 0.15) 20%, rgba(196, 159, 71, 0.15) 80%, transparent);
+    }
+    .v6 .content {
+      position: relative; z-index: 2;
+      display: flex; align-items: center;
+      height: 100%; padding: 0 100px;
+      justify-content: space-between;
+    }
+    .v6 .left-block { max-width: 900px; }
+    .v6 .label-tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 11px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.14em;
+      color: var(--al-blush-400);
+      background: rgba(232, 132, 154, 0.12);
+      padding: 5px 14px; border-radius: 20px;
+      margin-bottom: 20px;
+    }
+    .v6 .motto {
+      font-family: var(--font-dm-serif);
+      font-size: 44px; color: #fff;
+      line-height: 1.2;
+    }
+    .v6 .motto .rose-gold {
+      background: var(--al-rose-gold-gradient);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .v6 .right-block {
+      text-align: right;
+      flex-shrink: 0;
+    }
+    .v6 .logo-sm {
+      font-family: var(--font-dm-serif);
+      font-size: 36px; line-height: 1;
+    }
+    .v6 .logo-sm .ai { color: #fff; }
+    .v6 .logo-sm .ladies {
+      background: var(--al-gold-gradient);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .v6 .url-sm {
+      font-size: 14px; font-weight: 500;
+      color: rgba(255,255,255,0.35);
+      margin-top: 8px;
+      letter-spacing: 0.03em;
+    }
+    .v6 .stars-abs {
+      position: absolute; z-index: 1;
+    }
+    .v6 .stars-abs span {
+      position: absolute;
+      color: rgba(196, 159, 71, 0.18);
+    }
+    .v6 .sa1 { top: 30px; left: 50px; font-size: 16px; }
+    .v6 .sa2 { bottom: 35px; right: 80px; font-size: 20px; }
+    .v6 .sa3 { top: 50px; right: 400px; font-size: 10px; }
+    .v6 .sa4 { bottom: 60px; left: 500px; font-size: 13px; }
+
+    /* ===== VARIANT 7: White elegant — motto + gold accent ===== */
+    .v7 {
+      background: #ffffff;
+      border: 2px solid var(--al-blush-200);
+    }
+    .v7 .accent-bar {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #7a5a1e 0%, #c49f47 25%, #d4927a 50%, #d4627d 75%, #b8445f 100%);
+    }
+    .v7 .accent-top {
+      position: absolute; top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #b8445f 0%, #d4627d 25%, #d4927a 50%, #c49f47 75%, #7a5a1e 100%);
+    }
+    .v7 .content {
+      position: relative; z-index: 2;
+      display: flex; align-items: center;
+      height: 100%; padding: 0 100px;
+      gap: 60px;
+    }
+    .v7 .logo-area { flex-shrink: 0; }
+    .v7 .logo {
+      font-family: var(--font-dm-serif);
+      font-size: 44px; line-height: 1;
+    }
+    .v7 .logo .ai { color: var(--al-dark); }
+    .v7 .logo .ladies {
+      background: var(--al-gold-gradient);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .v7 .divider-v2 {
+      width: 1px; height: 100px; flex-shrink: 0;
+      background: linear-gradient(to bottom, transparent, var(--al-blush-200), transparent);
+    }
+    .v7 .text-area { flex: 1; }
+    .v7 .motto {
+      font-family: var(--font-dm-serif);
+      font-size: 32px; color: var(--al-dark);
+      line-height: 1.3; position: relative;
+    }
+    .v7 .motto .gold {
+      background: var(--al-gold-gradient);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .v7 .rose-underline {
+      display: block;
+      width: 80px; height: 2px;
+      background: linear-gradient(90deg, #c49f47, #d4627d);
+      border-radius: 1px;
+      margin-top: 12px;
+      opacity: 0.6;
+    }
+    .v7 .url-right {
+      position: absolute; right: 100px; top: 50%; transform: translateY(-50%);
+      font-size: 16px; font-weight: 600;
+      background: var(--al-gold-gradient);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    /* ===== VARIANT 8: Dark full-width — community statement ===== */
+    .v8 {
+      background: var(--al-dark);
+    }
+    .v8 .noise {
+      position: absolute; inset: 0; z-index: 1; overflow: hidden;
+    }
+    .v8 .glow-center {
+      position: absolute;
+      top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 900px; height: 400px;
+      background: radial-gradient(ellipse, rgba(196, 159, 71, 0.12) 0%, transparent 60%);
+      filter: blur(50px);
+    }
+    .v8 .content {
+      position: relative; z-index: 2;
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column;
+      height: 100%; padding: 0 100px;
+      text-align: center; gap: 20px;
+    }
+    .v8 .stars-row {
+      display: flex; align-items: center; gap: 12px;
+      font-size: 14px;
+    }
+    .v8 .stars-row .star {
+      background: var(--al-gold-gradient);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .v8 .stars-row .line {
+      width: 40px; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(196, 159, 71, 0.3), transparent);
+    }
+    .v8 .motto {
+      font-family: var(--font-dm-serif);
+      font-size: 46px; color: #fff;
+      line-height: 1.2;
+    }
+    .v8 .motto .gold {
+      background: var(--al-gold-gradient);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .v8 .bottom-row {
+      display: flex; align-items: center; gap: 24px;
+      font-size: 15px;
+    }
+    .v8 .logo-inline {
+      font-family: var(--font-dm-serif);
+      font-size: 22px;
+    }
+    .v8 .logo-inline .ai { color: #fff; }
+    .v8 .logo-inline .ladies {
+      background: var(--al-gold-gradient);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .v8 .sep {
+      width: 1px; height: 20px;
+      background: rgba(255,255,255,0.15);
+    }
+    .v8 .url {
+      color: rgba(255,255,255,0.4);
+      font-weight: 500; letter-spacing: 0.03em;
+    }
+
+    /* ===== VARIANT 9: Hero "Hledaly jsme místo..." ===== */
+    .v9 { background: var(--al-dark); }
+    .v9-bg {
+      position: absolute; inset: 0; z-index: 1; overflow: hidden;
+    }
+    .v9-orb {
+      position: absolute; border-radius: 50%; filter: blur(70px); pointer-events: none;
+    }
+    .v9-orb-1 {
+      width: 500px; height: 400px;
+      top: -120px; left: -80px;
+      background: radial-gradient(ellipse, rgba(196, 159, 71, 0.22) 0%, transparent 65%);
+    }
+    .v9-orb-2 {
+      width: 400px; height: 350px;
+      bottom: -140px; right: 100px;
+      background: radial-gradient(ellipse, rgba(196, 159, 71, 0.12) 0%, transparent 65%);
+    }
+    .v9-orb-3 {
+      width: 300px; height: 300px;
+      top: -60px; right: -40px;
+      background: radial-gradient(ellipse, rgba(196, 159, 71, 0.1) 0%, transparent 60%);
+    }
+    .v9-grid {
+      position: absolute; inset: 0;
+      background-image:
+        linear-gradient(rgba(196, 159, 71, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(196, 159, 71, 0.04) 1px, transparent 1px);
+      background-size: 80px 80px;
+      mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black 30%, transparent 70%);
+      -webkit-mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, black 30%, transparent 70%);
+    }
+    .v9-arc {
+      position: absolute; border-radius: 50%; pointer-events: none;
+      border: 1px solid transparent;
+    }
+    .v9-arc-1 {
+      width: 700px; height: 700px;
+      top: -350px; left: 50%; transform: translateX(-50%);
+      border-color: rgba(196, 159, 71, 0.07);
+    }
+    .v9-arc-2 {
+      width: 900px; height: 900px;
+      top: -480px; left: 50%; transform: translateX(-50%);
+      border-color: rgba(196, 159, 71, 0.04);
+    }
+    .v9-arc-3 {
+      width: 500px; height: 500px;
+      bottom: -350px; left: 50%; transform: translateX(-50%);
+      border-color: rgba(196, 159, 71, 0.06);
+    }
+    .v9-stars {
+      position: absolute; inset: 0; z-index: 2; pointer-events: none;
+    }
+    .v9-stars span {
+      position: absolute;
+      background: var(--al-gold-gradient);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .v9-content {
+      position: relative; z-index: 3;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      height: 100%; padding: 0 100px;
+      text-align: center; gap: 28px;
+    }
+    .v9-text-block { max-width: 1100px; }
+    .v9-line1 {
+      font-family: var(--font-dm-sans);
+      font-size: 26px; font-weight: 400;
+      color: rgba(255,255,255,0.6);
+      line-height: 1.4;
+      margin-bottom: 8px;
+    }
+    .v9-line2 {
+      font-family: var(--font-dm-serif);
+      font-size: 48px; color: #fff;
+      line-height: 1.2;
+    }
+    .v9-gold {
+      background: var(--al-gold-gradient);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .v9-gold-full {
+      background: var(--al-gold-gradient);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .v9-footer {
+      display: flex; align-items: center; gap: 16px;
+    }
+    .v9-line-left, .v9-line-right {
+      width: 60px; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(196, 159, 71, 0.25));
+    }
+    .v9-line-right {
+      background: linear-gradient(90deg, rgba(196, 159, 71, 0.25), transparent);
+    }
+    .v9-logo {
+      font-family: var(--font-dm-serif);
+      font-size: 20px; line-height: 1;
+    }
+    .v9-logo .ai { color: #fff; }
+    .v9-logo .ladies {
+      background: var(--al-gold-gradient);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .v9-dot {
+      font-size: 10px;
+      background: var(--al-gold-gradient);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .v9-url {
+      font-size: 14px; font-weight: 500;
+      color: rgba(255,255,255,0.35);
+      letter-spacing: 0.04em;
+    }
+
+    /* ===== VARIANT 9b: Horizontal "Hledaly jsme místo..." ===== */
+    .v9b { background: var(--al-dark); }
+    .v9b-bg {
+      position: absolute; inset: 0; z-index: 1; overflow: hidden;
+    }
+    .v9b-glow {
+      position: absolute;
+      top: 50%; left: 35%; transform: translate(-50%, -50%);
+      width: 600px; height: 350px;
+      background: radial-gradient(ellipse, rgba(196, 159, 71, 0.14) 0%, transparent 60%);
+      filter: blur(60px);
+    }
+    .v9b-glow-2 {
+      position: absolute;
+      top: 50%; right: -5%; transform: translateY(-50%);
+      width: 400px; height: 300px;
+      background: radial-gradient(ellipse, rgba(212, 98, 125, 0.1) 0%, transparent 60%);
+      filter: blur(50px);
+    }
+    .v9b-accent-line {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      height: 3px; z-index: 3;
+      background: linear-gradient(90deg,
+        #7a5a1e 0%, #c49f47 20%, #d4a85c 35%,
+        #d4927a 50%, #d4627d 70%, #b8445f 85%, transparent 100%
+      );
+      opacity: 0.7;
+    }
+    .v9b-content {
+      position: relative; z-index: 2;
+      display: flex; align-items: center;
+      height: 100%; padding: 0 80px;
+      gap: 40px;
+    }
+    .v9b-left { flex-shrink: 0; }
+    .v9b-logo {
+      font-family: var(--font-dm-serif);
+      font-size: 42px; line-height: 1;
+    }
+    .v9b-logo .ai { color: #fff; }
+    .v9b-logo .ladies {
+      background: var(--al-gold-gradient);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .v9b-divider {
+      width: 1px; height: 100px; flex-shrink: 0;
+      background: linear-gradient(to bottom, transparent, rgba(196, 159, 71, 0.3), rgba(212, 98, 125, 0.2), transparent);
+    }
+    .v9b-center { flex: 1; }
+    .v9b-claim {
+      font-size: 28px; line-height: 1.5;
+    }
+    .v9b-thin {
+      font-family: var(--font-dm-sans);
+      font-weight: 400;
+      color: rgba(255,255,255,0.55);
+    }
+    .v9b-bold {
+      font-family: var(--font-dm-serif);
+      font-size: 32px;
+      color: #fff;
+    }
+    .v9b-rose {
+      background: var(--al-rose-gold-gradient);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .v9b-right {
+      flex-shrink: 0; text-align: right;
+    }
+    .v9b-url {
+      font-size: 16px; font-weight: 500;
+      color: rgba(255,255,255,0.35);
+      letter-spacing: 0.04em;
+    }
+    .v9b-stars {
+      position: absolute; inset: 0; z-index: 2; pointer-events: none;
+    }
+    .v9b-stars span {
+      position: absolute;
+      background: var(--al-gold-gradient);
+      -webkit-background-clip: text; background-clip: text;
+      -webkit-text-fill-color: transparent;
+      opacity: 0.2;
+    }
+  </style>
+</head>
+<body>
+
+  <h1 style="font-family: var(--font-dm-serif); font-size: 28px; margin-bottom: 8px; color: var(--al-dark);">
+    LinkedIn Banner — AI Ladies
+  </h1>
+  <p style="color: #666; margin-bottom: 40px; font-size: 15px;">
+    Osobní profil: 1584 × 396 px &nbsp;·&nbsp; Otevři v prohlížeči a screenshotni jednotlivé bannery (nebo použij devtools → screenshot node)
+  </p>
+
+  <!-- ===== V1: Dark + Gold motto ===== -->
+  <div class="banner-wrapper">
+    <div class="banner-label">
+      Varianta 1 — Dark + Gold motto
+      <span class="size">1584 × 396 px</span>
+    </div>
+    <div class="banner v1">
+      <div class="orb orb-1"></div>
+      <div class="orb orb-2"></div>
+      <span class="stars star-1">✦</span>
+      <span class="stars star-2">✦</span>
+      <span class="stars star-3">✦</span>
+      <span class="stars star-4">✦</span>
+      <div class="content">
+        <div class="logo-area">
+          <div class="logo"><span class="ai">AI</span><span class="ladies">Ladies</span></div>
+        </div>
+        <div class="divider-line"></div>
+        <div class="text-area">
+          <div class="motto">Komunita žen, které mění svět<br>s pomocí <span class="gold">umělé inteligence</span></div>
+          <div class="sub">✦ &nbsp;Vzdělání &nbsp;·&nbsp; Komunita &nbsp;·&nbsp; Praxe</div>
+        </div>
+      </div>
+    </div>
+    <div class="tip">S textem — hlavní motto komunity, elegantní dark varianta</div>
+  </div>
+
+  <!-- ===== V2: Blush + motto ===== -->
+  <div class="banner-wrapper">
+    <div class="banner-label">
+      Varianta 2 — Blush gradient + motto
+      <span class="size">1584 × 396 px</span>
+    </div>
+    <div class="banner v2">
+      <div class="deco-blob blob-1"></div>
+      <div class="deco-blob blob-2"></div>
+      <div class="stars-deco">
+        <span class="s1">✦</span>
+        <span class="s2">✦</span>
+        <span class="s3">✦</span>
+      </div>
+      <div class="content">
+        <div class="label">✦ &nbsp;AI Ladies &nbsp;✦</div>
+        <div class="motto">AI není budoucnost.<br><span class="gold">AI je teď.</span></div>
+        <div class="sub">Připoj se ke komunitě žen, které AI používají v praxi každý den.</div>
+      </div>
+    </div>
+    <div class="tip">S textem — krátké, punchy motto na světlém pozadí</div>
+  </div>
+
+  <!-- ===== V3: Dark minimalist — no text ===== -->
+  <div class="banner-wrapper">
+    <div class="banner-label">
+      Varianta 3 — Dark minimalist (jen logo)
+      <span class="size">1584 × 396 px</span>
+    </div>
+    <div class="banner v3">
+      <div class="dot-grid"></div>
+      <div class="pattern">
+        <div class="ring ring-1"></div>
+        <div class="ring ring-2"></div>
+        <div class="ring ring-3"></div>
+        <div class="ring ring-4"></div>
+        <div class="orb orb-g"></div>
+        <div class="orb orb-b"></div>
+      </div>
+      <div class="content">
+        <div class="logo"><span class="ai">AI</span><span class="ladies">Ladies</span></div>
+      </div>
+    </div>
+    <div class="tip">Bez textu — čisté logo s dekorativními kruhy a jemným dot gridem</div>
+  </div>
+
+  <!-- ===== V4: Dark + rose-gold line — URL ===== -->
+  <div class="banner-wrapper">
+    <div class="banner-label">
+      Varianta 4 — Dark + rose-gold linka + URL
+      <span class="size">1584 × 396 px</span>
+    </div>
+    <div class="banner v4">
+      <div class="gradient-strip">
+        <div class="strip-inner s-1"></div>
+        <div class="strip-inner s-2"></div>
+        <div class="strip-inner s-3"></div>
+      </div>
+      <div class="orb-left"></div>
+      <div class="orb-right"></div>
+      <div class="content">
+        <div class="logo"><span class="ai">AI</span><span class="ladies">Ladies</span></div>
+        <div class="url">ailadies.cz</div>
+      </div>
+    </div>
+    <div class="tip">Minimální text — logo + URL s elegantní rose-gold linkou uprostřed</div>
+  </div>
+
+  <!-- ===== V5: Blush clean — logo + tagline + URL ===== -->
+  <div class="banner-wrapper">
+    <div class="banner-label">
+      Varianta 5 — Blush clean s tagline + URL
+      <span class="size">1584 × 396 px</span>
+    </div>
+    <div class="banner v5">
+      <div class="blob-r"></div>
+      <div class="stars-deco">
+        <span class="sd1">✦</span>
+        <span class="sd2">✦</span>
+      </div>
+      <div class="content">
+        <div class="left">
+          <div class="logo"><span class="ai">AI</span><span class="ladies">Ladies</span></div>
+          <div class="divider-v"></div>
+          <div class="tagline">Komunita pro ženy,<br>které chtějí <strong>AI používat v praxi</strong></div>
+        </div>
+        <div class="right">
+          <div class="url">ailadies.cz</div>
+        </div>
+      </div>
+    </div>
+    <div class="tip">Světlá varianta — logo, krátký tagline a odkaz na web</div>
+  </div>
+
+  <!-- ===== V6: Dark + bold motto (rose-gold) ===== -->
+  <div class="banner-wrapper">
+    <div class="banner-label">
+      Varianta 6 — Dark + bold statement (rose-gold)
+      <span class="size">1584 × 396 px</span>
+    </div>
+    <div class="banner v6">
+      <div class="bg-elements">
+        <div class="mesh-1"></div>
+        <div class="mesh-2"></div>
+        <div class="mesh-3"></div>
+      </div>
+      <div class="line-h"></div>
+      <div class="stars-abs">
+        <span class="sa1">✦</span>
+        <span class="sa2">✦</span>
+        <span class="sa3">✦</span>
+        <span class="sa4">✦</span>
+      </div>
+      <div class="content">
+        <div class="left-block">
+          <div class="label-tag">✦ Komunita</div>
+          <div class="motto">Neboj se AI.<br><span class="rose-gold">Nauč se ji používat.</span></div>
+        </div>
+        <div class="right-block">
+          <div class="logo-sm"><span class="ai">AI</span><span class="ladies">Ladies</span></div>
+          <div class="url-sm">ailadies.cz</div>
+        </div>
+      </div>
+    </div>
+    <div class="tip">S textem — odvážné motto s rose-gold gradientem, blush tag</div>
+  </div>
+
+  <!-- ===== V7: White elegant ===== -->
+  <div class="banner-wrapper">
+    <div class="banner-label">
+      Varianta 7 — White elegant + rose-gold accent
+      <span class="size">1584 × 396 px</span>
+    </div>
+    <div class="banner v7">
+      <div class="accent-top"></div>
+      <div class="accent-bar"></div>
+      <div class="content">
+        <div class="logo-area">
+          <div class="logo"><span class="ai">AI</span><span class="ladies">Ladies</span></div>
+        </div>
+        <div class="divider-v2"></div>
+        <div class="text-area">
+          <div class="motto">
+            Ženy, které tvoří budoucnost<br>s <span class="gold">umělou inteligencí</span>
+            <span class="rose-underline"></span>
+          </div>
+        </div>
+      </div>
+      <div class="url-right">ailadies.cz</div>
+    </div>
+    <div class="tip">White elegantní — čistý design s rose-gold proužky nahoře a dole</div>
+  </div>
+
+  <!-- ===== V8: Dark centered statement (original) ===== -->
+  <div class="banner-wrapper">
+    <div class="banner-label">
+      Varianta 8 — "Tvoje cesta k AI začíná tady"
+      <span class="size">1584 × 396 px</span>
+    </div>
+    <div class="banner v8">
+      <div class="noise">
+        <div class="glow-center"></div>
+      </div>
+      <div class="content">
+        <div class="stars-row">
+          <div class="line"></div>
+          <span class="star">✦</span>
+          <div class="line"></div>
+        </div>
+        <div class="motto">Tvoje cesta k <span class="gold">AI</span> začíná tady</div>
+        <div class="bottom-row">
+          <div class="logo-inline"><span class="ai">AI</span><span class="ladies">Ladies</span></div>
+          <div class="sep"></div>
+          <div class="url">ailadies.cz</div>
+        </div>
+      </div>
+    </div>
+    <div class="tip">Originál — centrovaný statement</div>
+  </div>
+
+  <!-- ===== V8b: "AI se nejlíp učí ve společnosti" ===== -->
+  <div class="banner-wrapper">
+    <div class="banner-label">
+      Varianta 8b — "AI se nejlíp učí ve společnosti"
+      <span class="size">1584 × 396 px</span>
+    </div>
+    <div class="banner v8">
+      <div class="noise">
+        <div class="glow-center"></div>
+      </div>
+      <div class="content">
+        <div class="stars-row">
+          <div class="line"></div>
+          <span class="star">✦</span>
+          <div class="line"></div>
+        </div>
+        <div class="motto"><span class="gold">AI</span> se nejlíp učí ve společnosti</div>
+        <div class="bottom-row">
+          <div class="logo-inline"><span class="ai">AI</span><span class="ladies">Ladies</span></div>
+          <div class="sep"></div>
+          <div class="url">ailadies.cz</div>
+        </div>
+      </div>
+    </div>
+    <div class="tip">Dvojsmysl — "ve společnosti" = spolu + ve firmách. Chytrý a nenásilný.</div>
+  </div>
+
+  <!-- ===== V8c: "Kde se ženy učí AI. A AI se učí od žen." ===== -->
+  <div class="banner-wrapper">
+    <div class="banner-label">
+      Varianta 8c — "Kde se ženy učí AI. A AI se učí od žen."
+      <span class="size">1584 × 396 px</span>
+    </div>
+    <div class="banner v8">
+      <div class="noise">
+        <div class="glow-center"></div>
+      </div>
+      <div class="content">
+        <div class="stars-row">
+          <div class="line"></div>
+          <span class="star">✦</span>
+          <div class="line"></div>
+        </div>
+        <div class="motto">Kde se ženy učí <span class="gold">AI</span>.<br>A <span class="gold">AI</span> se učí od žen.</div>
+        <div class="bottom-row">
+          <div class="logo-inline"><span class="ai">AI</span><span class="ladies">Ladies</span></div>
+          <div class="sep"></div>
+          <div class="url">ailadies.cz</div>
+        </div>
+      </div>
+    </div>
+    <div class="tip">Zrcadlový claim — symetrický, zapamatovatelný, ukazuje rovnocennost</div>
+  </div>
+
+  <!-- ===== V8d: "AI umí víc, když víš jak" ===== -->
+  <div class="banner-wrapper">
+    <div class="banner-label">
+      Varianta 8d — "AI umí víc, když víš jak"
+      <span class="size">1584 × 396 px</span>
+    </div>
+    <div class="banner v8">
+      <div class="noise">
+        <div class="glow-center"></div>
+      </div>
+      <div class="content">
+        <div class="stars-row">
+          <div class="line"></div>
+          <span class="star">✦</span>
+          <div class="line"></div>
+        </div>
+        <div class="motto"><span class="gold">AI</span> umí víc, když víš jak</div>
+        <div class="bottom-row">
+          <div class="logo-inline"><span class="ai">AI</span><span class="ladies">Ladies</span></div>
+          <div class="sep"></div>
+          <div class="url">ailadies.cz</div>
+        </div>
+      </div>
+    </div>
+    <div class="tip">Praktický — důraz na skills a know-how, žádný bullshit</div>
+  </div>
+
+  <!-- ===== V8e: "Budoucnost nepatří AI. Patří těm, kdo ji umí použít." ===== -->
+  <div class="banner-wrapper">
+    <div class="banner-label">
+      Varianta 8e — "Budoucnost nepatří AI. Patří těm, kdo ji umí použít."
+      <span class="size">1584 × 396 px</span>
+    </div>
+    <div class="banner v8">
+      <div class="noise">
+        <div class="glow-center"></div>
+      </div>
+      <div class="content">
+        <div class="stars-row">
+          <div class="line"></div>
+          <span class="star">✦</span>
+          <div class="line"></div>
+        </div>
+        <div class="motto">Budoucnost nepatří <span class="gold">AI</span>.<br>Patří těm, kdo ji umí použít.</div>
+        <div class="bottom-row">
+          <div class="logo-inline"><span class="ai">AI</span><span class="ladies">Ladies</span></div>
+          <div class="sep"></div>
+          <div class="url">ailadies.cz</div>
+        </div>
+      </div>
+    </div>
+    <div class="tip">Empowering — přesouvá moc od technologie k lidem. Silný a pravdivý.</div>
+  </div>
+
+  <!-- ===== V8f: "Protože AI bez žen je jen půlka příběhu" ===== -->
+  <div class="banner-wrapper">
+    <div class="banner-label">
+      Varianta 8f — "Protože AI bez žen je jen půlka příběhu"
+      <span class="size">1584 × 396 px</span>
+    </div>
+    <div class="banner v8">
+      <div class="noise">
+        <div class="glow-center"></div>
+      </div>
+      <div class="content">
+        <div class="stars-row">
+          <div class="line"></div>
+          <span class="star">✦</span>
+          <div class="line"></div>
+        </div>
+        <div class="motto">Protože <span class="gold">AI</span> bez žen je jen půlka příběhu</div>
+        <div class="bottom-row">
+          <div class="logo-inline"><span class="ai">AI</span><span class="ladies">Ladies</span></div>
+          <div class="sep"></div>
+          <div class="url">ailadies.cz</div>
+        </div>
+      </div>
+    </div>
+    <div class="tip">Ženský empowerment — bez kázání, s nadsázkou, pamatovatelný</div>
+  </div>
+
+  <!-- ===== V8g: "Méně buzzwords. Víc praxe." ===== -->
+  <div class="banner-wrapper">
+    <div class="banner-label">
+      Varianta 8g — "Méně buzzwords. Víc praxe."
+      <span class="size">1584 × 396 px</span>
+    </div>
+    <div class="banner v8">
+      <div class="noise">
+        <div class="glow-center"></div>
+      </div>
+      <div class="content">
+        <div class="stars-row">
+          <div class="line"></div>
+          <span class="star">✦</span>
+          <div class="line"></div>
+        </div>
+        <div class="motto">Méně buzzwords. Víc <span class="gold">praxe</span>.</div>
+        <div class="bottom-row">
+          <div class="logo-inline"><span class="ai">AI</span><span class="ladies">Ladies</span></div>
+          <div class="sep"></div>
+          <div class="url">ailadies.cz</div>
+        </div>
+      </div>
+    </div>
+    <div class="tip">No-bullshit — rovnou k věci, odlišuje od AI hypeu</div>
+  </div>
+
+  <!-- ===== V9: "Hledaly jsme místo..." — HERO VARIANT ===== -->
+  <div class="banner-wrapper">
+    <div class="banner-label">
+      Varianta 9 — "Hledaly jsme místo..." (hero, velký)
+      <span class="size">1584 × 396 px</span>
+    </div>
+    <div class="banner v9">
+      <div class="v9-bg">
+        <div class="v9-orb v9-orb-1"></div>
+        <div class="v9-orb v9-orb-2"></div>
+        <div class="v9-orb v9-orb-3"></div>
+        <div class="v9-grid"></div>
+        <div class="v9-arc v9-arc-1"></div>
+        <div class="v9-arc v9-arc-2"></div>
+        <div class="v9-arc v9-arc-3"></div>
+      </div>
+      <div class="v9-stars">
+        <span style="top:28px;left:60px;font-size:14px;opacity:0.2">✦</span>
+        <span style="top:55px;right:90px;font-size:18px;opacity:0.25">✦</span>
+        <span style="bottom:45px;left:200px;font-size:10px;opacity:0.15">✦</span>
+        <span style="bottom:35px;right:250px;font-size:12px;opacity:0.2">✦</span>
+        <span style="top:40px;left:45%;font-size:8px;opacity:0.12">✦</span>
+        <span style="bottom:60px;right:500px;font-size:15px;opacity:0.18">✦</span>
+      </div>
+      <div class="v9-content">
+        <div class="v9-text-block">
+          <div class="v9-line1">Hledaly jsme místo, kde se ženy baví o <span class="v9-gold">AI</span>.</div>
+          <div class="v9-line2">Nenašly. <span class="v9-gold-full">Tak jsme ho založily.</span></div>
+        </div>
+        <div class="v9-footer">
+          <div class="v9-line-left"></div>
+          <div class="v9-logo"><span class="ai">AI</span><span class="ladies">Ladies</span></div>
+          <div class="v9-dot">✦</div>
+          <div class="v9-url">ailadies.cz</div>
+          <div class="v9-line-right"></div>
+        </div>
+      </div>
+    </div>
+    <div class="tip">Storytelling claim — osobní, autentický, zapamatovatelný. Rose-gold orby a floating arcs.</div>
+  </div>
+
+  <!-- ===== V9b: Varianta s menším textem a rose-gold accent line ===== -->
+  <div class="banner-wrapper">
+    <div class="banner-label">
+      Varianta 9b — "Hledaly jsme místo..." (elegantní, s accent line)
+      <span class="size">1584 × 396 px</span>
+    </div>
+    <div class="banner v9b">
+      <div class="v9b-bg">
+        <div class="v9b-glow"></div>
+        <div class="v9b-glow-2"></div>
+      </div>
+      <div class="v9b-accent-line"></div>
+      <div class="v9b-content">
+        <div class="v9b-left">
+          <div class="v9b-logo"><span class="ai">AI</span><span class="ladies">Ladies</span></div>
+        </div>
+        <div class="v9b-divider"></div>
+        <div class="v9b-center">
+          <div class="v9b-claim">
+            <span class="v9b-thin">Hledaly jsme místo, kde se ženy baví o AI.</span><br>
+            <span class="v9b-bold">Nenašly. Tak jsme ho <span class="v9b-rose">založily</span>.</span>
+          </div>
+        </div>
+        <div class="v9b-right">
+          <div class="v9b-url">ailadies.cz</div>
+        </div>
+      </div>
+      <div class="v9b-stars">
+        <span style="top:30px;right:180px;font-size:16px">✦</span>
+        <span style="bottom:40px;left:160px;font-size:12px">✦</span>
+      </div>
+    </div>
+    <div class="tip">Horizontální layout — logo vlevo, claim uprostřed, URL vpravo. Čistší, profesionálnější.</div>
+  </div>
+
+  <div style="margin-top: 40px; padding: 24px; background: #fff; border-radius: 12px; border: 1px solid #eee; max-width: 800px;">
+    <h3 style="font-family: var(--font-dm-serif); font-size: 18px; margin-bottom: 12px;">Jak exportovat jako obrázek</h3>
+    <ol style="font-size: 14px; color: #555; line-height: 1.8; padding-left: 20px;">
+      <li>Otevři tento soubor v prohlížeči</li>
+      <li>Klikni pravým na banner → <strong>Prozkoumat</strong> (Inspect)</li>
+      <li>Pravý klik na <code>&lt;div class="banner ..."&gt;</code> v Elements → <strong>Capture node screenshot</strong></li>
+      <li>Uloží se PNG přesně 1584 × 396 px — hotovo!</li>
+    </ol>
+    <p style="font-size: 13px; color: #999; margin-top: 12px;">
+      Alternativně: DevTools → Ctrl+Shift+P → "screenshot" → "Capture node screenshot"
+    </p>
+  </div>
+
+</body>
+</html>

@@ -13,7 +13,7 @@ Agent (AI asistent) má přístupy ke VŠEM službám a provádí kompletní set
 - Nastavení Stripe Payment Link redirect URL + metadata přes MCP/API
 - Vytvoření Brevo email šablony přes API
 - Vytvoření dedup atributu v Brevo přes API
-- Přidání template ID do kódu (`api/send-confirmation.js` + `api/stripe-webhook.js`)
+- Přidání template ID do kódu (`api/complete-registration.js` + `api/stripe-webhook.js`)
 - Nastavení Vercel env vars přes CLI
 - Deploy přes git push
 
@@ -200,37 +200,48 @@ npx vercel env add STRIPE_LINK_{SLUG} production <<< "https://buy.stripe.com/XXX
 ### Aktuální Stripe links:
 - `STRIPE_LINK_AI_BEZPECNE` = `https://buy.stripe.com/cNi5kEbVk22bchj1yhes001`
 
-## Confirmation email — cookie trigger (POVINNÉ!)
+## Post-payment registrace — cookie trigger (POVINNÉ!)
 
-TY page musí automaticky odeslat confirmation email po loadu. Používáme cookie mechanismus (Safari ITP smaže localStorage při cross-domain redirectu přes Stripe).
+TY page musí po loadu dokončit registraci (AT + Brevo + confirmation email). Registrace se NEDĚJE při odeslání formuláře — pouze AŽ PO ZAPLACENÍ. Používáme cookie mechanismus (Safari ITP smaže localStorage při cross-domain redirectu přes Stripe).
 
 ### Jak to funguje:
-1. LP nastaví cookie před Stripe redirectem (SameSite=Lax přežije top-level navigaci)
+1. LP nastaví cookies se VŠEMI registračními daty před Stripe redirectem (SameSite=Lax přežije top-level navigaci)
 2. Po platbě Stripe redirectne na TY page
-3. TY page přečte cookie → zavolá `POST /api/send-confirmation` s `{ email, slug }` → smaže cookie
-4. API vybere Brevo template podle slugu (hardcoded mapa v kódu, NE env vars!)
+3. TY page přečte cookies → zavolá `POST /api/complete-registration` se všemi daty → smaže cookies
+4. `complete-registration.js` vytvoří AT záznam (Zaplaceno) + Brevo kontakt + pošle confirmation email
 5. Stripe webhook funguje jako backup (server-to-server, s dedup přes `CONFIRMATION_SENT_{SLUG}`)
 
-### Template IDs (hardcoded v `api/send-confirmation.js` a `api/stripe-webhook.js`):
+### Template IDs (hardcoded v `api/complete-registration.js` a `api/stripe-webhook.js`):
 - `ai-bezpecne` → Template ID **7**
 - `asistent-na-web` → Template ID **8**
+- `proc-mi-z-ai-leze-nuda` → Template ID **9**
 - Pro nový webinář: přidat řádek `'{slug}': {id}` do obou souborů a deploynout
 
 ### Povinný script na KAŽDÉ TY page (před `</body>`):
 ```javascript
-(function sendConfirmation() {
+(function completeRegistration() {
   try {
-    const emailMatch = document.cookie.match(/(?:^|;\s*)al_webinar_email=([^;]+)/);
-    const slugMatch = document.cookie.match(/(?:^|;\s*)al_webinar_slug=([^;]+)/);
-    if (!emailMatch) return;
-    const email = decodeURIComponent(emailMatch[1]);
-    const slug = slugMatch ? decodeURIComponent(slugMatch[1]) : '{slug-tohoto-webinare}';
-    document.cookie = 'al_webinar_email=;path=/;max-age=0';
-    document.cookie = 'al_webinar_slug=;path=/;max-age=0';
-    fetch('/api/send-confirmation', {
+    function getCookie(name) {
+      const m = document.cookie.match(new RegExp('(?:^|;\\s*)' + name + '=([^;]+)'));
+      return m ? decodeURIComponent(m[1]) : '';
+    }
+    const email = getCookie('al_webinar_email');
+    if (!email) return;
+    const data = {
+      email: email,
+      webinar: getCookie('al_webinar_slug') || '{slug-tohoto-webinare}',
+      fname: getCookie('al_reg_fname'),
+      lname: getCookie('al_reg_lname'),
+      field: getCookie('al_reg_field'),
+      seniority: getCookie('al_reg_seniority'),
+      webinarName: getCookie('al_reg_webinar_name'),
+    };
+    var cookieNames = ['al_webinar_email','al_webinar_slug','al_reg_fname','al_reg_lname','al_reg_field','al_reg_seniority','al_reg_webinar_name'];
+    cookieNames.forEach(function(n) { document.cookie = n + '=;path=/;max-age=0'; });
+    fetch('/api/complete-registration', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, slug }),
+      body: JSON.stringify(data),
     }).catch(() => {});
   } catch (_) {}
 })();
@@ -239,8 +250,8 @@ TY page musí automaticky odeslat confirmation email po loadu. Používáme cook
 ### Na co dát pozor:
 - Script MUSÍ být hned na začátku `<script>` bloku (před calendar funkcemi)
 - Default slug v fallbacku = slug konkrétního webináře dané TY page
-- Cookie jména: `al_webinar_email`, `al_webinar_slug` (sdílené pro všechny webináře)
-- Dedup: API kontroluje `CONFIRMATION_SENT` atribut v Brevo — nepošle dvakrát
+- Cookie jména: `al_webinar_email`, `al_webinar_slug`, `al_reg_fname`, `al_reg_lname`, `al_reg_field`, `al_reg_seniority`, `al_reg_webinar_name` (sdílené pro všechny webináře)
+- Dedup: API kontroluje `CONFIRMATION_SENT_{SLUG}` atribut v Brevo — nepošle/nezapíše dvakrát
 - Pokud cookie chybí (uživatel přišel přímo na URL), script nic neudělá — webhook se postará
 
 ## Sirotky a vdovy
