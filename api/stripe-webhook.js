@@ -160,9 +160,9 @@ export default async function handler(req, res) {
   }
 
   // Airtable: update existing record or create new one (backup for TY page)
+  const airtableToken = process.env.AIRTABLE_API_TOKEN;
   if (webinarSlug) {
     try {
-      const airtableToken = process.env.AIRTABLE_API_TOKEN;
       const airtableBaseId = process.env.AIRTABLE_BASE_ID;
       if (airtableToken && airtableBaseId) {
         const searchUrl = `https://api.airtable.com/v0/${airtableBaseId}/${encodeURIComponent('Registrace webináře')}?filterByFormula=AND({Email}='${email}',{Webinář slug}='${webinarSlug}')&maxRecords=1`;
@@ -217,9 +217,66 @@ export default async function handler(req, res) {
     } catch (err) {
       console.error('Airtable error:', err.message);
     }
+  } else {
+    // Night: update existing AT record (Status → Zaplaceno) or create one
+    try {
+      const nightBaseId = process.env.AIRTABLE_NIGHT_BASE_ID;
+      const nightTable = process.env.AIRTABLE_NIGHT_TABLE || 'Registrace';
+      if (airtableToken && nightBaseId) {
+        const searchUrl = `https://api.airtable.com/v0/${nightBaseId}/${encodeURIComponent(nightTable)}?filterByFormula={Email}='${email}'&sort%5B0%5D%5Bfield%5D=Datum+registrace&sort%5B0%5D%5Bdirection%5D=desc&maxRecords=1`;
+        const searchRes = await fetch(searchUrl, {
+          headers: { Authorization: `Bearer ${airtableToken}` },
+        });
+        if (searchRes.ok) {
+          const searchData = await searchRes.json();
+          const record = searchData.records?.[0];
+          if (record) {
+            await fetch(
+              `https://api.airtable.com/v0/${nightBaseId}/${encodeURIComponent(nightTable)}/${record.id}`,
+              {
+                method: 'PATCH',
+                headers: {
+                  Authorization: `Bearer ${airtableToken}`,
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ fields: { Status: 'Zaplaceno' } }),
+              }
+            );
+          } else {
+            const customerName = session.customer_details?.name || '';
+            const nameParts = customerName.split(' ');
+            const wh_fname = nameParts[0] || '';
+            const wh_lname = nameParts.slice(1).join(' ') || '';
+            await fetch(
+              `https://api.airtable.com/v0/${nightBaseId}/${encodeURIComponent(nightTable)}`,
+              {
+                method: 'POST',
+                headers: {
+                  Authorization: `Bearer ${airtableToken}`,
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  typecast: true,
+                  fields: {
+                    'First Name': wh_fname,
+                    Surname: wh_lname,
+                    Email: email,
+                    'GDPR souhlas': true,
+                    'Datum registrace': new Date().toISOString().split('T')[0],
+                    Status: 'Zaplaceno',
+                  },
+                }),
+              }
+            );
+          }
+        }
+      }
+    } catch (err) {
+      console.error('Night Airtable error:', err.message);
+    }
   }
 
-  // Brevo: ensure contact is in webinar list (backup for TY page)
+  // Brevo: ensure contact is in correct list (backup for TY page)
   if (webinarSlug) {
     const webinarLists = {
       'ai-bezpecne': 8,
@@ -247,6 +304,26 @@ export default async function handler(req, res) {
       } catch (err) {
         console.error('Brevo contact backup error:', err.message);
       }
+    }
+  } else {
+    // Night: add to Brevo list 6
+    try {
+      await fetch('https://api.brevo.com/v3/contacts', {
+        method: 'POST',
+        headers: { 'api-key': brevoKey, 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email,
+          attributes: {
+            FIRSTNAME: firstName,
+            LASTNAME: session.customer_details?.name?.split(' ').slice(1).join(' ') || '',
+            FIRSTNAME_5PAD: firstName5pad,
+          },
+          listIds: [6],
+          updateEnabled: true,
+        }),
+      });
+    } catch (err) {
+      console.error('Night Brevo contact backup error:', err.message);
     }
   }
 

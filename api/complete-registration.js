@@ -2,15 +2,16 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { fname, lname, email, field, seniority, webinar, webinarName } = req.body || {};
+  const { fname, lname, email, field, seniority, webinar, webinarName, event, aiLevel } = req.body || {};
 
-  if (!email || !webinar) {
-    return res.status(400).json({ error: 'Email and webinar slug required' });
+  const isNight = event === 'night';
+
+  if (!email || (!webinar && !isNight)) {
+    return res.status(400).json({ error: 'Email and webinar slug (or event=night) required' });
   }
 
   const brevoKey = process.env.BREVO_API_KEY;
   const airtableToken = process.env.AIRTABLE_API_TOKEN;
-  const airtableBaseId = process.env.AIRTABLE_BASE_ID;
 
   const webinarLists = {
     'ai-bezpecne': 8,
@@ -24,9 +25,13 @@ export default async function handler(req, res) {
     'proc-mi-z-ai-leze-nuda': 9,
   };
 
-  const sentAttr = `CONFIRMATION_SENT_${webinar.replace(/-/g, '_').toUpperCase()}`;
-  const templateId = templates[webinar];
-  const brevoListId = webinarLists[webinar];
+  const sentAttr = isNight
+    ? 'CONFIRMATION_SENT'
+    : `CONFIRMATION_SENT_${webinar.replace(/-/g, '_').toUpperCase()}`;
+  const templateId = isNight
+    ? (Number(process.env.BREVO_NIGHT_TEMPLATE_ID) || 6)
+    : templates[webinar];
+  const brevoListId = isNight ? 6 : webinarLists[webinar];
 
   if (!templateId || !brevoListId) {
     return res.status(400).json({ error: `Unknown webinar: ${webinar}` });
@@ -79,57 +84,124 @@ export default async function handler(req, res) {
     }
   }
 
-  // --- Airtable: create record (Status: Zaplaceno) ---
-  if (airtableToken && airtableBaseId) {
+  // --- Airtable ---
+  if (airtableToken) {
     try {
-      const airtableRes = await fetch(
-        `https://api.airtable.com/v0/${airtableBaseId}/${encodeURIComponent('Registrace webináře')}`,
-        {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${airtableToken}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            typecast: true,
-            fields: {
-              'Email': email,
-              'Jméno': firstName,
-              'Příjmení': lastName,
-              'Webinář slug': webinar,
-              'Obor': field || '',
-              'Seniorita': seniority || '',
-              'GDPR souhlas': true,
-              'Datum registrace': new Date().toISOString().split('T')[0],
-              'Status': 'Zaplaceno',
-            },
-          }),
+      if (isNight) {
+        // Night: find existing record (from register.js) and update Status to Zaplaceno
+        const nightBaseId = process.env.AIRTABLE_NIGHT_BASE_ID;
+        const nightTable = process.env.AIRTABLE_NIGHT_TABLE || 'Registrace';
+        if (nightBaseId) {
+          const searchUrl = `https://api.airtable.com/v0/${nightBaseId}/${encodeURIComponent(nightTable)}?filterByFormula={Email}='${email}'&sort%5B0%5D%5Bfield%5D=Datum+registrace&sort%5B0%5D%5Bdirection%5D=desc&maxRecords=1`;
+          const searchRes = await fetch(searchUrl, {
+            headers: { Authorization: `Bearer ${airtableToken}` },
+          });
+          if (searchRes.ok) {
+            const searchData = await searchRes.json();
+            const record = searchData.records?.[0];
+            if (record) {
+              await fetch(
+                `https://api.airtable.com/v0/${nightBaseId}/${encodeURIComponent(nightTable)}/${record.id}`,
+                {
+                  method: 'PATCH',
+                  headers: {
+                    Authorization: `Bearer ${airtableToken}`,
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({ fields: { Status: 'Zaplaceno' } }),
+                }
+              );
+            } else {
+              // Backup: no pre-existing record, create one
+              await fetch(
+                `https://api.airtable.com/v0/${nightBaseId}/${encodeURIComponent(nightTable)}`,
+                {
+                  method: 'POST',
+                  headers: {
+                    Authorization: `Bearer ${airtableToken}`,
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({
+                    typecast: true,
+                    fields: {
+                      'First Name': firstName,
+                      Surname: lastName,
+                      Email: email,
+                      Obor: field || '',
+                      Seniorita: seniority || '',
+                      AI: aiLevel || '',
+                      'GDPR souhlas': true,
+                      'Datum registrace': new Date().toISOString().split('T')[0],
+                      Status: 'Zaplaceno',
+                    },
+                  }),
+                }
+              );
+            }
+          }
         }
-      );
-      if (!airtableRes.ok) {
-        const errData = await airtableRes.json().catch(() => ({}));
-        console.error('Airtable error:', errData);
+      } else {
+        // Webinar: create new record
+        const airtableBaseId = process.env.AIRTABLE_BASE_ID;
+        if (airtableBaseId) {
+          const airtableRes = await fetch(
+            `https://api.airtable.com/v0/${airtableBaseId}/${encodeURIComponent('Registrace webináře')}`,
+            {
+              method: 'POST',
+              headers: {
+                Authorization: `Bearer ${airtableToken}`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                typecast: true,
+                fields: {
+                  'Email': email,
+                  'Jméno': firstName,
+                  'Příjmení': lastName,
+                  'Webinář slug': webinar,
+                  'Obor': field || '',
+                  'Seniorita': seniority || '',
+                  'GDPR souhlas': true,
+                  'Datum registrace': new Date().toISOString().split('T')[0],
+                  'Status': 'Zaplaceno',
+                },
+              }),
+            }
+          );
+          if (!airtableRes.ok) {
+            const errData = await airtableRes.json().catch(() => ({}));
+            console.error('Airtable error:', errData);
+          }
+        }
       }
     } catch (err) {
       console.error('Airtable error:', err.message);
     }
   }
 
-  // --- Brevo: add contact to webinar list ---
+  // --- Brevo: add contact to list ---
   if (brevoKey) {
     try {
+      const brevoAttrs = {
+        FIRSTNAME: firstName,
+        LASTNAME: lastName,
+        FIRSTNAME_5PAD: fname5pad,
+      };
+      if (isNight) {
+        brevoAttrs.FIELD = field || '';
+        brevoAttrs.SENIORITY = seniority || '';
+        brevoAttrs.AI_LEVEL = aiLevel || '';
+      } else {
+        brevoAttrs.WEBINAR_SLUG = webinar;
+        brevoAttrs.WEBINAR_NAME = webinarName || '';
+      }
+
       const brevoRes = await fetch('https://api.brevo.com/v3/contacts', {
         method: 'POST',
         headers: { 'api-key': brevoKey, 'Content-Type': 'application/json' },
         body: JSON.stringify({
           email,
-          attributes: {
-            FIRSTNAME: firstName,
-            LASTNAME: lastName,
-            FIRSTNAME_5PAD: fname5pad,
-            WEBINAR_SLUG: webinar,
-            WEBINAR_NAME: webinarName || '',
-          },
+          attributes: brevoAttrs,
           listIds: [Number(brevoListId)],
           updateEnabled: true,
         }),
@@ -160,7 +232,7 @@ export default async function handler(req, res) {
         const errData = await emailRes.json().catch(() => ({}));
         console.error('Brevo email error:', errData);
       } else {
-        console.log(`Complete-registration: confirmation sent to ${email} (template ${templateId})`);
+        console.log(`Complete-registration: confirmation sent to ${email} (template ${templateId}, ${isNight ? 'night' : webinar})`);
         try {
           await fetch(`https://api.brevo.com/v3/contacts/${encodeURIComponent(email)}`, {
             method: 'PUT',

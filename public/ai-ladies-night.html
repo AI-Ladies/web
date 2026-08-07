@@ -945,8 +945,14 @@
         }
         regBtn.textContent = 'Přesměrovávám na platbu…';
         document.cookie = 'al_night_email=' + encodeURIComponent(data.email) + ';path=/;max-age=7200;SameSite=Lax';
-        const stripeUrl = 'https://buy.stripe.com/cNieVe3oO7mvbdf1yhes000'
-          + '?prefilled_email=' + encodeURIComponent(data.email);
+        document.cookie = 'al_night_fname=' + encodeURIComponent(data.fname) + ';path=/;max-age=7200;SameSite=Lax';
+        document.cookie = 'al_night_lname=' + encodeURIComponent(data.lname) + ';path=/;max-age=7200;SameSite=Lax';
+        document.cookie = 'al_night_field=' + encodeURIComponent(data.field || '') + ';path=/;max-age=7200;SameSite=Lax';
+        document.cookie = 'al_night_seniority=' + encodeURIComponent(data.seniority || '') + ';path=/;max-age=7200;SameSite=Lax';
+        document.cookie = 'al_night_ai_level=' + encodeURIComponent(data.aiLevel || '') + ';path=/;max-age=7200;SameSite=Lax';
+        const stripeUrl = result.stripeUrl
+          ? result.stripeUrl + '?prefilled_email=' + encodeURIComponent(data.email)
+          : 'https://buy.stripe.com/cNieVe3oO7mvbdf1yhes000?prefilled_email=' + encodeURIComponent(data.email);
         window.location.href = stripeUrl;
       } else {
         showRegError(result.error || 'Něco se pokazilo. Zkus to prosím znovu.');

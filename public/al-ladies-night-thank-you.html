@@ -366,17 +366,30 @@
 </footer>
 
 <script>
-  (function sendConfirmation() {
+  (function completeRegistration() {
     try {
-      const match = document.cookie.match(/(?:^|;\s*)al_night_email=([^;]+)/);
-      if (!match) return;
-      const email = decodeURIComponent(match[1]);
-      document.cookie = 'al_night_email=;path=/;max-age=0';
-      fetch('/api/send-confirmation', {
+      function getCookie(name) {
+        var m = document.cookie.match(new RegExp('(?:^|;\\s*)' + name + '=([^;]+)'));
+        return m ? decodeURIComponent(m[1]) : '';
+      }
+      var email = getCookie('al_night_email');
+      if (!email) return;
+      var data = {
+        email: email,
+        event: 'night',
+        fname: getCookie('al_night_fname'),
+        lname: getCookie('al_night_lname'),
+        field: getCookie('al_night_field'),
+        seniority: getCookie('al_night_seniority'),
+        aiLevel: getCookie('al_night_ai_level'),
+      };
+      var cookieNames = ['al_night_email','al_night_fname','al_night_lname','al_night_field','al_night_seniority','al_night_ai_level'];
+      cookieNames.forEach(function(n) { document.cookie = n + '=;path=/;max-age=0'; });
+      fetch('/api/complete-registration', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      }).catch(() => {});
+        body: JSON.stringify(data),
+      }).catch(function() {});
     } catch (_) {}
   })();
 
