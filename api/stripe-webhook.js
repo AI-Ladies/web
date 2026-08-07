@@ -159,7 +159,7 @@ export default async function handler(req, res) {
     firstName5pad = firstName;
   }
 
-  // Update Airtable status to "Zaplaceno"
+  // Airtable: update existing record or create new one (backup for TY page)
   if (webinarSlug) {
     try {
       const airtableToken = process.env.AIRTABLE_API_TOKEN;
@@ -184,11 +184,69 @@ export default async function handler(req, res) {
                 body: JSON.stringify({ fields: { Status: 'Zaplaceno' } }),
               }
             );
+          } else {
+            const customerName = session.customer_details?.name || '';
+            const nameParts = customerName.split(' ');
+            const wh_fname = nameParts[0] || '';
+            const wh_lname = nameParts.slice(1).join(' ') || '';
+            await fetch(
+              `https://api.airtable.com/v0/${airtableBaseId}/${encodeURIComponent('Registrace webináře')}`,
+              {
+                method: 'POST',
+                headers: {
+                  Authorization: `Bearer ${airtableToken}`,
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  typecast: true,
+                  fields: {
+                    'Email': email,
+                    'Jméno': wh_fname,
+                    'Příjmení': wh_lname,
+                    'Webinář slug': webinarSlug,
+                    'GDPR souhlas': true,
+                    'Datum registrace': new Date().toISOString().split('T')[0],
+                    'Status': 'Zaplaceno',
+                  },
+                }),
+              }
+            );
           }
         }
       }
     } catch (err) {
-      console.error('Airtable status update error:', err.message);
+      console.error('Airtable error:', err.message);
+    }
+  }
+
+  // Brevo: ensure contact is in webinar list (backup for TY page)
+  if (webinarSlug) {
+    const webinarLists = {
+      'ai-bezpecne': 8,
+      'asistent-na-web': 9,
+      'proc-mi-z-ai-leze-nuda': 10,
+    };
+    const listId = webinarLists[webinarSlug];
+    if (listId) {
+      try {
+        await fetch('https://api.brevo.com/v3/contacts', {
+          method: 'POST',
+          headers: { 'api-key': brevoKey, 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email,
+            attributes: {
+              FIRSTNAME: firstName,
+              LASTNAME: session.customer_details?.name?.split(' ').slice(1).join(' ') || '',
+              FIRSTNAME_5PAD: firstName5pad,
+              WEBINAR_SLUG: webinarSlug,
+            },
+            listIds: [Number(listId)],
+            updateEnabled: true,
+          }),
+        });
+      } catch (err) {
+        console.error('Brevo contact backup error:', err.message);
+      }
     }
   }
 

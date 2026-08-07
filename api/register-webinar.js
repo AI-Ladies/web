@@ -8,7 +8,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { fname, lname, email, gdpr, field, seniority, webinar, webinarName } = req.body;
+    const { fname, lname, email, gdpr, webinar } = req.body;
 
     if (!fname || !lname || !email || !gdpr || !webinar) {
       return res.status(400).json({
@@ -25,7 +25,6 @@ export default async function handler(req, res) {
       });
     }
 
-    // Stripe Payment Links per webinar (configure here)
     const stripeLinks = {
       'ai-bezpecne': process.env.STRIPE_LINK_AI_BEZPECNE || '',
       'asistent-na-web': process.env.STRIPE_LINK_ASISTENT_NA_WEB || '',
@@ -34,108 +33,6 @@ export default async function handler(req, res) {
       'ai-zivot': process.env.STRIPE_LINK_AI_ZIVOT || '',
     };
 
-    // --- Airtable: create registration record ---
-    const airtableToken = process.env.AIRTABLE_API_TOKEN;
-    const airtableBaseId = process.env.AIRTABLE_BASE_ID;
-    const airtableTable = 'Registrace webináře';
-
-    if (airtableToken && airtableBaseId) {
-      const airtableRes = await fetch(
-        `https://api.airtable.com/v0/${airtableBaseId}/${encodeURIComponent(airtableTable)}`,
-        {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${airtableToken}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            typecast: true,
-            fields: {
-              'Email': email,
-              'Jméno': fname,
-              'Příjmení': lname,
-              'Webinář slug': webinar,
-              'Obor': field || '',
-              'Seniorita': seniority || '',
-              'GDPR souhlas': true,
-              'Datum registrace': new Date().toISOString().split('T')[0],
-              'Status': 'Nová',
-            },
-          }),
-        }
-      );
-
-      if (!airtableRes.ok) {
-        const errData = await airtableRes.json().catch(() => ({}));
-        console.error('Airtable error:', errData);
-      }
-    }
-
-    // --- Brevo: add contact to webinar-specific list ---
-    const brevoKey = process.env.BREVO_API_KEY;
-    const webinarLists = {
-      'ai-bezpecne': 8,
-      'asistent-na-web': 9,
-      'proc-mi-z-ai-leze-nuda': 10,
-    };
-    const brevoWebinarListId = webinarLists[webinar] || 8;
-
-    if (brevoKey) {
-      let fname5pad = fname;
-      const sklonKey = process.env.SKLONOVANI_API_KEY;
-      if (sklonKey) {
-        try {
-          const sklonUrl = new URL('https://www.sklonovani-jmen.cz/api');
-          sklonUrl.searchParams.set('klic', sklonKey);
-          sklonUrl.searchParams.set('pad', '5');
-          sklonUrl.searchParams.set('jmeno', `${fname} ${lname}`);
-          sklonUrl.searchParams.set('pouzit-osloveni', 'ne');
-          sklonUrl.searchParams.set('pouzit-prijmeni', 'ne');
-          sklonUrl.searchParams.set('pouzit-krestni', 'ano');
-          sklonUrl.searchParams.set('format', 'json');
-
-          const sklonRes = await fetch(sklonUrl.toString());
-          if (sklonRes.ok) {
-            const sklonData = await sklonRes.json();
-            if (Array.isArray(sklonData) && sklonData[0]?.odpoved) {
-              const odpoved = sklonData[0].odpoved;
-              if (!/^\d+$/.test(odpoved)) {
-                fname5pad = odpoved;
-              }
-            }
-          }
-        } catch (err) {
-          console.error('Sklonovani-jmen error (fallback to fname):', err.message);
-        }
-      }
-
-      const brevoRes = await fetch('https://api.brevo.com/v3/contacts', {
-        method: 'POST',
-        headers: {
-          'api-key': brevoKey,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email,
-          attributes: {
-            FIRSTNAME: fname,
-            LASTNAME: lname,
-            FIRSTNAME_5PAD: fname5pad,
-            WEBINAR_SLUG: webinar,
-            WEBINAR_NAME: webinarName || '',
-          },
-          listIds: [Number(brevoWebinarListId)],
-          updateEnabled: true,
-        }),
-      });
-
-      if (!brevoRes.ok) {
-        const errData = await brevoRes.json().catch(() => ({}));
-        console.error('Brevo contact error:', errData);
-      }
-    }
-
-    // Return Stripe payment link
     const stripeUrl = stripeLinks[webinar]
       ? stripeLinks[webinar] + '?prefilled_email=' + encodeURIComponent(email)
       : null;

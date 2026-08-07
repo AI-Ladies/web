@@ -401,19 +401,29 @@
 </footer>
 
 <script>
-  (function sendConfirmation() {
+  (function completeRegistration() {
     try {
-      const emailMatch = document.cookie.match(/(?:^|;\s*)al_webinar_email=([^;]+)/);
-      const slugMatch = document.cookie.match(/(?:^|;\s*)al_webinar_slug=([^;]+)/);
-      if (!emailMatch) return;
-      const email = decodeURIComponent(emailMatch[1]);
-      const slug = slugMatch ? decodeURIComponent(slugMatch[1]) : 'proc-mi-z-ai-leze-nuda';
-      document.cookie = 'al_webinar_email=;path=/;max-age=0';
-      document.cookie = 'al_webinar_slug=;path=/;max-age=0';
-      fetch('/api/send-confirmation', {
+      function getCookie(name) {
+        const m = document.cookie.match(new RegExp('(?:^|;\\s*)' + name + '=([^;]+)'));
+        return m ? decodeURIComponent(m[1]) : '';
+      }
+      const email = getCookie('al_webinar_email');
+      if (!email) return;
+      const data = {
+        email: email,
+        webinar: getCookie('al_webinar_slug') || 'proc-mi-z-ai-leze-nuda',
+        fname: getCookie('al_reg_fname'),
+        lname: getCookie('al_reg_lname'),
+        field: getCookie('al_reg_field'),
+        seniority: getCookie('al_reg_seniority'),
+        webinarName: getCookie('al_reg_webinar_name'),
+      };
+      var cookieNames = ['al_webinar_email','al_webinar_slug','al_reg_fname','al_reg_lname','al_reg_field','al_reg_seniority','al_reg_webinar_name'];
+      cookieNames.forEach(function(n) { document.cookie = n + '=;path=/;max-age=0'; });
+      fetch('/api/complete-registration', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, slug }),
+        body: JSON.stringify(data),
       }).catch(() => {});
     } catch (_) {}
   })();

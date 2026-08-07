@@ -1318,6 +1318,11 @@
         regBtn.textContent = 'Přesměrovávám na platbu…';
         document.cookie = 'al_webinar_email=' + encodeURIComponent(data.email) + ';path=/;max-age=7200;SameSite=Lax';
         document.cookie = 'al_webinar_slug=proc-mi-z-ai-leze-nuda;path=/;max-age=7200;SameSite=Lax';
+        document.cookie = 'al_reg_fname=' + encodeURIComponent(data.fname) + ';path=/;max-age=7200;SameSite=Lax';
+        document.cookie = 'al_reg_lname=' + encodeURIComponent(data.lname) + ';path=/;max-age=7200;SameSite=Lax';
+        document.cookie = 'al_reg_field=' + encodeURIComponent(data.field || '') + ';path=/;max-age=7200;SameSite=Lax';
+        document.cookie = 'al_reg_seniority=' + encodeURIComponent(data.seniority || '') + ';path=/;max-age=7200;SameSite=Lax';
+        document.cookie = 'al_reg_webinar_name=' + encodeURIComponent(data.webinarName || '') + ';path=/;max-age=7200;SameSite=Lax';
         window.location.href = result.stripeUrl
           || ('https://buy.stripe.com/cNi14o9Nc0Y74ORccVes003?prefilled_email=' + encodeURIComponent(data.email));
       } else {
