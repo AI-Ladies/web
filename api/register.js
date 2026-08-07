@@ -64,7 +64,7 @@ export default async function handler(req, res) {
 
     // --- Brevo: add contact to AI Ladies Night list ---
     const brevoKey = process.env.BREVO_API_KEY;
-    const brevoNightListId = process.env.BREVO_NIGHT_LIST_ID;
+    const brevoNightListId = 6; // AI Ladies Night — 27.8.2026 (Brevo list)
 
     if (brevoKey && brevoNightListId) {
       // --- sklonovani-jmen.cz: get vocative (5th case) of first name ---
