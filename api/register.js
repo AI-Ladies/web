@@ -26,50 +26,46 @@ export default async function handler(req, res) {
     }
 
     // --- Airtable: create registration record (Status: Registrace = before payment) ---
-    const airtableToken = process.env.AIRTABLE_API_TOKEN;
+    const airtableToken = process.env.AIRTABLE_NIGHT_TOKEN;
     const airtableBaseId = process.env.AIRTABLE_NIGHT_BASE_ID;
     const airtableTable = process.env.AIRTABLE_NIGHT_TABLE || 'Registrace';
 
     if (!airtableToken || !airtableBaseId) {
-      console.error('CRITICAL: AIRTABLE_API_TOKEN or AIRTABLE_NIGHT_BASE_ID missing!');
-      return res.status(500).json({
-        success: false,
-        error: 'Registrace se nepodařila (chyba konfigurace). Napiš nám prosím na hello@ailadies.cz.',
-      });
-    }
+      console.error('[NIGHT REGISTER] CRITICAL: AIRTABLE_API_TOKEN or AIRTABLE_NIGHT_BASE_ID not set — AT record NOT created for', email);
+    } else {
+      try {
+        const airtableRes = await fetch(
+          `https://api.airtable.com/v0/${airtableBaseId}/${encodeURIComponent(airtableTable)}`,
+          {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${airtableToken}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              typecast: true,
+              fields: {
+                'First Name': fname,
+                Surname: lname,
+                Email: email,
+                Obor: field || '',
+                Seniorita: seniority || '',
+                AI: aiLevel || '',
+                'GDPR souhlas': true,
+                'Datum registrace': new Date().toISOString().split('T')[0],
+                Status: 'Registrace',
+              },
+            }),
+          }
+        );
 
-    const airtableRes = await fetch(
-      `https://api.airtable.com/v0/${airtableBaseId}/${encodeURIComponent(airtableTable)}`,
-      {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${airtableToken}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          typecast: true,
-          fields: {
-            'First Name': fname,
-            Surname: lname,
-            Email: email,
-            Obor: field || '',
-            Seniorita: seniority || '',
-            AI: aiLevel || '',
-            'GDPR souhlas': true,
-            'Datum registrace': new Date().toISOString().split('T')[0],
-            Status: 'Registrace',
-          },
-        }),
+        if (!airtableRes.ok) {
+          const errData = await airtableRes.json().catch(() => ({}));
+          console.error('[NIGHT REGISTER] CRITICAL: AT write FAILED for', email, '— data will be missing! Error:', JSON.stringify(errData));
+        }
+      } catch (err) {
+        console.error('[NIGHT REGISTER] CRITICAL: AT write threw for', email, '—', err.message);
       }
-    );
-
-    if (!airtableRes.ok) {
-      const errData = await airtableRes.json().catch(() => ({}));
-      console.error('CRITICAL: Airtable write failed:', errData);
-      return res.status(500).json({
-        success: false,
-        error: 'Registrace se nepodařila (chyba databáze). Zkus to prosím znovu nebo nám napiš na hello@ailadies.cz.',
-      });
     }
 
     // Brevo + confirmation email happen AFTER payment (via complete-registration.js / stripe-webhook.js)

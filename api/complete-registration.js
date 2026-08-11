@@ -11,7 +11,7 @@ export default async function handler(req, res) {
   }
 
   const brevoKey = process.env.BREVO_API_KEY;
-  const airtableToken = process.env.AIRTABLE_API_TOKEN;
+  const airtableToken = isNight ? process.env.AIRTABLE_NIGHT_TOKEN : process.env.AIRTABLE_API_TOKEN;
 
   const webinarLists = {
     'ai-bezpecne': 8,

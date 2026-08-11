@@ -161,7 +161,7 @@ export default async function handler(req, res) {
   }
 
   // Airtable: update existing record or create new one (backup for TY page)
-  const airtableToken = process.env.AIRTABLE_API_TOKEN;
+  const airtableToken = webinarSlug ? process.env.AIRTABLE_API_TOKEN : process.env.AIRTABLE_NIGHT_TOKEN;
   if (webinarSlug) {
     try {
       const airtableBaseId = process.env.AIRTABLE_BASE_ID;
