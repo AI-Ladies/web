@@ -17,12 +17,14 @@ export default async function handler(req, res) {
     'ai-bezpecne': 8,
     'asistent-na-web': 9,
     'proc-mi-z-ai-leze-nuda': 10,
+    '10x-ai-ve-tvem-dni': 11,
   };
 
   const templates = {
     'ai-bezpecne': 7,
     'asistent-na-web': 8,
     'proc-mi-z-ai-leze-nuda': 9,
+    '10x-ai-ve-tvem-dni': 16,
   };
 
   const sentAttr = isNight

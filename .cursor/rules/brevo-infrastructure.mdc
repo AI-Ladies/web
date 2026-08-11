@@ -15,6 +15,7 @@ alwaysApply: true
 ## Listy (kontaktní seznamy)
 
 Každý webinář/událost má VLASTNÍ list. Žádné sdílené listy, žádné segmenty.
+Kontakty se do Brevo přidávají AŽ PO PLATBĚ (payment-first flow) — nikdy před ní!
 
 | List ID | Název | Složka | Účel |
 |---------|-------|--------|------|
@@ -24,6 +25,7 @@ Každý webinář/událost má VLASTNÍ list. Žádné sdílené listy, žádné
 | 8 | Webinář: AI bezpečně | Webináře (7) | Registrace webináře |
 | 9 | Webinář: Asistent na web | Webináře (7) | Registrace webináře |
 | 10 | Webinář: Proč mi z AI leze nuda | Webináře (7) | Registrace webináře |
+| 11 | Webinář: 10x AI ve tvém dni | Webináře (7) | Registrace webináře |
 
 ### Kde je mapping v kódu
 
@@ -33,6 +35,7 @@ const webinarLists = {
   'ai-bezpecne': 8,
   'asistent-na-web': 9,
   'proc-mi-z-ai-leze-nuda': 10,
+  '10x-ai-ve-tvem-dni': 11,
 };
 ```
 
@@ -55,6 +58,7 @@ Template IDs jsou **hardcoded v kódu** (ne env vars):
 | 7 | AI bezpečně | `api/complete-registration.js`, `api/stripe-webhook.js` |
 | 8 | Asistent na web | `api/complete-registration.js`, `api/stripe-webhook.js` |
 | 9 | Proč mi z AI leze nuda | `api/complete-registration.js`, `api/stripe-webhook.js` |
+| 16 | 10× AI ve tvém dni | `api/complete-registration.js`, `api/stripe-webhook.js` |
 
 Šablony jsou uložené lokálně v `emails/webinar-{slug}-confirmation.html` A zároveň v Brevo (Transactional → Templates). Při změně updatovat obojí.
 
@@ -98,6 +102,7 @@ Aby se confirmation email neposlal 2x (TY page + webhook):
 | `CONFIRMATION_SENT_AI_BEZPECNE` | AI bezpečně |
 | `CONFIRMATION_SENT_ASISTENT_NA_WEB` | Asistent na web |
 | `CONFIRMATION_SENT_PROC_MI_Z_AI_LEZE_NUDA` | Proč mi z AI leze nuda |
+| `CONFIRMATION_SENT_10X_AI_VE_TVEM_DNI` | 10× AI ve tvém dni |
 
 Při novém webináři vytvořit:
 ```bash

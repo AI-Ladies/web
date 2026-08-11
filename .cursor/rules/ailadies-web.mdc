@@ -15,7 +15,11 @@ alwaysApply: true
 ## Struktura
 
 - `public/` — statické soubory webu (HTML, CSS, JS, obrázky). **Editace se dělají tady.**
-- `api/register.js` — serverless: registrace na event → Airtable + Brevo + potvrzovací email
+- `api/register.js` — serverless: Night registrace → Airtable (Status: Registrace) + Stripe URL (BEZ Brevo — to až po platbě)
+- `api/register-webinar.js` — serverless: webinář registrace → validace + Stripe URL
+- `api/complete-registration.js` — serverless: po platbě (TY page) → AT update na Zaplaceno + Brevo + confirmation email (Night i webináře)
+- `api/stripe-webhook.js` — serverless: Stripe webhook backup → totéž co complete-registration (dedup přes CONFIRMATION_SENT)
+- `api/send-confirmation.js` — serverless: legacy, používá se jako záloha
 - `api/newsletter.js` — serverless: newsletter signup → Brevo
 - `vercel.json` — routing, CORS headers, redirect `/mentoring` → `mentoring.ailadies.cz`
 
@@ -50,17 +54,21 @@ Kompletní seznam env vars potřebných pro `ai-ladies-projects/ailadies-web`:
 | Proměnná | Účel |
 |---|---|
 | `AIRTABLE_API_TOKEN` | Airtable Personal Access Token |
-| `AIRTABLE_BASE_ID` | Airtable base ID (`app0hrAz2Vj2TxNHe`) |
+| `AIRTABLE_BASE_ID` | Airtable base ID pro **webináře** (`app0hrAz2Vj2TxNHe`) — POZOR: nesahat, jinak se rozbijí webinářové registrace! |
+| `AIRTABLE_NIGHT_BASE_ID` | Airtable base ID pro **Night** (`appAH66yaK1S4phgq`) — oddělený base od webinářů! |
+| `AIRTABLE_NIGHT_TABLE` | Název AT tabulky pro aktuální Night (aktuálně `Registrace 27.8.`) |
 | `BREVO_API_KEY` | Brevo (ex-Sendinblue) API klíč |
 | `BREVO_NEWSLETTER_LIST_ID` | Brevo list pro newsletter (5) |
-| `BREVO_NIGHT_LIST_ID` | Brevo list pro AI Ladies Night (4) |
-| ~~`BREVO_WEBINAR_LIST_ID`~~ | **DEPRECATED** — list IDs jsou nyní hardcoded per webinář v `api/complete-registration.js` a `api/stripe-webhook.js` (mapping `webinarLists`) |
+| `BREVO_NIGHT_LIST_ID` | Brevo list pro AI Ladies Night (aktuálně 6, kód hardcoduje v `complete-registration.js` a `stripe-webhook.js`) |
 | `BREVO_NIGHT_TEMPLATE_ID` | Brevo template pro Night confirmation (6) |
+| ~~`BREVO_WEBINAR_LIST_ID`~~ | **DEPRECATED** — list IDs jsou nyní hardcoded per webinář v `api/complete-registration.js` a `api/stripe-webhook.js` (mapping `webinarLists`) |
 | `SKLONOVANI_API_KEY` | API pro české skloňování jmen (5. pád) |
 | `STRIPE_WEBHOOK_SECRET` | Stripe webhook signing secret |
 | `STRIPE_LINK_AI_BEZPECNE` | Stripe Payment Link pro webinář AI bezpečně |
 | `STRIPE_LINK_ASISTENT_NA_WEB` | Stripe Payment Link pro webinář Asistent na web |
 | `STRIPE_LINK_PROC_MI_Z_AI_LEZE_NUDA` | Stripe Payment Link pro webinář Proč mi z AI leze nuda |
+
+**KRITICKÉ:** Night a webináře mají RŮZNÉ Airtable base IDs. Nikdy nenastavuj `AIRTABLE_BASE_ID` na Night base — rozbije to webinářové registrace!
 
 Při přidání nového webináře přidej `STRIPE_LINK_{SLUG}` (slug CAPS, pomlčky → podtržítka).
 
@@ -71,6 +79,7 @@ Pro každý webinář musí v Brevo existovat boolean atribut pro deduplication 
 - `CONFIRMATION_SENT_AI_BEZPECNE` — boolean
 - `CONFIRMATION_SENT_ASISTENT_NA_WEB` — boolean
 - `CONFIRMATION_SENT_PROC_MI_Z_AI_LEZE_NUDA` — boolean
+- `CONFIRMATION_SENT_10X_AI_VE_TVEM_DNI` — boolean
 
 Při novém webináři vytvořit přes API:
 ```bash

@@ -1,0 +1,138 @@
+---
+description: AI Ladies Night — checklist pro nový termín, registrace, Brevo + Airtable
+alwaysApply: true
+---
+
+# AI Ladies Night — Setup nového termínu
+
+Každá Night má svůj vlastní Brevo list, AT tabulku a konfiguraci. Při novém termínu se musí updatnout VŠE najednou, jinak registrace padají do starého listu/tabulky.
+
+## Aktuální Night
+
+| Co | Hodnota |
+|----|---------|
+| Termín | 27.8.2026 |
+| Brevo list ID | **6** (hardcoded v `complete-registration.js` a `stripe-webhook.js`) |
+| Brevo confirmation template ID | **6** (env `BREVO_NIGHT_TEMPLATE_ID`) |
+| AT base | `appAH66yaK1S4phgq` (env `AIRTABLE_NIGHT_BASE_ID`) |
+| AT tabulka | `Registrace 27.8.` (env `AIRTABLE_NIGHT_TABLE`) |
+| Dedup atribut | `CONFIRMATION_SENT` |
+| Stripe Payment Link | `https://buy.stripe.com/cNieVe3oO7mvbdf1yhes000` (hardcoded v `register.js`) |
+
+**POZOR:** Night a webináře mají RŮZNÉ Airtable bases! Night = `AIRTABLE_NIGHT_BASE_ID`, webináře = `AIRTABLE_BASE_ID`. Nikdy je nezaměňovat!
+
+## Registrační flow (payment-first)
+
+1. Uživatel vyplní formulář na `public/ai-ladies-night.html`
+2. Formulář volá `POST /api/register`
+3. `api/register.js`:
+   - Zapíše do **Airtable** (base `AIRTABLE_NIGHT_BASE_ID`, tabulka `AIRTABLE_NIGHT_TABLE`) se **Status: Registrace**
+   - **NEPŘIDÁVÁ do Brevo** (to až po platbě)
+   - Vrátí Stripe URL
+4. Formulář uloží **všechna form data do cookies** (fname, lname, email, field, seniority, ai_level) a přesměruje na Stripe
+5. Po úspěšné platbě → Stripe přesměruje na `public/al-ladies-night-thank-you.html`
+6. Thank-you page přečte cookies a volá `POST /api/complete-registration` s `event: 'night'`
+7. `api/complete-registration.js` (Night větev):
+   - Najde AT záznam podle emailu → **updatne Status na Zaplaceno**
+   - Přidá kontakt do **Brevo listu 6** s atributy (FIRSTNAME, LASTNAME, FIRSTNAME_5PAD, FIELD, SENIORITY, AI_LEVEL)
+   - Pošle **confirmation email** (template dle `BREVO_NIGHT_TEMPLATE_ID`, default 6)
+   - Nastaví `CONFIRMATION_SENT = true` (dedup)
+8. `api/stripe-webhook.js` — **backup**: pokud TY page selže (cookies smazány, browser zavřen apod.), webhook udělá totéž (AT update + Brevo + confirmation email, dedup přes `CONFIRMATION_SENT`)
+
+### Co se stane, když uživatel nezaplatí?
+Záznam zůstane v Airtable se **Status: Registrace** — lze jim poslat reminder. Do Brevo se nedostanou → nedostanou žádnou komunikaci.
+
+## Checklist: Nový termín Night
+
+Při zakládání nové Night (nový datum) proveď VŠECHNY kroky:
+
+### 1. Brevo — nový list
+```bash
+curl -s -X POST "https://api.brevo.com/v3/contacts/lists" \
+  -H "api-key: $BREVO_API_KEY" -H "Content-Type: application/json" \
+  -d '{"name": "AI Ladies Night — {DD.M.YYYY}", "folderId": 3}'
+```
+→ Zapiš vrácené `id`.
+
+### 2. Kód — hardcoded Brevo list ID
+Updatuj Night Brevo list ID v těchto souborech:
+- `api/complete-registration.js` — řádek `const brevoListId = isNight ? 6 : ...`
+- `api/stripe-webhook.js` — řádek `listIds: [6]` v Night bloku
+
+### 3. Kód — Stripe Payment Link
+Updatuj Stripe URL v `api/register.js`:
+```javascript
+const stripeUrl = 'https://buy.stripe.com/{NOVÝ_LINK}';
+```
+
+### 4. Airtable — nová tabulka
+V base `appAH66yaK1S4phgq` vytvoř tabulku `Registrace {DD.M.}` se sloupci:
+`First Name`, `Surname`, `Email`, `Obor`, `Seniorita`, `AI`, `GDPR souhlas`, `Datum registrace`, `Status`
+
+### 5. Vercel env vars
+```bash
+npx vercel env rm AIRTABLE_NIGHT_TABLE production --yes
+echo "Registrace {DD.M.}" | npx vercel env add AIRTABLE_NIGHT_TABLE production
+
+npx vercel env rm BREVO_NIGHT_LIST_ID production --yes
+echo "{NOVÉ_ID}" | npx vercel env add BREVO_NIGHT_LIST_ID production
+```
+**NESAHAT na `AIRTABLE_BASE_ID`** (to je pro webináře) ani `AIRTABLE_NIGHT_BASE_ID` (pokud se nemění AT base).
+
+### 6. Brevo — confirmation email šablona
+Šablona je v Brevo: Transactional → Templates → ID dle `BREVO_NIGHT_TEMPLATE_ID`.
+
+**Při novém termínu VŽDY updatuj šablonu** (v Brevo UI nebo přes API):
+- Datum a čas eventu
+- Místo konání (adresa, odkaz na mapu)
+- Google Calendar link (`dates=` parametr v URL)
+- Jakékoliv další detaily specifické pro termín
+
+Lokální kopie: `emails/ai-ladies-night-confirmation.html` — updatuj obojí (Brevo + lokální soubor).
+
+Pokud se mění template ID (nová šablona místo updatu staré):
+```bash
+npx vercel env rm BREVO_NIGHT_TEMPLATE_ID production --yes
+echo "{NOVÉ_TEMPLATE_ID}" | npx vercel env add BREVO_NIGHT_TEMPLATE_ID production
+```
+
+### 7. Dedup atribut `CONFIRMATION_SENT`
+Atribut `CONFIRMATION_SENT` je sdílený mezi termíny Night. Před novým termínem **resetuj** u kontaktů z minulého termínu, pokud se mohou registrovat znovu:
+```bash
+# Pro každý kontakt ze starého listu:
+curl -X PUT "https://api.brevo.com/v3/contacts/{email}" \
+  -H "api-key: $BREVO_API_KEY" -H "Content-Type: application/json" \
+  -d '{"attributes": {"CONFIRMATION_SENT": null}}'
+```
+Jinak dedup zablokuje odeslání confirmation emailu vracejícím se účastnicím.
+
+### 8. Landing page + thank-you page
+- `public/ai-ladies-night.html` — datum, místo, program, speakers
+- `public/al-ladies-night-thank-you.html` — meta description s datem, texty
+
+### 9. Deploy + ověření
+```bash
+git add . && git commit -m "Night {datum}: nový termín" && git push
+```
+**Po deployi udělej testovací registraci** a ověř VŠECHNO:
+- [ ] Po vyplnění formuláře → AT záznam se Status **Registrace** (ne Zaplaceno, ne Nova)
+- [ ] Kontakt NENÍ v Brevo (dokud neproběhne platba)
+- [ ] Po Stripe platbě → AT záznam updatnut na Status **Zaplaceno**
+- [ ] Po platbě → kontakt je v NOVÉM Brevo listu (ne starém)
+- [ ] Přišel confirmation email se správným datem a místem
+- [ ] `CONFIRMATION_SENT` je nastaveno na `true`
+- [ ] Calendar link v emailu má správné datum
+
+### 10. Updatuj tuto rule
+Po dokončení všech kroků updatuj tabulku "Aktuální Night" v tomto souboru novými hodnotami.
+
+## Časté chyby (aby se neopakovaly)
+
+- **Záměna `AIRTABLE_BASE_ID` a `AIRTABLE_NIGHT_BASE_ID`** → Night a webináře mají RŮZNÉ bases! Záměna rozbije jedny nebo druhé registrace
+- **Zapomenutý Brevo list ID v kódu** → registrace padají do starého listu (list ID je hardcoded, ne v env vars!)
+- **Chybějící `AIRTABLE_NIGHT_TABLE`** → záznamy jdou do výchozí tabulky `Registrace`
+- **AT token bez přístupu k base** → AT zápisy tiše selhávají (kód chybu jen loguje)
+- **Neaktualizovaná confirmation šablona** → email s datem/místem starého eventu
+- **Neresetovaný `CONFIRMATION_SENT`** → vracející se účastnice nedostanou confirmation
+- **Neaktualizovaný Stripe Payment Link** → platba jde na starý produkt
+- **Cookies se SameSite=Strict** → po Stripe redirectu se cookies neodešlou (musí být SameSite=Lax)
