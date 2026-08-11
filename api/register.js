@@ -30,36 +30,46 @@ export default async function handler(req, res) {
     const airtableBaseId = process.env.AIRTABLE_NIGHT_BASE_ID;
     const airtableTable = process.env.AIRTABLE_NIGHT_TABLE || 'Registrace';
 
-    if (airtableToken && airtableBaseId) {
-      const airtableRes = await fetch(
-        `https://api.airtable.com/v0/${airtableBaseId}/${encodeURIComponent(airtableTable)}`,
-        {
-          method: 'POST',
-          headers: {
-            Authorization: `Bearer ${airtableToken}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            typecast: true,
-            fields: {
-              'First Name': fname,
-              Surname: lname,
-              Email: email,
-              Obor: field || '',
-              Seniorita: seniority || '',
-              AI: aiLevel || '',
-              'GDPR souhlas': true,
-              'Datum registrace': new Date().toISOString().split('T')[0],
-              Status: 'Registrace',
-            },
-          }),
-        }
-      );
+    if (!airtableToken || !airtableBaseId) {
+      console.error('CRITICAL: AIRTABLE_API_TOKEN or AIRTABLE_NIGHT_BASE_ID missing!');
+      return res.status(500).json({
+        success: false,
+        error: 'Registrace se nepodařila (chyba konfigurace). Napiš nám prosím na hello@ailadies.cz.',
+      });
+    }
 
-      if (!airtableRes.ok) {
-        const errData = await airtableRes.json().catch(() => ({}));
-        console.error('Airtable error:', errData);
+    const airtableRes = await fetch(
+      `https://api.airtable.com/v0/${airtableBaseId}/${encodeURIComponent(airtableTable)}`,
+      {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${airtableToken}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          typecast: true,
+          fields: {
+            'First Name': fname,
+            Surname: lname,
+            Email: email,
+            Obor: field || '',
+            Seniorita: seniority || '',
+            AI: aiLevel || '',
+            'GDPR souhlas': true,
+            'Datum registrace': new Date().toISOString().split('T')[0],
+            Status: 'Registrace',
+          },
+        }),
       }
+    );
+
+    if (!airtableRes.ok) {
+      const errData = await airtableRes.json().catch(() => ({}));
+      console.error('CRITICAL: Airtable write failed:', errData);
+      return res.status(500).json({
+        success: false,
+        error: 'Registrace se nepodařila (chyba databáze). Zkus to prosím znovu nebo nám napiš na hello@ailadies.cz.',
+      });
     }
 
     // Brevo + confirmation email happen AFTER payment (via complete-registration.js / stripe-webhook.js)
