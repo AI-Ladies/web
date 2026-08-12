@@ -16,6 +16,16 @@
       "source": "/webinar-asistent-na-web-thank-you",
       "destination": "/webinare",
       "permanent": false
+    },
+    {
+      "source": "/webinar-proc-mi-z-ai-leze-nuda",
+      "destination": "/webinare",
+      "permanent": false
+    },
+    {
+      "source": "/webinar-proc-mi-z-ai-leze-nuda-thank-you",
+      "destination": "/webinare",
+      "permanent": false
     }
   ],
   "headers": [
