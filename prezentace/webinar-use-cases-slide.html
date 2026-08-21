@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jak si zjednodušit život s AI — Use Cases</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --al-gold: #c49f47;
+      --al-gold-dark: #7a5a1e;
+      --al-gold-gradient: linear-gradient(115deg, #8a6a24 0%, #b8892a 20%, #c49f47 38%, #e0c87a 52%, #c49f47 66%, #9a7428 84%, #7a5a1e 100%);
+      --font-dm-serif: "DM Serif Display", Georgia, serif;
+      --font-dm-sans: "DM Sans", system-ui, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body { height: 100%; overflow: hidden; background: #050403; }
+
+    body {
+      font-family: var(--font-dm-sans), sans-serif;
+      color: rgba(255,255,255,0.92);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── jeviště 1920×1080, škáluje se do okna ── */
+    #stage {
+      width: 1920px; height: 1080px;
+      position: absolute; transform-origin: top left;
+      overflow: hidden;
+    }
+
+    .slide {
+      position: absolute; inset: 0;
+      background: #0a0806;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      overflow: hidden;
+    }
+    .slide.is-active { display: flex; }
+
+    /* ── teplé zlaté glow vrstvy ── */
+    .glow { position: absolute; border-radius: 50%; pointer-events: none; }
+    .g1 { top: -320px; left: 50%; transform: translateX(-50%);
+          width: 1500px; height: 820px;
+          background: radial-gradient(ellipse, rgba(170,120,40,0.30) 0%, rgba(130,92,28,0.12) 38%, transparent 72%);
+          filter: blur(70px); }
+    .g2 { top: -60px; right: 4%; width: 620px; height: 560px;
+          background: radial-gradient(circle, rgba(196,159,71,0.14) 0%, transparent 65%);
+          filter: blur(60px); }
+    .g3 { bottom: -280px; right: -80px; width: 900px; height: 640px;
+          background: radial-gradient(ellipse, rgba(150,105,35,0.16) 0%, transparent 68%);
+          filter: blur(75px); }
+    .g4 { bottom: -240px; left: -140px; width: 780px; height: 560px;
+          background: radial-gradient(ellipse, rgba(130,92,28,0.12) 0%, transparent 68%);
+          filter: blur(70px); }
+    .vignette {
+      position: absolute; inset: 0; pointer-events: none;
+      background: radial-gradient(ellipse 90% 75% at 50% 45%, transparent 55%, rgba(0,0,0,0.55) 100%);
+    }
+
+    .eyebrow {
+      font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.18em;
+      color: var(--al-gold);
+    }
+    .eyebrow::before { content: '✦  '; }
+
+    .gold-text {
+      background: var(--al-gold-gradient);
+      -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;
+    }
+
+    /* ══════════════════════════════════════
+       SLIDE 1 — PŘEHLED
+       ══════════════════════════════════════ */
+    .s-overview { padding: 90px 90px 60px; justify-content: center; }
+
+    .ov-head { text-align: center; margin-bottom: 68px; position: relative; z-index: 3; }
+    .ov-head .eyebrow { display: block; margin-bottom: 26px; }
+    .ov-head h1 {
+      font-family: var(--font-dm-serif);
+      font-size: 92px; font-weight: 400; line-height: 1.05;
+      color: #fff; letter-spacing: -0.01em; margin-bottom: 24px;
+    }
+    .ov-head p {
+      font-size: 26px; color: rgba(255,255,255,0.6); line-height: 1.55;
+      max-width: 900px; margin: 0 auto;
+    }
+
+    .ov-cards {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px;
+      width: 100%; max-width: 1700px; position: relative; z-index: 3;
+    }
+    .ov-card {
+      background: linear-gradient(160deg, rgba(30,25,19,0.92) 0%, rgba(17,14,11,0.92) 55%, rgba(12,10,8,0.94) 100%);
+      border: 1px solid rgba(196,159,71,0.14);
+      border-radius: 22px;
+      padding: 40px 38px 36px;
+      box-shadow: 0 24px 70px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.03);
+      display: flex; flex-direction: column;
+    }
+    .ov-card .num {
+      font-family: var(--font-dm-serif); font-size: 34px; line-height: 1;
+      color: var(--al-gold); margin-bottom: 20px;
+    }
+    .ov-card h3 {
+      font-family: var(--font-dm-serif); font-size: 38px; font-weight: 400;
+      color: #fff; line-height: 1.15; margin-bottom: 12px;
+    }
+    .ov-card .desc {
+      font-size: 21px; line-height: 1.55; color: rgba(255,255,255,0.62);
+      margin-bottom: 30px; flex: 1;
+    }
+
+    /* ── tagy ── */
+    .tags { display: flex; flex-wrap: wrap; gap: 10px; }
+    .tag {
+      display: inline-flex; align-items: center; gap: 9px;
+      font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+      color: rgba(255,255,255,0.85);
+      background: rgba(255,255,255,0.045);
+      border: 1px solid rgba(255,255,255,0.11);
+      border-radius: 12px; padding: 9px 15px 9px 10px;
+    }
+    .tag .ico {
+      width: 26px; height: 26px; border-radius: 50%;
+      background: #f7f4ef; color: #1a1a1a;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; line-height: 1; flex-shrink: 0; font-style: normal;
+    }
+
+    /* ══════════════════════════════════════
+       SLIDE 2–4 — DETAIL
+       ══════════════════════════════════════ */
+    .s-detail { padding: 74px 110px 96px; justify-content: flex-start; }
+
+    .d-inner {
+      width: 100%; max-width: 1700px; position: relative; z-index: 3;
+      display: flex; flex-direction: column; height: 100%;
+    }
+
+    .d-head { display: flex; align-items: flex-start; gap: 28px; margin-bottom: 30px; }
+    .d-num {
+      font-family: var(--font-dm-serif); font-size: 40px; line-height: 1;
+      color: var(--al-gold);
+      width: 82px; height: 82px; flex-shrink: 0;
+      border: 1px solid rgba(196,159,71,0.35);
+      border-radius: 22px;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(196,159,71,0.07);
+    }
+    .d-titles { padding-top: 2px; }
+    .d-titles .eyebrow { display: block; margin-bottom: 10px; font-size: 14px; }
+    .d-titles h2 {
+      font-family: var(--font-dm-serif); font-size: 68px; font-weight: 400;
+      color: #fff; line-height: 1.08; letter-spacing: -0.01em; margin-bottom: 8px;
+    }
+    .d-titles .kicker {
+      font-size: 20px; color: rgba(196,159,71,0.9); font-weight: 500;
+    }
+
+    .d-flow {
+      display: flex; align-items: center; flex-wrap: wrap; gap: 12px;
+      padding: 22px 0 26px; margin-bottom: 26px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .d-flow .chip {
+      font-size: 19px; font-weight: 600;
+      color: rgba(255,255,255,0.85);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 11px 20px; border-radius: 11px; white-space: nowrap;
+    }
+    .d-flow .arrow { font-size: 20px; color: rgba(196,159,71,0.7); }
+
+    .d-lead {
+      font-size: 28px; line-height: 1.5; color: rgba(255,255,255,0.75);
+      max-width: 1500px; margin-bottom: 40px;
+    }
+    .d-lead strong { color: #fff; font-weight: 600; }
+
+    .d-cols {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 56px;
+      margin-bottom: 40px;
+    }
+    .d-label {
+      display: flex; align-items: center; gap: 12px;
+      font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em;
+      color: rgba(255,255,255,0.38); margin-bottom: 18px;
+    }
+    .d-label::after { content: ''; flex: 1; height: 1px; background: rgba(255,255,255,0.07); }
+
+    .d-steps { list-style: none; display: flex; flex-direction: column; gap: 14px; }
+    .d-steps li {
+      font-size: 22px; line-height: 1.5; color: rgba(255,255,255,0.68);
+      padding-left: 30px; position: relative;
+    }
+    .d-steps li::before {
+      content: ''; position: absolute; left: 4px; top: 12px;
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--al-gold); opacity: 0.9;
+    }
+    .d-steps li strong { color: #fff; font-weight: 600; }
+
+    .d-bottom {
+      margin-top: auto;
+      display: grid; grid-template-columns: 1.55fr 1fr; gap: 40px; align-items: end;
+    }
+    .d-result {
+      border-left: 3px solid rgba(196,159,71,0.6);
+      background: linear-gradient(90deg, rgba(196,159,71,0.11) 0%, rgba(196,159,71,0.02) 100%);
+      border-radius: 0 14px 14px 0;
+      padding: 22px 28px;
+    }
+    .d-result .lbl {
+      font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.16em;
+      color: var(--al-gold); margin-bottom: 8px;
+    }
+    .d-result p { font-size: 23px; line-height: 1.45; color: rgba(255,255,255,0.86); }
+
+    .d-side { display: flex; flex-direction: column; gap: 16px; align-items: flex-start; }
+    .d-link { font-size: 17px; line-height: 1.4; }
+    .d-link .k {
+      font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.14em;
+      color: rgba(255,255,255,0.32); display: block; margin-bottom: 4px;
+    }
+    .d-link .v { color: rgba(196,159,71,0.95); font-weight: 500; }
+
+    /* ══════════════════════════════════════
+       FOOTER (na všech slidech)
+       ══════════════════════════════════════ */
+    .foot {
+      position: absolute; bottom: 34px; left: 0; right: 0;
+      padding: 0 90px;
+      display: flex; align-items: center; justify-content: space-between;
+      z-index: 4;
+    }
+    .s-detail .foot { padding: 0 110px; }
+    .foot-left { font-size: 14px; color: rgba(255,255,255,0.28); letter-spacing: 0.02em; }
+    .foot-note {
+      display: inline-flex; align-items: center; margin-left: 16px;
+      padding: 5px 13px; border-radius: 8px;
+      background: rgba(196,159,71,0.08); border: 1px solid rgba(196,159,71,0.22);
+      font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;
+      color: rgba(196,159,71,0.95);
+    }
+    .foot-right {
+      display: flex; align-items: center; gap: 22px;
+    }
+    .foot-logo { font-family: var(--font-dm-serif); font-size: 22px; }
+    .foot-logo .ai { color: #fff; }
+    .foot-count {
+      font-size: 14px; font-weight: 600; letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.3);
+    }
+
+    /* ── navigační tečky ── */
+    #dots {
+      position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 10px; z-index: 50;
+    }
+    #dots button {
+      width: 9px; height: 9px; border-radius: 50%; border: none; cursor: pointer;
+      background: rgba(255,255,255,0.22); padding: 0; transition: background 0.2s, transform 0.2s;
+    }
+    #dots button:hover { background: rgba(196,159,71,0.6); }
+    #dots button.on { background: var(--al-gold); transform: scale(1.35); }
+
+    #hint {
+      position: fixed; bottom: 14px; right: 18px; z-index: 50;
+      font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase;
+      color: rgba(255,255,255,0.22);
+      transition: opacity 0.6s;
+    }
+  </style>
+</head>
+<body>
+
+<div id="stage">
+
+  <!-- ══════════ SLIDE 1 — PŘEHLED ══════════ -->
+  <section class="slide s-overview is-active">
+    <div class="glow g1"></div><div class="glow g2"></div>
+    <div class="glow g3"></div><div class="glow g4"></div>
+    <div class="vignette"></div>
+
+    <div class="ov-head">
+      <span class="eyebrow">Use casy · 20. 8. 2026</span>
+      <h1>Tři věci, co mi <span class="gold-text">AI dělá denně</span></h1>
+      <p>Nastavila jsem si je jednou a od té doby mi šetří čas každý den. Teď je představím, potom se do každé podíváme zvlášť.</p>
+    </div>
+
+    <div class="ov-cards">
+      <div class="ov-card">
+        <div class="num">1</div>
+        <h3>.md Converter</h3>
+        <p class="desc">Převede jakýkoliv web nebo tabulku do Markdownu — formátu, kterému AI rozumí nejlíp.</p>
+        <div class="tags">
+          <span class="tag"><i class="ico">⚡</i>Cursor</span>
+          <span class="tag"><i class="ico">🌐</i>Chrome ext</span>
+        </div>
+      </div>
+
+      <div class="ov-card">
+        <div class="num">2</div>
+        <h3>Task Planner</h3>
+        <p class="desc">Nadiktuju, co musím udělat. AI to rozloží do kalendáře — najde volná okna, bez kolizí.</p>
+        <div class="tags">
+          <span class="tag"><i class="ico">🎙</i>Wispr Flow</span>
+          <span class="tag"><i class="ico">◐</i>ChatGPT</span>
+          <span class="tag"><i class="ico">📅</i>G Cal</span>
+        </div>
+      </div>
+
+      <div class="ov-card">
+        <div class="num">3</div>
+        <h3>Admin Watchdog</h3>
+        <p class="desc">Hlídací pes na předplatná. Projde Gmail a udržuje mi jeden centrální přehled v tabulce.</p>
+        <div class="tags">
+          <span class="tag"><i class="ico">✉</i>Gmail</span>
+          <span class="tag"><i class="ico">📊</i>Sheets</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="foot">
+      <span class="foot-left">
+        Webinář „Jak si zjednodušit život s AI" · 20. 8. 2026
+        <span class="foot-note">✦ Všechno vibecodované v Cursoru</span>
+      </span>
+      <span class="foot-right">
+        <span class="foot-count">01 / 04</span>
+        <span class="foot-logo"><span class="ai">AI</span><span class="gold-text">Ladies</span></span>
+      </span>
+    </div>
+  </section>
+
+  <!-- ══════════ SLIDE 2 — .md CONVERTER ══════════ -->
+  <section class="slide s-detail">
+    <div class="glow g1"></div><div class="glow g2"></div>
+    <div class="glow g3"></div><div class="glow g4"></div>
+    <div class="vignette"></div>
+
+    <div class="d-inner">
+      <div class="d-head">
+        <div class="d-num">1</div>
+        <div class="d-titles">
+          <span class="eyebrow">Use case 1 ze 3</span>
+          <h2>.md Converter</h2>
+          <div class="kicker">Vlastní appka + Chrome extension — vibecodované v Cursoru</div>
+        </div>
+      </div>
+
+      <div class="d-flow">
+        <span class="chip">Web / tabulka</span><span class="arrow">→</span>
+        <span class="chip">Markdown</span><span class="arrow">→</span>
+        <span class="chip">AI</span>
+      </div>
+
+      <p class="d-lead">
+        Převede <strong>jakýkoliv web nebo tabulku do Markdownu</strong> — formátu, kterému AI rozumí nejlíp. Buď celou stránku, nebo jen tu část textu, kterou si označím.
+      </p>
+
+      <div class="d-cols">
+        <div>
+          <div class="d-label">Jak to používám</div>
+          <ul class="d-steps">
+            <li>Vložím <strong>URL do appky</strong> — převede celou stránku</li>
+            <li>Nebo označím text a kliknu v <strong>Chrome extension</strong></li>
+            <li>Dostanu čistý <strong>.md</strong> — nadpisy, odkazy, tabulky</li>
+            <li>Vložím do ChatGPT nebo Claude a pracuju s tím dál</li>
+          </ul>
+        </div>
+        <div>
+          <div class="d-label">Proč je Markdown do AI dobrý</div>
+          <ul class="d-steps">
+            <li>Nese <strong>strukturu</strong> — AI vidí, co je nadpis a co tabulka</li>
+            <li>Žádná reklama, cookie lišty ani rozsypaný copy-paste</li>
+            <li>Míň tokenů než HTML, takže se vejde <strong>víc obsahu</strong></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="d-bottom">
+        <div class="d-result">
+          <div class="lbl">Výsledek</div>
+          <p>AI dostane čistá strukturovaná data místo bordelu. Lepší vstup = výrazně lepší odpovědi.</p>
+        </div>
+        <div class="d-side">
+          <div class="d-link">
+            <span class="k">Appka</span>
+            <span class="v">web-to-markdown-mauve.vercel.app</span>
+          </div>
+          <div class="tags">
+            <span class="tag"><i class="ico">⚡</i>Cursor</span>
+            <span class="tag"><i class="ico">🌐</i>Chrome ext</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="foot">
+      <span class="foot-left">Webinář „Jak si zjednodušit život s AI" · 20. 8. 2026</span>
+      <span class="foot-right">
+        <span class="foot-count">02 / 04</span>
+        <span class="foot-logo"><span class="ai">AI</span><span class="gold-text">Ladies</span></span>
+      </span>
+    </div>
+  </section>
+
+  <!-- ══════════ SLIDE 3 — TASK PLANNER ══════════ -->
+  <section class="slide s-detail">
+    <div class="glow g1"></div><div class="glow g2"></div>
+    <div class="glow g3"></div><div class="glow g4"></div>
+    <div class="vignette"></div>
+
+    <div class="d-inner">
+      <div class="d-head">
+        <div class="d-num">2</div>
+        <div class="d-titles">
+          <span class="eyebrow">Use case 2 ze 3</span>
+          <h2>Task Planner</h2>
+          <div class="kicker">Diktuju cestou, mám to naplánované v kalendáři</div>
+        </div>
+      </div>
+
+      <div class="d-flow">
+        <span class="chip">Hlas / text</span><span class="arrow">→</span>
+        <span class="chip">AI</span><span class="arrow">→</span>
+        <span class="chip">Moje kalendáře</span><span class="arrow">→</span>
+        <span class="chip">Naplánované tasky</span>
+      </div>
+
+      <p class="d-lead">
+        Jdu do práce nebo ze schůzky a <strong>nadiktuju přes Wispr Flow</strong> (nebo napíšu do chatu), co musím udělat. AI z toho udělá <strong>úkoly v kalendáři</strong>.
+      </p>
+
+      <div class="d-cols">
+        <div>
+          <div class="d-label">Co AI udělá za mě</div>
+          <ul class="d-steps">
+            <li>Rozpozná <strong>jednotlivé úkoly</strong>, délku a prioritu</li>
+            <li>Zkontroluje <strong>všechny moje kalendáře</strong></li>
+            <li>Najde volná okna a naplánuje úkoly <strong>bez kolizí</strong></li>
+            <li>Tasky zobrazí, ale <strong>neblokují dostupnost</strong></li>
+          </ul>
+        </div>
+        <div>
+          <div class="d-label">Kdy to používám</div>
+          <ul class="d-steps">
+            <li>Ráno cestou do práce — co dneska musím stihnout</li>
+            <li>Po meetingu — to-do, co z něj vypadlo</li>
+            <li>Kdykoliv si na něco vzpomenu, ať to nezůstane v hlavě</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="d-bottom">
+        <div class="d-result">
+          <div class="lbl">Výsledek</div>
+          <p>Nemusím řešit, kdy to udělám — AI to rozloží za mě. A hlavně na to nezapomenu.</p>
+        </div>
+        <div class="d-side">
+          <div class="d-link">
+            <span class="k">Vstup</span>
+            <span class="v">Diktafon nebo jedna zpráva do chatu</span>
+          </div>
+          <div class="tags">
+            <span class="tag"><i class="ico">🎙</i>Wispr Flow</span>
+            <span class="tag"><i class="ico">◐</i>ChatGPT</span>
+            <span class="tag"><i class="ico">📅</i>G Cal</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="foot">
+      <span class="foot-left">Webinář „Jak si zjednodušit život s AI" · 20. 8. 2026</span>
+      <span class="foot-right">
+        <span class="foot-count">03 / 04</span>
+        <span class="foot-logo"><span class="ai">AI</span><span class="gold-text">Ladies</span></span>
+      </span>
+    </div>
+  </section>
+
+  <!-- ══════════ SLIDE 4 — ADMIN WATCHDOG ══════════ -->
+  <section class="slide s-detail">
+    <div class="glow g1"></div><div class="glow g2"></div>
+    <div class="glow g3"></div><div class="glow g4"></div>
+    <div class="vignette"></div>
+
+    <div class="d-inner">
+      <div class="d-head">
+        <div class="d-num">3</div>
+        <div class="d-titles">
+          <span class="eyebrow">Use case 3 ze 3</span>
+          <h2>AI Admin Watchdog</h2>
+          <div class="kicker">Osobní hlídací pes na předplatná a administrativu</div>
+        </div>
+      </div>
+
+      <div class="d-flow">
+        <span class="chip">Gmail</span><span class="arrow">→</span>
+        <span class="chip">AI</span><span class="arrow">→</span>
+        <span class="chip">Google Sheets</span>
+      </div>
+
+      <p class="d-lead">
+        Jednou měsíčně nebo na povel projde mail a udržuje mi <strong>jeden centrální přehled</strong> všech předplatných v tabulce.
+      </p>
+
+      <div class="d-cols">
+        <div>
+          <div class="d-label">Co hlídá</div>
+          <ul class="d-steps">
+            <li>Hledá <strong>platby, trialy, obnovy, zrušení</strong> a změny cen</li>
+            <li>Rozpozná <strong>aktuální stav</strong> každé služby</li>
+            <li>Aktualizuje přehled a <strong>uchovává historii</strong> změn</li>
+            <li>Upozorní na věci, které je potřeba <strong>řešit</strong></li>
+          </ul>
+        </div>
+        <div>
+          <div class="d-label">Na co je to dobré</div>
+          <ul class="d-steps">
+            <li>Vidím, kolik měsíčně opravdu platím za nástroje</li>
+            <li>Zruším trial <strong>před</strong> první platbou</li>
+            <li>Zdražení mi neproklouzne</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="d-bottom">
+        <div class="d-result">
+          <div class="lbl">Výsledek</div>
+          <p>Nemusím si pamatovat, kde co platím a kdy se to znovu strhne. Mám to na jednom místě.</p>
+        </div>
+        <div class="d-side">
+          <div class="d-link">
+            <span class="k">Výstup</span>
+            <span class="v">Jedna tabulka v Google Sheets</span>
+          </div>
+          <div class="tags">
+            <span class="tag"><i class="ico">◐</i>ChatGPT</span>
+            <span class="tag"><i class="ico">✉</i>Gmail</span>
+            <span class="tag"><i class="ico">📊</i>Sheets</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="foot">
+      <span class="foot-left">Webinář „Jak si zjednodušit život s AI" · 20. 8. 2026</span>
+      <span class="foot-right">
+        <span class="foot-count">04 / 04</span>
+        <span class="foot-logo"><span class="ai">AI</span><span class="gold-text">Ladies</span></span>
+      </span>
+    </div>
+  </section>
+
+</div>
+
+<div id="dots"></div>
+<div id="hint">← → přepínání slidů</div>
+
+<script>
+  const stage = document.getElementById('stage');
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const dotsBox = document.getElementById('dots');
+  let current = 0;
+
+  function fit() {
+    const scale = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+    stage.style.transform = `scale(${scale})`;
+    stage.style.left = `${(window.innerWidth - 1920 * scale) / 2}px`;
+    stage.style.top = `${(window.innerHeight - 1080 * scale) / 2}px`;
+  }
+
+  function show(i) {
+    current = (i + slides.length) % slides.length;
+    slides.forEach((s, n) => s.classList.toggle('is-active', n === current));
+    Array.from(dotsBox.children).forEach((d, n) => d.classList.toggle('on', n === current));
+    location.hash = current + 1;
+  }
+
+  slides.forEach((_, i) => {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.setAttribute('aria-label', `Slide ${i + 1}`);
+    b.addEventListener('click', () => show(i));
+    dotsBox.appendChild(b);
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (['ArrowRight', 'ArrowDown', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); show(current + 1); }
+    else if (['ArrowLeft', 'ArrowUp', 'PageUp'].includes(e.key)) { e.preventDefault(); show(current - 1); }
+    else if (e.key === 'Home') show(0);
+    else if (e.key === 'End') show(slides.length - 1);
+    else if (e.key === 'f') document.documentElement.requestFullscreen?.();
+  });
+
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('#dots')) return;
+    show(current + (e.clientX < window.innerWidth * 0.25 ? -1 : 1));
+  });
+
+  const startIndex = Math.max(0, Math.min(slides.length - 1, parseInt(location.hash.slice(1), 10) - 1 || 0));
+  fit();
+  show(startIndex);
+  window.addEventListener('resize', fit);
+
+  setTimeout(() => { document.getElementById('hint').style.opacity = '0'; }, 5000);
+</script>
+</body>
+</html>

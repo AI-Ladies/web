@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Ladies Night — Promo Bannery 16:9</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=DM+Serif+Display&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #e8e4de;
+      font-family: "DM Sans", system-ui, sans-serif;
+      padding: 40px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 48px;
+    }
+
+    .label {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: #7a5a1e;
+      text-align: center;
+    }
+
+    .banner {
+      width: 100%;
+      max-width: 1200px;
+      aspect-ratio: 16 / 9;
+      position: relative;
+      overflow: hidden;
+      border-radius: 8px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.2);
+    }
+
+    /* ═══════════════════════════════════════
+       V1 — Tmavá elegance, centrovaná
+       ═══════════════════════════════════════ */
+    .v1 { background: #0a0a0a; }
+
+    .v1::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 70% 30%, rgba(196,159,71,0.1) 0%, transparent 70%),
+        radial-gradient(ellipse 60% 80% at 25% 75%, rgba(212,98,125,0.07) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .v1 .frame {
+      position: absolute;
+      inset: 5%;
+      border: 1px solid rgba(196,159,71,0.15);
+      pointer-events: none;
+    }
+
+    .v1 .content {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 8%;
+      z-index: 2;
+    }
+
+    .v1 .stars {
+      font-size: 1.2vw;
+      letter-spacing: 0.5em;
+      color: rgba(196,159,71,0.4);
+      margin-bottom: 3%;
+    }
+
+    .v1 h1 {
+      font-family: "DM Serif Display", Georgia, serif;
+      font-size: 7.5vw;
+      font-weight: 400;
+      line-height: 1.05;
+      background: linear-gradient(115deg, #8a6a24 0%, #c49f47 30%, #e0c87a 50%, #c49f47 70%, #8a6a24 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1.5%;
+    }
+
+    .v1 .subtitle {
+      font-family: "DM Serif Display", Georgia, serif;
+      font-size: 2.5vw;
+      color: rgba(255,255,255,0.85);
+      font-weight: 400;
+      margin-bottom: 5%;
+    }
+
+    .v1 .line {
+      width: 6%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #c49f47, transparent);
+      margin-bottom: 4%;
+    }
+
+    .v1 .meta {
+      display: flex;
+      align-items: center;
+      gap: 2.5vw;
+      font-size: 1.5vw;
+      color: rgba(255,255,255,0.6);
+      letter-spacing: 0.03em;
+    }
+
+    .v1 .meta .dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #c49f47;
+      flex-shrink: 0;
+    }
+
+    /* ═══════════════════════════════════════
+       V2 — Foto background s overlay
+       ═══════════════════════════════════════ */
+    .v2 { background: #0a0a0a; }
+
+    .v2 .bg-photo {
+      position: absolute;
+      inset: 0;
+      background: url('../public/img/ai-ladies-night-photo.png') center 35% / cover no-repeat;
+      opacity: 0.35;
+    }
+
+    .v2 .overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg,
+        rgba(10,10,10,0.3) 0%,
+        rgba(10,10,10,0.5) 40%,
+        rgba(10,10,10,0.85) 75%,
+        rgba(10,10,10,0.95) 100%
+      );
+    }
+
+    .v2 .content {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 6% 7%;
+      z-index: 2;
+    }
+
+    .v2 .tag {
+      font-size: 1vw;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: #c49f47;
+      margin-bottom: 2%;
+    }
+
+    .v2 h1 {
+      font-family: "DM Serif Display", Georgia, serif;
+      font-size: 7vw;
+      font-weight: 400;
+      line-height: 1;
+      color: #fff;
+      margin-bottom: 0.5%;
+    }
+
+    .v2 h1 span {
+      background: linear-gradient(115deg, #8a6a24 0%, #c49f47 30%, #e0c87a 50%, #c49f47 70%, #8a6a24 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .v2 .info {
+      display: flex;
+      align-items: center;
+      gap: 2vw;
+      margin-top: 3%;
+      padding-top: 3%;
+      border-top: 1px solid rgba(196,159,71,0.25);
+      flex-wrap: nowrap;
+    }
+
+    .v2 .info-item {
+      display: flex;
+      align-items: center;
+      gap: 0.7vw;
+      font-size: 1.3vw;
+      color: rgba(255,255,255,0.7);
+    }
+
+    .v2 .info-item svg {
+      width: 1.5vw;
+      height: 1.5vw;
+      flex-shrink: 0;
+      opacity: 0.7;
+    }
+
+    /* ═══════════════════════════════════════
+       V3 — Foto vpravo, text vlevo
+       ═══════════════════════════════════════ */
+    .v3 { background: #0a0a0a; }
+
+    .v3 .photo-right {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 48%;
+      height: 100%;
+      background: url('../public/img/night-photo-1.png') center 45% / cover no-repeat;
+    }
+
+    .v3 .photo-right::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, #0a0a0a 0%, rgba(10,10,10,0.6) 40%, rgba(10,10,10,0.2) 100%);
+    }
+
+    .v3 .content {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 7% 0 7% 7%;
+      width: 60%;
+      z-index: 2;
+    }
+
+    .v3 .accent-line {
+      width: 4vw;
+      height: 3px;
+      background: linear-gradient(90deg, #c49f47, #d4bc6a);
+      margin-bottom: 3%;
+      border-radius: 2px;
+    }
+
+    .v3 h1 {
+      font-family: "DM Serif Display", Georgia, serif;
+      font-size: 6vw;
+      font-weight: 400;
+      line-height: 1.05;
+      color: #fff;
+      margin-bottom: 1%;
+    }
+
+    .v3 h1 em {
+      font-style: italic;
+      background: linear-gradient(115deg, #8a6a24 0%, #c49f47 30%, #e0c87a 50%, #c49f47 70%, #8a6a24 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .v3 .details {
+      margin-top: 5%;
+      display: flex;
+      flex-direction: column;
+      gap: 1vw;
+    }
+
+    .v3 .detail-row {
+      display: flex;
+      align-items: center;
+      gap: 0.8vw;
+      font-size: 1.6vw;
+      color: rgba(255,255,255,0.65);
+    }
+
+    .v3 .detail-row svg {
+      width: 1.4vw;
+      height: 1.4vw;
+      flex-shrink: 0;
+    }
+
+    /* ═══════════════════════════════════════
+       V4 — Bold split, datum hero
+       ═══════════════════════════════════════ */
+    .v4 {
+      background: linear-gradient(135deg, #0d0d0d 0%, #12100e 100%);
+    }
+
+    .v4 .bg-glow {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 50% 80% at 75% 50%, rgba(196,159,71,0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .v4 .gold-bar {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 6px;
+      background: linear-gradient(180deg, #7a5a1e, #c49f47, #e0c87a, #c49f47, #7a5a1e);
+    }
+
+    .v4 .content {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      z-index: 2;
+    }
+
+    .v4 .left-side {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 6% 4% 6% 7%;
+    }
+
+    .v4 .brand {
+      font-size: 1vw;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: #c49f47;
+      margin-bottom: 3%;
+    }
+
+    .v4 h1 {
+      font-family: "DM Serif Display", Georgia, serif;
+      font-size: 7.5vw;
+      font-weight: 400;
+      line-height: 1.15;
+      color: #fff;
+      margin-bottom: 1%;
+    }
+
+    .v4 h1 .gold {
+      display: block;
+      background: linear-gradient(115deg, #8a6a24 0%, #c49f47 30%, #e0c87a 50%, #c49f47 70%, #8a6a24 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .v4 .right-side {
+      width: 30%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 5%;
+      border-left: 1px solid rgba(196,159,71,0.12);
+    }
+
+    .v4 .date-hero {
+      text-align: center;
+    }
+
+    .v4 .date-hero .num {
+      font-family: "DM Serif Display", Georgia, serif;
+      font-size: 8vw;
+      line-height: 1;
+      background: linear-gradient(180deg, #c49f47 0%, #8a6a24 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .v4 .date-hero .month {
+      font-size: 1.6vw;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: rgba(255,255,255,0.5);
+      margin-top: 0.5vw;
+    }
+
+    .v4 .date-hero .sep {
+      width: 40%;
+      height: 1px;
+      background: rgba(196,159,71,0.3);
+      margin: 1.5vw auto;
+    }
+
+    .v4 .date-hero .time {
+      font-size: 1.4vw;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 0.5vw;
+    }
+
+    .v4 .date-hero .place {
+      font-size: 1.3vw;
+      color: rgba(255,255,255,0.4);
+    }
+
+    /* ═══════════════════════════════════════
+       V5 — Foto plný background, velký text
+       ═══════════════════════════════════════ */
+    .v5 { background: #0a0a0a; }
+
+    .v5 .bg-photo {
+      position: absolute;
+      inset: 0;
+      background: url('../public/img/night-photo-2.png') center 50% / cover no-repeat;
+      opacity: 0.25;
+    }
+
+    .v5 .overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg,
+        rgba(10,10,10,0.9) 0%,
+        rgba(10,10,10,0.7) 50%,
+        rgba(10,10,10,0.85) 100%
+      );
+    }
+
+    .v5 .border-frame {
+      position: absolute;
+      inset: 4%;
+      border: 1px solid rgba(196,159,71,0.12);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .v5 .content {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 8%;
+      z-index: 2;
+    }
+
+    .v5 .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6vw;
+      background: rgba(196,159,71,0.1);
+      border: 1px solid rgba(196,159,71,0.25);
+      border-radius: 100px;
+      padding: 0.6vw 1.8vw;
+      font-size: 1vw;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: #c49f47;
+      margin-bottom: 3%;
+    }
+
+    .v5 h1 {
+      font-family: "DM Serif Display", Georgia, serif;
+      font-size: 9vw;
+      font-weight: 400;
+      line-height: 1;
+      color: #fff;
+      margin-bottom: 4%;
+    }
+
+    .v5 h1 span {
+      display: block;
+      background: linear-gradient(115deg, #8a6a24 0%, #c49f47 30%, #e0c87a 50%, #c49f47 70%, #8a6a24 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .v5 .info-row {
+      display: flex;
+      align-items: center;
+      gap: 1.5vw;
+      font-size: 1.6vw;
+      color: rgba(255,255,255,0.7);
+      font-weight: 500;
+    }
+
+    .v5 .info-row .sep {
+      color: #c49f47;
+      font-size: 1.2vw;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- VARIANTA 1 — Tmavá elegance, centrovaná -->
+  <p class="label">Varianta 1 — Tmavá elegance, centrovaná</p>
+  <div class="banner v1">
+    <div class="frame"></div>
+    <div class="content">
+      <div class="stars">✦&emsp;✦&emsp;✦</div>
+      <h1>AI Ladies Night</h1>
+      <div class="subtitle">Večer, kdy u AI stolu sedí samé ženy.</div>
+      <div class="line"></div>
+      <div class="meta">
+        <span>27. srpna 2026</span>
+        <div class="dot"></div>
+        <span>18:00 – 21:00</span>
+        <div class="dot"></div>
+        <span>Space Café, Praha — Anděl</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- VARIANTA 2 — Foto background, text dole -->
+  <p class="label">Varianta 2 — Foto background, text dole</p>
+  <div class="banner v2">
+    <div class="bg-photo"></div>
+    <div class="overlay"></div>
+    <div class="content">
+      <div class="tag">✦ AI Ladies</div>
+      <h1>AI Ladies <span>Night</span></h1>
+      <div class="info">
+        <div class="info-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#c49f47" stroke-width="1.75"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          27. srpna 2026
+        </div>
+        <div class="info-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#c49f47" stroke-width="1.75"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          18:00 – 21:00
+        </div>
+        <div class="info-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#c49f47" stroke-width="1.75"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+          Space Café, Praha — Anděl
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VARIANTA 3 — Foto vpravo, text vlevo -->
+  <p class="label">Varianta 3 — Foto vpravo, text vlevo</p>
+  <div class="banner v3">
+    <div class="photo-right"></div>
+    <div class="content">
+      <div class="accent-line"></div>
+      <h1>AI Ladies<br><em>Night</em></h1>
+      <div class="details">
+        <div class="detail-row">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#c49f47" stroke-width="1.75"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          Středa 27. srpna 2026
+        </div>
+        <div class="detail-row">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#c49f47" stroke-width="1.75"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          18:00 – 21:00
+        </div>
+        <div class="detail-row">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#c49f47" stroke-width="1.75"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+          Space Café, Praha — Anděl
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VARIANTA 4 — Bold split, datum hero -->
+  <p class="label">Varianta 4 — Bold split s datem</p>
+  <div class="banner v4">
+    <div class="bg-glow"></div>
+    <div class="gold-bar"></div>
+    <div class="content">
+      <div class="left-side">
+        <div class="brand">✦ AI Ladies</div>
+        <h1>AI Ladies<br><span class="gold">Night</span></h1>
+      </div>
+      <div class="right-side">
+        <div class="date-hero">
+          <div class="num">27</div>
+          <div class="month">Srpna 2026</div>
+          <div class="sep"></div>
+          <div class="time">18:00 – 21:00</div>
+          <div class="place">Space Café<br>Praha — Anděl</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VARIANTA 5 — Foto plný bg, velký centrovaný text -->
+  <p class="label">Varianta 5 — Foto pozadí, velký centrovaný text</p>
+  <div class="banner v5">
+    <div class="bg-photo"></div>
+    <div class="overlay"></div>
+    <div class="border-frame"></div>
+    <div class="content">
+      <div class="pill">✦ AI Ladies</div>
+      <h1>AI Ladies<br><span>Night</span></h1>
+      <div class="info-row">
+        <span>27. srpna 2026</span>
+        <span class="sep">✦</span>
+        <span>18:00 – 21:00</span>
+        <span class="sep">✦</span>
+        <span>Space Café, Praha — Anděl</span>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

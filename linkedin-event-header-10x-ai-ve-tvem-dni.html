@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jak si zjednodušit život s AI — LinkedIn Event Header</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Serif+Display&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --al-gold: #c49f47;
+      --al-gold-dark: #7a5a1e;
+      --al-gold-light: #f8f2e4;
+      --al-dark: #0d0d0d;
+      --al-blush-50: #fef7f8;
+      --al-blush-100: #fdecef;
+      --al-blush-200: #f9d4da;
+      --al-blush-300: #f2adb8;
+      --al-blush-400: #e8849a;
+      --al-blush-500: #d4627d;
+      --al-gold-gradient: linear-gradient(115deg, #7a5a1e 0%, #b8892a 22%, #c49f47 40%, #d4bc6a 55%, #c49f47 68%, #9a7428 84%, #7a5a1e 100%);
+      --al-rose-gold-gradient: linear-gradient(135deg, #c49f47 0%, #d4a85c 25%, #d4927a 50%, #d4627d 75%, #b8445f 100%);
+      --font-dm-serif: "DM Serif Display", Georgia, serif;
+      --font-dm-sans: "DM Sans", system-ui, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      background: #f2eeea;
+      font-family: var(--font-dm-sans);
+      padding: 40px;
+    }
+
+    .event-cover {
+      width: 1920px;
+      height: 1080px;
+      position: relative;
+      overflow: hidden;
+      color: #fff;
+      border-radius: 0;
+      background:
+        radial-gradient(ellipse 920px 560px at 16% 36%, rgba(196, 159, 71, 0.24), transparent 64%),
+        radial-gradient(ellipse 780px 520px at 86% 78%, rgba(212, 98, 125, 0.2), transparent 62%),
+        linear-gradient(112deg, #0d0d0d 0%, #17110f 52%, #0d0d0d 100%);
+      box-shadow: 0 24px 72px rgba(13, 13, 13, 0.22);
+      isolation: isolate;
+    }
+
+    .event-cover::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background:
+        linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+        linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+      background-size: 96px 96px;
+      mask-image: radial-gradient(ellipse 80% 70% at 50% 48%, black 20%, transparent 78%);
+      -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 48%, black 20%, transparent 78%);
+      opacity: 0.38;
+    }
+
+    .event-cover::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 6;
+      height: 5px;
+      background: linear-gradient(90deg, #7a5a1e 0%, #c49f47 22%, #d4a85c 40%, #d4927a 56%, #d4627d 76%, #b8445f 100%);
+    }
+
+    .glow {
+      position: absolute;
+      z-index: 0;
+      border-radius: 999px;
+      filter: blur(56px);
+      pointer-events: none;
+    }
+
+    .glow-gold {
+      width: 720px;
+      height: 460px;
+      left: -120px;
+      top: 130px;
+      background: rgba(196, 159, 71, 0.26);
+      transform: rotate(-12deg);
+    }
+
+    .glow-blush {
+      width: 640px;
+      height: 430px;
+      right: -110px;
+      bottom: -110px;
+      background: rgba(212, 98, 125, 0.2);
+      transform: rotate(10deg);
+    }
+
+    .gold-ring {
+      position: absolute;
+      z-index: 1;
+      width: 900px;
+      height: 900px;
+      right: -320px;
+      top: -300px;
+      border: 1px solid rgba(196, 159, 71, 0.16);
+      border-radius: 50%;
+    }
+
+    .gold-ring::after {
+      content: "";
+      position: absolute;
+      inset: 72px;
+      border: 1px solid rgba(232, 132, 154, 0.11);
+      border-radius: inherit;
+    }
+
+    .content {
+      position: relative;
+      z-index: 5;
+      height: 100%;
+      display: grid;
+      grid-template-columns: 470px minmax(0, 1fr);
+      grid-template-rows: 1fr auto;
+      column-gap: 82px;
+      row-gap: 44px;
+      align-items: center;
+      padding: 84px 106px 96px;
+    }
+
+    .date-card {
+      height: 740px;
+      grid-row: 1 / span 2;
+      display: grid;
+      place-items: center;
+      position: relative;
+      border-radius: 44px;
+      background:
+        linear-gradient(180deg, rgba(253, 236, 239, 0.96), rgba(248, 242, 228, 0.94)),
+        var(--al-blush-100);
+      color: var(--al-dark);
+      box-shadow:
+        0 34px 82px rgba(0, 0, 0, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.9);
+    }
+
+    .date-card::before {
+      content: "";
+      position: absolute;
+      inset: 20px;
+      border: 1px solid rgba(196, 159, 71, 0.3);
+      border-radius: 32px;
+      pointer-events: none;
+    }
+
+    .date-inner {
+      position: relative;
+      text-align: center;
+    }
+
+    .month {
+      margin-bottom: 18px;
+      color: var(--al-blush-500);
+      font-size: 31px;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .day {
+      font-family: var(--font-dm-serif);
+      font-size: 270px;
+      line-height: 0.78;
+      letter-spacing: -0.06em;
+      color: var(--al-dark);
+    }
+
+    .year {
+      margin-top: 34px;
+      color: rgba(13, 13, 13, 0.66);
+      font-size: 38px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+    }
+
+    .main {
+      min-width: 0;
+      align-self: end;
+      padding-bottom: 0;
+      transform: translateY(-80px);
+    }
+
+    .event-type {
+      display: inline-block;
+      margin-bottom: 22px;
+      padding: 8px 22px;
+      border-radius: 100px;
+      background: rgba(196, 159, 71, 0.14);
+      border: 1px solid rgba(196, 159, 71, 0.32);
+      color: var(--al-gold);
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .title {
+      font-family: var(--font-dm-serif);
+      font-size: 106px;
+      font-weight: 400;
+      line-height: 0.96;
+      letter-spacing: -0.04em;
+      color: #fff;
+    }
+
+    .title .gold {
+      background: var(--al-gold-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .claim {
+      max-width: 1120px;
+      margin-top: 36px;
+      color: rgba(255, 255, 255, 0.88);
+      font-size: 48px;
+      font-weight: 500;
+      line-height: 1.22;
+      letter-spacing: -0.02em;
+      text-wrap: balance;
+    }
+
+    .claim .soft {
+      color: var(--al-blush-300);
+    }
+
+    .meta-card {
+      position: relative;
+      align-self: start;
+      max-width: 1110px;
+      padding: 34px 38px 36px;
+      border-radius: 34px;
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.13), rgba(255, 255, 255, 0.055)),
+        linear-gradient(180deg, rgba(196, 159, 71, 0.11), rgba(212, 98, 125, 0.08));
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      box-shadow:
+        0 24px 54px rgba(0, 0, 0, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.16);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      transform: translateY(-80px);
+    }
+
+    .logo {
+      margin-bottom: 28px;
+      font-family: var(--font-dm-serif);
+      font-size: 48px;
+      line-height: 1;
+      letter-spacing: -0.015em;
+    }
+
+    .logo .ai {
+      color: #fff;
+    }
+
+    .logo .ladies {
+      background: var(--al-gold-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .meta-list {
+      display: grid;
+      grid-template-columns: 0.9fr 0.9fr 1.25fr;
+      gap: 22px;
+    }
+
+    .meta-item {
+      display: grid;
+      grid-template-columns: 54px 1fr;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .meta-icon {
+      width: 54px;
+      height: 54px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: rgba(248, 242, 228, 0.12);
+      border: 1px solid rgba(196, 159, 71, 0.34);
+      color: var(--al-gold);
+      font-size: 22px;
+      font-weight: 800;
+    }
+
+    .meta-label {
+      display: block;
+      margin-bottom: 2px;
+      color: rgba(255, 255, 255, 0.46);
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .meta-value {
+      display: block;
+      color: rgba(255, 255, 255, 0.92);
+      font-size: 29px;
+      font-weight: 700;
+      line-height: 1.18;
+      letter-spacing: -0.01em;
+    }
+
+    .url {
+      margin-top: 32px;
+      padding-top: 24px;
+      border-top: 1px solid rgba(255, 255, 255, 0.11);
+      color: rgba(255, 255, 255, 0.48);
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+    }
+  </style>
+</head>
+<body>
+  <section id="linkedin-event-header" class="event-cover" aria-label="Jak si zjednodušit život s AI — LinkedIn event header">
+    <div class="glow glow-gold"></div>
+    <div class="glow glow-blush"></div>
+    <div class="gold-ring"></div>
+    <div class="content">
+      <aside class="date-card">
+        <div class="date-inner">
+          <div class="month">srpen</div>
+          <div class="day">20</div>
+          <div class="year">2026</div>
+        </div>
+      </aside>
+
+      <main class="main">
+        <span class="event-type">Webinář zdarma</span>
+        <h1 class="title">Jak si zjednodušit<br>život <span class="gold">s&nbsp;AI</span></h1>
+        <p class="claim">10 situací z&nbsp;práce a&nbsp;domácnosti. U&nbsp;každé uvidíš, co&nbsp;zadat a&nbsp;<span class="soft">co&nbsp;dostaneš zpátky.</span></p>
+      </main>
+
+      <aside class="meta-card">
+        <div class="logo"><span class="ai">AI</span><span class="ladies">Ladies</span></div>
+        <div class="meta-list">
+          <div class="meta-item">
+            <span class="meta-icon">D</span>
+            <span>
+              <span class="meta-label">datum</span>
+              <span class="meta-value">20. 8. 2026</span>
+            </span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-icon">Č</span>
+            <span>
+              <span class="meta-label">čas</span>
+              <span class="meta-value">13:00–14:00</span>
+            </span>
+          </div>
+          <div class="meta-item">
+            <span class="meta-icon">F</span>
+            <span>
+              <span class="meta-label">formát</span>
+              <span class="meta-value">Online · 60 min · Zdarma</span>
+            </span>
+          </div>
+        </div>
+        <div class="url">ailadies.cz/webinar-10x-ai-ve-tvem-dni</div>
+      </aside>
+    </div>
+  </section>
+</body>
+</html>
